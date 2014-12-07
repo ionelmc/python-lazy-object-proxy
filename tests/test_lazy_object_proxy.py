@@ -24,6 +24,7 @@ def target():
 objects = imp.new_module('objects')
 exec_(OBJECTS_CODE, objects.__dict__, objects.__dict__)
 
+
 @pytest.fixture(scope="module", params=["pure-python", "c-extension"])
 def lazy_object_proxy(request):
     class mod:
@@ -36,6 +37,7 @@ def lazy_object_proxy(request):
                 pytest.skip(msg="C Extension not available.")
         else:
             raise RuntimeError("Unsupported param: %r." % request.param)
+
     return mod
 
 
@@ -45,7 +47,7 @@ def test_attributes(lazy_object_proxy):
 
     function2 = lazy_object_proxy.Proxy(function1)
 
-    assert function2.__wrapped__ ==  function1
+    assert function2.__wrapped__ == function1
 
 
 def test_get_wrapped(lazy_object_proxy):
@@ -1524,7 +1526,9 @@ def test_override_getattr(lazy_object_proxy):
 
     assert 'attribute' in accessed
 
-skipcallable = pytest.mark.xfail(reason="Don't know how to make this work. This tests the existance of the __call__ method.")
+
+skipcallable = pytest.mark.xfail(
+    reason="Don't know how to make this work. This tests the existance of the __call__ method.")
 
 
 @skipcallable

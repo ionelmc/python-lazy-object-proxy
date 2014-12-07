@@ -12,17 +12,18 @@ The lazy object proxy class is available as ``lazy_object_proxy.Proxy``.
     >>> import lazy_object_proxy
     >>> proxy = lazy_object_proxy.Proxy(table)
     >>> proxy['key-1'] = 'value-1'
+    >>> proxy['key-2'] = 'value-2'
 
-    >>> proxy.keys()
-    ['key-1']
-    >>> table.keys()
-    ['key-1']
+    >>> sorted(proxy.keys())
+    ['key-1', 'key-2']
+    >>> sorted(table.keys())
+    ['key-1', 'key-2']
 
     >>> isinstance(proxy, dict)
     True
 
     >>> dir(proxy)
-    ['__class__', '__cmp__', '__contains__', '__delattr__', '__delitem__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__gt__', '__hash__', '__init__', '__iter__', '__le__', '__len__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__sizeof__', '__str__', '__subclasshook__', 'clear', 'copy', 'fromkeys', 'get', 'has_key', 'items', 'iteritems', 'iterkeys', 'itervalues', 'keys', 'pop', 'popitem', 'setdefault', 'update', 'values', 'viewitems', 'viewkeys', 'viewvalues']
+    ['__class__', ...'__contains__', '__delattr__', '__delitem__', ...'__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__gt__', '__hash__', '__init__', '__iter__', '__le__', '__len__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', ...'__setattr__', '__setitem__', ...'__str__', '__subclasshook__', 'clear', 'copy', 'fromkeys', 'get', ...]
 
 
 This ability for a proxy to stand in for the original goes as far as
@@ -111,7 +112,7 @@ type for the wrapped object.
 ::
 
     >>> proxy.__class__
-    <type 'int'>
+    <... 'int'>
 
 Note that ``isinstance()`` will still also succeed if comparing to the
 ``ObjectProxy`` type. It is therefore still possible to use ``isinstance()``
@@ -142,15 +143,15 @@ some specific behaviour of the proxy.
 ::
 
     >>> def function():
-    ...     print('executing', function.__name__)
+    ...     print(('executing', function.__name__))
 
     >>> class CallableWrapper(lazy_object_proxy.Proxy):
     ...     def __call__(self, *args, **kwargs):
-    ...         print('entering', self.__wrapped__.__name__)
+    ...         print(('entering', self.__wrapped__.__name__))
     ...         try:
     ...             return self.__wrapped__(*args, **kwargs)
     ...         finally:
-    ...             print('exiting', self.__wrapped__.__name__)
+    ...             print(('exiting', self.__wrapped__.__name__))
 
     >>> proxy = CallableWrapper(function)
 
@@ -266,10 +267,10 @@ definition.
     ...        del self._self_attribute
 
     >>> proxy = CustomProxy(1)
-    >>> print proxy.attribute
+    >>> proxy.attribute
     1
     >>> proxy.attribute = 2
-    >>> print proxy.attribute
+    >>> proxy.attribute
     2
     >>> del proxy.attribute
     >>> proxy.attribute
@@ -296,7 +297,7 @@ that then being overidden if necessary, with a specific value in the
     >>> proxy.attribute
     2
     >>> del proxy.attribute
-    >>> print proxy.attribute
+    >>> print(proxy.attribute)
     None
 
 Just be aware that although the attribute can be deleted from the instance

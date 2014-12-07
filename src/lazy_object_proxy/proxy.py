@@ -7,20 +7,21 @@ import inspect
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
+
 def with_metaclass(meta, *bases):
     """Create a base class with a metaclass."""
     return meta("NewBase", bases, {})
 
-class _ProxyMethods(object):
 
-     # We use properties to override the values of __module__ and
-     # __doc__. If we add these in ObjectProxy, the derived class
-     # __dict__ will still be setup to have string variants of these
-     # attributes and the rules of descriptors means that they appear to
-     # take precedence over the properties in the base class. To avoid
-     # that, we copy the properties into the derived class type itself
-     # via a meta class. In that way the properties will always take
-     # precedence.
+class _ProxyMethods(object):
+    # We use properties to override the values of __module__ and
+    # __doc__. If we add these in ObjectProxy, the derived class
+    # __dict__ will still be setup to have string variants of these
+    # attributes and the rules of descriptors means that they appear to
+    # take precedence over the properties in the base class. To avoid
+    # that, we copy the properties into the derived class type itself
+    # via a meta class. In that way the properties will always take
+    # precedence.
 
     @property
     def __module__(self):
@@ -54,19 +55,20 @@ class _ProxyMethods(object):
     def __weakref__(self):
         return self.__wrapped__.__weakref__
 
+
 class _ProxyMetaType(type):
-     def __new__(cls, name, bases, dictionary):
-         # Copy our special properties into the class so that they
-         # always take precedence over attributes of the same name added
-         # during construction of a derived class. This is to save
-         # duplicating the implementation for them in all derived classes.
+    def __new__(cls, name, bases, dictionary):
+        # Copy our special properties into the class so that they
+        # always take precedence over attributes of the same name added
+        # during construction of a derived class. This is to save
+        # duplicating the implementation for them in all derived classes.
 
-         dictionary.update(vars(_ProxyMethods))
+        dictionary.update(vars(_ProxyMethods))
 
-         return type.__new__(cls, name, bases, dictionary)
+        return type.__new__(cls, name, bases, dictionary)
+
 
 class Proxy(with_metaclass(_ProxyMetaType)):
-
     __slots__ = '__wrapped__'
 
     def __init__(self, wrapped):
@@ -117,9 +119,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __repr__(self):
         return '<%s at 0x%x for %s at 0x%x>' % (
-                type(self).__name__, id(self),
-                type(self.__wrapped__).__name__,
-                id(self.__wrapped__))
+            type(self).__name__, id(self),
+            type(self.__wrapped__).__name__,
+            id(self.__wrapped__))
 
     def __reversed__(self):
         return reversed(self.__wrapped__)
