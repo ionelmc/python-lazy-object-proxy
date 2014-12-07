@@ -1,99 +1,67 @@
-from __future__ import print_function
+# -*- encoding: utf-8 -*-
+import glob
+import io
+import re
+from os.path import basename
+from os.path import dirname
+from os.path import join
+from os.path import splitext
 
-import os
-import sys
+from setuptools import find_packages
+from setuptools import setup
 
-from distutils.core import setup
-from distutils.core import Extension
-from distutils.command.build_ext import build_ext
-from distutils.errors import (CCompilerError, DistutilsExecError,
-                DistutilsPlatformError)
 
-if sys.platform == 'win32':
-    build_ext_errors = (CCompilerError, DistutilsExecError,
-            DistutilsPlatformError, IOError)
-else:
-    build_ext_errors = (CCompilerError, DistutilsExecError,
-            DistutilsPlatformError)
+def read(*names, **kwargs):
+    return io.open(
+        join(dirname(__file__), *names),
+        encoding=kwargs.get("encoding", "utf8")
+    ).read()
 
-class BuildExtFailed(Exception):
-    pass
+setup(
+    name="lazy-object-proxy",
+    version="0.1.0",
+    license="BSD",
+    description="A lazy object proxy",
+    long_description="%s\n%s" % (read("README.rst"), re.sub(":obj:`~?(.*?)`", r"``\1``", read("CHANGELOG.rst"))),
+    author="Ionel Cristian Mărieș",
+    author_email="contact@ionelmc.ro",
+    url="https://github.com/ionelmc/python-lazy-object-proxy",
+    packages=find_packages("src"),
+    package_dir={"": "src"},
+    py_modules=[splitext(basename(i))[0] for i in glob.glob("src/*.py")],
+    include_package_data=True,
+    zip_safe=False,
+    classifiers=[
+        # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: BSD License",
+        "Operating System :: Unix",
+        "Operating System :: POSIX",
+        "Operating System :: Microsoft :: Windows",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Programming Language :: Python :: Implementation :: PyPy",
+        "Topic :: Utilities",
+    ],
+    keywords=[
+        # eg: "keyword1", "keyword2", "keyword3",
+    ],
+    install_requires=[
+        # eg: "aspectlib==1.1.1", "six>=1.7",
+    ],
+    extras_require={
+        # eg: 'rst': ["docutils>=0.11"],
+    },
+    entry_points={
+        "console_scripts": [
+            "lazy_object_proxy = lazy_object_proxy.__main__:main"
+        ]
+    }
 
-class optional_build_ext(build_ext):
-    def run(self):
-        try:
-            build_ext.run(self)
-        except DistutilsPlatformError:
-            raise BuildExtFailed()
-
-    def build_extension(self, ext):
-        try:
-            build_ext.build_extension(self, ext)
-        except build_ext_errors:
-            raise BuildExtFailed()
-
-setup_kwargs = dict(
-      name = 'wrapt',
-      version = '1.9.0',
-      description = 'Module for decorators, wrappers and monkey patching.',
-      author = 'Graham Dumpleton',
-      author_email = 'Graham.Dumpleton@gmail.com',
-      license = 'BSD',
-      url = 'https://github.com/GrahamDumpleton/wrapt',
-      packages = ['wrapt'],
-      package_dir={'wrapt': 'src'},
-     )
-
-def run_setup(with_extensions):
-    setup_kwargs_tmp = dict(setup_kwargs)
-
-    if with_extensions:
-        setup_kwargs_tmp['ext_modules'] = [
-                Extension("wrapt._wrappers", ["src/_wrappers.c"])]
-        setup_kwargs_tmp['cmdclass'] = dict(build_ext=optional_build_ext)
-
-    setup(**setup_kwargs_tmp)
-
-with_extensions = os.environ.get('WRAPT_EXTENSIONS', None)
-
-if with_extensions:
-    if with_extensions.lower() == 'true':
-        with_extensions = True
-    elif with_extensions.lower() == 'false':
-        with_extensions = False
-    else:
-        with_extensions = None
-
-if hasattr(sys, 'pypy_version_info'):
-    with_extensions = False
-
-WARNING = """
-WARNING: The C extension component for wrapt could not be compiled.
-"""
-
-if with_extensions is not None:
-    run_setup(with_extensions=with_extensions)
-
-else:
-    try:
-        run_setup(with_extensions=True)
-
-    except BuildExtFailed:
-
-        print(75 * '*')
-
-        print(WARNING)
-        print("INFO: Trying to build without extensions.")
-
-        print()
-        print(75 * '*')
-
-        run_setup(with_extensions=False)
-
-        print(75 * '*')
-
-        print(WARNING)
-        print("INFO: Only pure Python version of package installed.")
-
-        print()
-        print(75 * '*')
+)

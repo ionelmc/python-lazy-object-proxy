@@ -18,18 +18,16 @@ develop-eggs
 lib
 lib64
 
-man
-include
-.Python
-MANIFEST
-
 # Installer logs
 pip-log.txt
 
 # Unit test / coverage reports
 .coverage
 .tox
+.coverage
+.coverage.*
 nosetests.xml
+htmlcov
 
 # Translations
 *.mo
@@ -39,13 +37,16 @@ nosetests.xml
 .project
 .pydevproject
 
-# Editor save files.
-.*.swp
+# Complexity
+output/*.html
+output/*/index.html
 
-# Sphinx documentation.
+# Sphinx
 docs/_build
 
-# Coverage.
-htmlcov
-.coverage
-.tddium*
+.DS_Store
+*~
+.*.sw[po]
+.build
+.ve
+.bootstrap
