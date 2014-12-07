@@ -3,6 +3,7 @@ from __future__ import print_function
 import imp
 import sys
 import pytest
+# import pytest.runner
 
 from compat import PY2, PY3, exec_
 
@@ -29,7 +30,10 @@ def lazy_object_proxy(request):
         if request.param == "pure-python":
             from lazy_object_proxy.proxy import Proxy
         elif request.param == "c-extension":
-            from lazy_object_proxy._proxy import Proxy
+            try:
+                from lazy_object_proxy._proxy import Proxy
+            except ImportError:
+                pytest.skip(msg="C Extension not available.")
         else:
             raise RuntimeError("Unsupported param: %r." % request.param)
     return mod
