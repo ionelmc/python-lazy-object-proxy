@@ -34,7 +34,10 @@ def lazy_object_proxy(request):
             try:
                 from lazy_object_proxy._proxy import Proxy
             except ImportError:
-                pytest.skip(msg="C Extension not available.")
+                if PYPY:
+                    pytest.skip(msg="C Extension not available.")
+                else:
+                    raise
         else:
             raise RuntimeError("Unsupported param: %r." % request.param)
 
