@@ -1,8 +1,5 @@
 import sys
-import functools
 import operator
-import weakref
-import inspect
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
@@ -354,8 +351,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __int__(self):
         return int(self.__wrapped__)
 
-    def __long__(self):
-        return long(self.__wrapped__)
+    if PY2:
+        def __long__(self):
+            return long(self.__wrapped__)  # flake8: noqa
 
     def __float__(self):
         return float(self.__wrapped__)
@@ -404,4 +402,3 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __call__(self, *args, **kwargs):
         return self.__wrapped__(*args, **kwargs)
-
