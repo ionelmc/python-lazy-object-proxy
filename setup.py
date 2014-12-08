@@ -1,18 +1,22 @@
 # -*- encoding: utf-8 -*-
-import glob
 import io
 import os
 import re
-from os.path import basename, relpath
+from glob import glob
+from os.path import basename
 from os.path import dirname
 from os.path import join
+from os.path import relpath
 from os.path import splitext
 
 from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
-from distutils.errors import DistutilsPlatformError, CCompilerError, DistutilsExecError, CompileError
 from distutils.core import Extension
+from distutils.errors import CCompilerError
+from distutils.errors import CompileError
+from distutils.errors import DistutilsExecError
+from distutils.errors import DistutilsPlatformError
 
 def read(*names, **kwargs):
     return io.open(
@@ -28,14 +32,14 @@ class optional_build_ext(build_ext):
             build_ext.run(self)
         except DistutilsPlatformError as e:
             self._unavailable(e)
-            self.extensions = []
+            self.extensions = []  # avoid copying missing files (it would fail).
 
     def build_extension(self, ext):
         try:
             build_ext.build_extension(self, ext)
         except (CCompilerError, CompileError, DistutilsExecError) as e:
             self._unavailable(e)
-            self.extensions = []
+            self.extensions = []  # avoid copying missing files (it would fail).
 
     def _unavailable(self, e):
         print("*" * 80)
@@ -62,7 +66,7 @@ setup(
     url="https://github.com/ionelmc/python-lazy-object-proxy",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    py_modules=[splitext(basename(path))[0] for path in glob.glob("src/*.py")],
+    py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
     include_package_data=True,
     zip_safe=False,
     classifiers=[
@@ -105,6 +109,6 @@ setup(
             include_dirs=[dirname(path)]
         )
         for root, _, _ in os.walk("src")
-        for path in glob.glob(os.path.join(root, "*.c"))
+        for path in glob(join(root, "*.c"))
     ]
 )
