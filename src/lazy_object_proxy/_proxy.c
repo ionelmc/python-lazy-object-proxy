@@ -8,6 +8,15 @@
 #define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
 #endif
 
+#define Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(object) \
+    if (PyObject_IsInstance(object, (PyObject *)&Proxy_Type)) { \
+        object = Proxy__ensure_wrapped((ProxyObject *)object); \
+        if (!object) return NULL; \
+    }
+
+#define Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self) if (!Proxy__ensure_wrapped(self)) return NULL;
+#define Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self) if (!Proxy__ensure_wrapped(self)) return -1;
+
 /* ------------------------------------------------------------------------- */
 
 typedef struct {
@@ -15,9 +24,37 @@ typedef struct {
 
     PyObject *dict;
     PyObject *wrapped;
+    PyObject *factory;
 } ProxyObject;
 
 PyTypeObject Proxy_Type;
+
+/* ------------------------------------------------------------------------- */
+
+static PyObject *Proxy__ensure_wrapped(ProxyObject *self)
+{
+    PyObject *wrapped;
+
+    if (self->wrapped) {
+        return self->wrapped;
+    } else {
+        if (self->factory) {
+            wrapped = PyObject_CallFunctionObjArgs(self->factory, NULL);
+            if (wrapped) {
+                Py_INCREF(wrapped);
+                self->wrapped = wrapped;
+                return wrapped;
+            } else {
+                return NULL;
+            }
+        } else {
+            PyErr_SetString(PyExc_ValueError, "Proxy hasn't been initiated: __factory__ is missing.");
+            return NULL;
+        }
+
+
+    }
+}
 
 /* ------------------------------------------------------------------------- */
 
@@ -33,6 +70,7 @@ static PyObject *Proxy_new(PyTypeObject *type,
 
     self->dict = PyDict_New();
     self->wrapped = NULL;
+    self->factory = NULL;
 
     return (PyObject *)self;
 }
@@ -40,56 +78,12 @@ static PyObject *Proxy_new(PyTypeObject *type,
 /* ------------------------------------------------------------------------- */
 
 static int Proxy_raw_init(ProxyObject *self,
-        PyObject *wrapped)
+        PyObject *factory)
 {
-    static PyObject *module_str = NULL;
-    static PyObject *doc_str = NULL;
-
-    PyObject *object = NULL;
-
-    Py_INCREF(wrapped);
+    Py_INCREF(factory);
     Py_XDECREF(self->wrapped);
-    self->wrapped = wrapped;
-
-    if (!module_str) {
-#if PY_MAJOR_VERSION >= 3
-        module_str = PyUnicode_InternFromString("__module__");
-#else
-        module_str = PyString_InternFromString("__module__");
-#endif
-    }
-
-    if (!doc_str) {
-#if PY_MAJOR_VERSION >= 3
-        doc_str = PyUnicode_InternFromString("__doc__");
-#else
-        doc_str = PyString_InternFromString("__doc__");
-#endif
-    }
-
-    object = PyObject_GetAttr(wrapped, module_str);
-
-    if (object) {
-        if (PyDict_SetItem(self->dict, module_str, object) == -1) {
-            Py_DECREF(object);
-            return -1;
-        }
-        Py_DECREF(object);
-    }
-    else
-        PyErr_Clear();
-
-    object = PyObject_GetAttr(wrapped, doc_str);
-
-    if (object) {
-        if (PyDict_SetItem(self->dict, doc_str, object) == -1) {
-            Py_DECREF(object);
-            return -1;
-        }
-        Py_DECREF(object);
-    }
-    else
-        PyErr_Clear();
+    Py_XDECREF(self->factory);
+    self->factory = factory;
 
     return 0;
 }
@@ -147,10 +141,7 @@ static void Proxy_dealloc(ProxyObject *self)
 
 static PyObject *Proxy_repr(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
 #if PY_MAJOR_VERSION >= 3
     return PyUnicode_FromFormat("<%s at %p for %s at %p>",
@@ -167,10 +158,7 @@ static PyObject *Proxy_repr(ProxyObject *self)
 
 static long Proxy_hash(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     return PyObject_Hash(self->wrapped);
 }
@@ -179,10 +167,7 @@ static long Proxy_hash(ProxyObject *self)
 
 static PyObject *Proxy_str(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_Str(self->wrapped);
 }
@@ -191,11 +176,8 @@ static PyObject *Proxy_str(ProxyObject *self)
 
 static PyObject *Proxy_add(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Add(o1, o2);
 }
@@ -204,12 +186,8 @@ static PyObject *Proxy_add(PyObject *o1, PyObject *o2)
 
 static PyObject *Proxy_subtract(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
-
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Subtract(o1, o2);
 }
@@ -218,11 +196,8 @@ static PyObject *Proxy_subtract(PyObject *o1, PyObject *o2)
 
 static PyObject *Proxy_multiply(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Multiply(o1, o2);
 }
@@ -232,11 +207,8 @@ static PyObject *Proxy_multiply(PyObject *o1, PyObject *o2)
 #if PY_MAJOR_VERSION < 3
 static PyObject *Proxy_divide(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Divide(o1, o2);
 }
@@ -246,11 +218,8 @@ static PyObject *Proxy_divide(PyObject *o1, PyObject *o2)
 
 static PyObject *Proxy_remainder(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Remainder(o1, o2);
 }
@@ -259,11 +228,8 @@ static PyObject *Proxy_remainder(PyObject *o1, PyObject *o2)
 
 static PyObject *Proxy_divmod(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Divmod(o1, o2);
 }
@@ -273,11 +239,8 @@ static PyObject *Proxy_divmod(PyObject *o1, PyObject *o2)
 static PyObject *Proxy_power(PyObject *o1, PyObject *o2,
         PyObject *modulo)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Power(o1, o2, modulo);
 }
@@ -286,10 +249,7 @@ static PyObject *Proxy_power(PyObject *o1, PyObject *o2,
 
 static PyObject *Proxy_negative(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyNumber_Negative(self->wrapped);
 }
@@ -298,10 +258,7 @@ static PyObject *Proxy_negative(ProxyObject *self)
 
 static PyObject *Proxy_positive(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyNumber_Positive(self->wrapped);
 }
@@ -310,10 +267,7 @@ static PyObject *Proxy_positive(ProxyObject *self)
 
 static PyObject *Proxy_absolute(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyNumber_Absolute(self->wrapped);
 }
@@ -322,10 +276,7 @@ static PyObject *Proxy_absolute(ProxyObject *self)
 
 static int Proxy_bool(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     return PyObject_IsTrue(self->wrapped);
 }
@@ -334,10 +285,7 @@ static int Proxy_bool(ProxyObject *self)
 
 static PyObject *Proxy_invert(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyNumber_Invert(self->wrapped);
 }
@@ -346,11 +294,8 @@ static PyObject *Proxy_invert(ProxyObject *self)
 
 static PyObject *Proxy_lshift(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Lshift(o1, o2);
 }
@@ -359,11 +304,8 @@ static PyObject *Proxy_lshift(PyObject *o1, PyObject *o2)
 
 static PyObject *Proxy_rshift(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Rshift(o1, o2);
 }
@@ -372,11 +314,8 @@ static PyObject *Proxy_rshift(PyObject *o1, PyObject *o2)
 
 static PyObject *Proxy_and(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_And(o1, o2);
 }
@@ -385,11 +324,8 @@ static PyObject *Proxy_and(PyObject *o1, PyObject *o2)
 
 static PyObject *Proxy_xor(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Xor(o1, o2);
 }
@@ -398,11 +334,8 @@ static PyObject *Proxy_xor(PyObject *o1, PyObject *o2)
 
 static PyObject *Proxy_or(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_Or(o1, o2);
 }
@@ -412,10 +345,7 @@ static PyObject *Proxy_or(PyObject *o1, PyObject *o2)
 #if PY_MAJOR_VERSION < 3
 static PyObject *Proxy_int(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyNumber_Int(self->wrapped);
 }
@@ -425,10 +355,7 @@ static PyObject *Proxy_int(ProxyObject *self)
 
 static PyObject *Proxy_long(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyNumber_Long(self->wrapped);
 }
@@ -437,10 +364,7 @@ static PyObject *Proxy_long(ProxyObject *self)
 
 static PyObject *Proxy_float(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyNumber_Float(self->wrapped);
 }
@@ -452,10 +376,7 @@ static PyObject *Proxy_oct(ProxyObject *self)
 {
     PyNumberMethods *nb;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     if ((nb = self->wrapped->ob_type->tp_as_number) == NULL ||
         nb->nb_oct == NULL) {
@@ -475,10 +396,7 @@ static PyObject *Proxy_hex(ProxyObject *self)
 {
     PyNumberMethods *nb;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     if ((nb = self->wrapped->ob_type->tp_as_number) == NULL ||
         nb->nb_hex == NULL) {
@@ -498,13 +416,8 @@ static PyObject *Proxy_inplace_add(ProxyObject *self,
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceAdd(self->wrapped, other);
 
@@ -525,13 +438,8 @@ static PyObject *Proxy_inplace_subtract(
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceSubtract(self->wrapped, other);
 
@@ -552,13 +460,8 @@ static PyObject *Proxy_inplace_multiply(
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceMultiply(self->wrapped, other);
 
@@ -580,13 +483,8 @@ static PyObject *Proxy_inplace_divide(
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceDivide(self->wrapped, other);
 
@@ -608,13 +506,8 @@ static PyObject *Proxy_inplace_remainder(
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceRemainder(self->wrapped, other);
 
@@ -635,13 +528,8 @@ static PyObject *Proxy_inplace_power(ProxyObject *self,
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlacePower(self->wrapped, other, modulo);
 
@@ -662,13 +550,8 @@ static PyObject *Proxy_inplace_lshift(ProxyObject *self,
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceLshift(self->wrapped, other);
 
@@ -689,13 +572,8 @@ static PyObject *Proxy_inplace_rshift(ProxyObject *self,
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceRshift(self->wrapped, other);
 
@@ -716,13 +594,8 @@ static PyObject *Proxy_inplace_and(ProxyObject *self,
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceAnd(self->wrapped, other);
 
@@ -743,13 +616,8 @@ static PyObject *Proxy_inplace_xor(ProxyObject *self,
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceXor(self->wrapped, other);
 
@@ -770,13 +638,8 @@ static PyObject *Proxy_inplace_or(ProxyObject *self,
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceOr(self->wrapped, other);
 
@@ -791,11 +654,8 @@ static PyObject *Proxy_inplace_or(ProxyObject *self,
 
 static PyObject *Proxy_floor_divide(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_FloorDivide(o1, o2);
 }
@@ -804,11 +664,8 @@ static PyObject *Proxy_floor_divide(PyObject *o1, PyObject *o2)
 
 static PyObject *Proxy_true_divide(PyObject *o1, PyObject *o2)
 {
-    if (PyObject_IsInstance(o1, (PyObject *)&Proxy_Type))
-        o1 = ((ProxyObject *)o1)->wrapped;
-
-    if (PyObject_IsInstance(o2, (PyObject *)&Proxy_Type))
-        o2 = ((ProxyObject *)o2)->wrapped;
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
 
     return PyNumber_TrueDivide(o1, o2);
 }
@@ -820,13 +677,8 @@ static PyObject *Proxy_inplace_floor_divide(
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceFloorDivide(self->wrapped, other);
 
@@ -847,13 +699,8 @@ static PyObject *Proxy_inplace_true_divide(
 {
     PyObject *object = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
-
-    if (PyObject_IsInstance(other, (PyObject *)&Proxy_Type))
-        other = ((ProxyObject *)other)->wrapped;
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceTrueDivide(self->wrapped, other);
 
@@ -871,10 +718,7 @@ static PyObject *Proxy_inplace_true_divide(
 
 static PyObject *Proxy_index(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyNumber_Index(self->wrapped);
 }
@@ -883,10 +727,7 @@ static PyObject *Proxy_index(ProxyObject *self)
 
 static Py_ssize_t Proxy_length(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     return PyObject_Length(self->wrapped);
 }
@@ -896,10 +737,7 @@ static Py_ssize_t Proxy_length(ProxyObject *self)
 static int Proxy_contains(ProxyObject *self,
         PyObject *value)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     return PySequence_Contains(self->wrapped, value);
 }
@@ -909,10 +747,7 @@ static int Proxy_contains(ProxyObject *self,
 static PyObject *Proxy_getitem(ProxyObject *self,
         PyObject *key)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_GetItem(self->wrapped, key);
 }
@@ -922,10 +757,7 @@ static PyObject *Proxy_getitem(ProxyObject *self,
 static int Proxy_setitem(ProxyObject *self,
         PyObject *key, PyObject* value)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     if (value == NULL)
         return PyObject_DelItem(self->wrapped, key);
@@ -938,10 +770,7 @@ static int Proxy_setitem(ProxyObject *self,
 static PyObject *Proxy_dir(
         ProxyObject *self, PyObject *args)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_Dir(self->wrapped);
 }
@@ -954,10 +783,7 @@ static PyObject *Proxy_enter(
     PyObject *method = NULL;
     PyObject *result = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     method = PyObject_GetAttrString(self->wrapped, "__enter__");
 
@@ -979,10 +805,7 @@ static PyObject *Proxy_exit(
     PyObject *method = NULL;
     PyObject *result = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     method = PyObject_GetAttrString(self->wrapped, "__exit__");
 
@@ -1001,10 +824,7 @@ static PyObject *Proxy_exit(
 static PyObject *Proxy_bytes(
         ProxyObject *self, PyObject *args)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_Bytes(self->wrapped);
 }
@@ -1014,10 +834,7 @@ static PyObject *Proxy_bytes(
 static PyObject *Proxy_reversed(
         ProxyObject *self, PyObject *args)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_CallFunctionObjArgs((PyObject *)&PyReversed_Type,
             self->wrapped, NULL);
@@ -1035,10 +852,7 @@ static PyObject *Proxy_round(
 
     PyObject *result = NULL;
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     module = PyImport_ImportModule("builtins");
 
@@ -1069,10 +883,7 @@ static PyObject *Proxy_round(
 static PyObject *Proxy_get_name(
         ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_GetAttrString(self->wrapped, "__name__");
 }
@@ -1082,10 +893,7 @@ static PyObject *Proxy_get_name(
 static int Proxy_set_name(ProxyObject *self,
         PyObject *value)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     return PyObject_SetAttrString(self->wrapped, "__name__", value);
 }
@@ -1095,10 +903,7 @@ static int Proxy_set_name(ProxyObject *self,
 static PyObject *Proxy_get_qualname(
         ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_GetAttrString(self->wrapped, "__qualname__");
 }
@@ -1108,10 +913,7 @@ static PyObject *Proxy_get_qualname(
 static int Proxy_set_qualname(ProxyObject *self,
         PyObject *value)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     return PyObject_SetAttrString(self->wrapped, "__qualname__", value);
 }
@@ -1121,10 +923,7 @@ static int Proxy_set_qualname(ProxyObject *self,
 static PyObject *Proxy_get_module(
         ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_GetAttrString(self->wrapped, "__module__");
 }
@@ -1134,10 +933,7 @@ static PyObject *Proxy_get_module(
 static int Proxy_set_module(ProxyObject *self,
         PyObject *value)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     if (PyObject_SetAttrString(self->wrapped, "__module__", value) == -1)
         return -1;
@@ -1150,10 +946,7 @@ static int Proxy_set_module(ProxyObject *self,
 static PyObject *Proxy_get_doc(
         ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_GetAttrString(self->wrapped, "__doc__");
 }
@@ -1163,10 +956,7 @@ static PyObject *Proxy_get_doc(
 static int Proxy_set_doc(ProxyObject *self,
         PyObject *value)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     if (PyObject_SetAttrString(self->wrapped, "__doc__", value) == -1)
         return -1;
@@ -1179,10 +969,7 @@ static int Proxy_set_doc(ProxyObject *self,
 static PyObject *Proxy_get_class(
         ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_GetAttrString(self->wrapped, "__class__");
 }
@@ -1192,10 +979,7 @@ static PyObject *Proxy_get_class(
 static PyObject *Proxy_get_annotations(
         ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_GetAttrString(self->wrapped, "__annotations__");
 }
@@ -1205,10 +989,7 @@ static PyObject *Proxy_get_annotations(
 static int Proxy_set_annotations(ProxyObject *self,
         PyObject *value)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     return PyObject_SetAttrString(self->wrapped, "__annotations__", value);
 }
@@ -1218,10 +999,7 @@ static int Proxy_set_annotations(ProxyObject *self,
 static PyObject *Proxy_get_wrapped(
         ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     Py_INCREF(self->wrapped);
     return self->wrapped;
@@ -1232,10 +1010,7 @@ static PyObject *Proxy_get_wrapped(
 static int Proxy_set_wrapped(ProxyObject *self,
         PyObject *value)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     if (!value) {
         PyErr_SetString(PyExc_TypeError, "__wrapped__ must be an object");
@@ -1302,10 +1077,7 @@ static PyObject *Proxy_getattr(
         return NULL;
 #endif
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_GetAttr(self->wrapped, name);
 }
@@ -1363,10 +1135,7 @@ static int Proxy_setattro(
     if (PyObject_HasAttr((PyObject *)Py_TYPE(self), name))
         return PyObject_GenericSetAttr((PyObject *)self, name, value);
 
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return -1;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
     return PyObject_SetAttr(self->wrapped, name, value);
 }
@@ -1376,10 +1145,7 @@ static int Proxy_setattro(
 static PyObject *Proxy_richcompare(ProxyObject *self,
         PyObject *other, int opcode)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_RichCompare(self->wrapped, other, opcode);
 }
@@ -1388,10 +1154,7 @@ static PyObject *Proxy_richcompare(ProxyObject *self,
 
 static PyObject *Proxy_iter(ProxyObject *self)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_GetIter(self->wrapped);
 }
@@ -1401,10 +1164,7 @@ static PyObject *Proxy_iter(ProxyObject *self)
 static PyObject *Proxy_call(
         ProxyObject *self, PyObject *args, PyObject *kwds)
 {
-    if (!self->wrapped) {
-      PyErr_SetString(PyExc_ValueError, "wrapper has not been initialized");
-      return NULL;
-    }
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
     return PyObject_Call(self->wrapped, args, kwds);
 }
@@ -1412,62 +1172,62 @@ static PyObject *Proxy_call(
 /* ------------------------------------------------------------------------- */;
 
 static PyNumberMethods Proxy_as_number = {
-    (binaryfunc)Proxy_add, /*nb_add*/
-    (binaryfunc)Proxy_subtract, /*nb_subtract*/
-    (binaryfunc)Proxy_multiply, /*nb_multiply*/
+    (binaryfunc)Proxy_add,                  /*nb_add*/
+    (binaryfunc)Proxy_subtract,             /*nb_subtract*/
+    (binaryfunc)Proxy_multiply,             /*nb_multiply*/
 #if PY_MAJOR_VERSION < 3
-    (binaryfunc)Proxy_divide, /*nb_divide*/
+    (binaryfunc)Proxy_divide,               /*nb_divide*/
 #endif
-    (binaryfunc)Proxy_remainder, /*nb_remainder*/
-    (binaryfunc)Proxy_divmod, /*nb_divmod*/
-    (ternaryfunc)Proxy_power, /*nb_power*/
-    (unaryfunc)Proxy_negative, /*nb_negative*/
-    (unaryfunc)Proxy_positive, /*nb_positive*/
-    (unaryfunc)Proxy_absolute, /*nb_absolute*/
-    (inquiry)Proxy_bool, /*nb_nonzero/nb_bool*/
-    (unaryfunc)Proxy_invert, /*nb_invert*/
-    (binaryfunc)Proxy_lshift, /*nb_lshift*/
-    (binaryfunc)Proxy_rshift, /*nb_rshift*/
-    (binaryfunc)Proxy_and, /*nb_and*/
-    (binaryfunc)Proxy_xor, /*nb_xor*/
-    (binaryfunc)Proxy_or, /*nb_or*/
+    (binaryfunc)Proxy_remainder,            /*nb_remainder*/
+    (binaryfunc)Proxy_divmod,               /*nb_divmod*/
+    (ternaryfunc)Proxy_power,               /*nb_power*/
+    (unaryfunc)Proxy_negative,              /*nb_negative*/
+    (unaryfunc)Proxy_positive,              /*nb_positive*/
+    (unaryfunc)Proxy_absolute,              /*nb_absolute*/
+    (inquiry)Proxy_bool,                    /*nb_nonzero/nb_bool*/
+    (unaryfunc)Proxy_invert,                /*nb_invert*/
+    (binaryfunc)Proxy_lshift,               /*nb_lshift*/
+    (binaryfunc)Proxy_rshift,               /*nb_rshift*/
+    (binaryfunc)Proxy_and,                  /*nb_and*/
+    (binaryfunc)Proxy_xor,                  /*nb_xor*/
+    (binaryfunc)Proxy_or,                   /*nb_or*/
 #if PY_MAJOR_VERSION < 3
-    0,                      /*nb_coerce*/
+    0,                                      /*nb_coerce*/
 #endif
 #if PY_MAJOR_VERSION < 3
-    (unaryfunc)Proxy_int, /*nb_int*/
-    (unaryfunc)Proxy_long, /*nb_long*/
+    (unaryfunc)Proxy_int,                   /*nb_int*/
+    (unaryfunc)Proxy_long,                  /*nb_long*/
 #else
-    (unaryfunc)Proxy_long, /*nb_int*/
-    0,                      /*nb_long/nb_reserved*/
+    (unaryfunc)Proxy_long,                  /*nb_int*/
+    0,                                      /*nb_long/nb_reserved*/
 #endif
-    (unaryfunc)Proxy_float, /*nb_float*/
+    (unaryfunc)Proxy_float,                 /*nb_float*/
 #if PY_MAJOR_VERSION < 3
-    (unaryfunc)Proxy_oct, /*nb_oct*/
-    (unaryfunc)Proxy_hex, /*nb_hex*/
+    (unaryfunc)Proxy_oct,                   /*nb_oct*/
+    (unaryfunc)Proxy_hex,                   /*nb_hex*/
 #endif
-    (binaryfunc)Proxy_inplace_add, /*nb_inplace_add*/
-    (binaryfunc)Proxy_inplace_subtract, /*nb_inplace_subtract*/
-    (binaryfunc)Proxy_inplace_multiply, /*nb_inplace_multiply*/
+    (binaryfunc)Proxy_inplace_add,          /*nb_inplace_add*/
+    (binaryfunc)Proxy_inplace_subtract,     /*nb_inplace_subtract*/
+    (binaryfunc)Proxy_inplace_multiply,     /*nb_inplace_multiply*/
 #if PY_MAJOR_VERSION < 3
-    (binaryfunc)Proxy_inplace_divide, /*nb_inplace_divide*/
+    (binaryfunc)Proxy_inplace_divide,       /*nb_inplace_divide*/
 #endif
-    (binaryfunc)Proxy_inplace_remainder, /*nb_inplace_remainder*/
-    (ternaryfunc)Proxy_inplace_power, /*nb_inplace_power*/
-    (binaryfunc)Proxy_inplace_lshift, /*nb_inplace_lshift*/
-    (binaryfunc)Proxy_inplace_rshift, /*nb_inplace_rshift*/
-    (binaryfunc)Proxy_inplace_and, /*nb_inplace_and*/
-    (binaryfunc)Proxy_inplace_xor, /*nb_inplace_xor*/
-    (binaryfunc)Proxy_inplace_or, /*nb_inplace_or*/
-    (binaryfunc)Proxy_floor_divide, /*nb_floor_divide*/
-    (binaryfunc)Proxy_true_divide, /*nb_true_divide*/
+    (binaryfunc)Proxy_inplace_remainder,    /*nb_inplace_remainder*/
+    (ternaryfunc)Proxy_inplace_power,       /*nb_inplace_power*/
+    (binaryfunc)Proxy_inplace_lshift,       /*nb_inplace_lshift*/
+    (binaryfunc)Proxy_inplace_rshift,       /*nb_inplace_rshift*/
+    (binaryfunc)Proxy_inplace_and,          /*nb_inplace_and*/
+    (binaryfunc)Proxy_inplace_xor,          /*nb_inplace_xor*/
+    (binaryfunc)Proxy_inplace_or,           /*nb_inplace_or*/
+    (binaryfunc)Proxy_floor_divide,         /*nb_floor_divide*/
+    (binaryfunc)Proxy_true_divide,          /*nb_true_divide*/
     (binaryfunc)Proxy_inplace_floor_divide, /*nb_inplace_floor_divide*/
-    (binaryfunc)Proxy_inplace_true_divide, /*nb_inplace_true_divide*/
-    (unaryfunc)Proxy_index, /*nb_index*/
+    (binaryfunc)Proxy_inplace_true_divide,  /*nb_inplace_true_divide*/
+    (unaryfunc)Proxy_index,                 /*nb_index*/
 };
 
 static PySequenceMethods Proxy_as_sequence = {
-    (lenfunc)Proxy_length, /*sq_length*/
+    (lenfunc)Proxy_length,      /*sq_length*/
     0,                          /*sq_concat*/
     0,                          /*sq_repeat*/
     0,                          /*sq_item*/
@@ -1478,8 +1238,8 @@ static PySequenceMethods Proxy_as_sequence = {
 };
 
 static PyMappingMethods Proxy_as_mapping = {
-    (lenfunc)Proxy_length, /*mp_length*/
-    (binaryfunc)Proxy_getitem, /*mp_subscript*/
+    (lenfunc)Proxy_length,        /*mp_length*/
+    (binaryfunc)Proxy_getitem,    /*mp_subscript*/
     (objobjargproc)Proxy_setitem, /*mp_ass_subscript*/
 };
 
