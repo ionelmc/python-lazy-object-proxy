@@ -5,15 +5,15 @@ env:
     LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
   matrix:
     - TOXENV=check
-    - TOXENV=2.6,coveralls
+    - TOXENV=2.6,coveralls,extension-coveralls
     - TOXENV=2.6-nocover
-    - TOXENV=2.7,coveralls
+    - TOXENV=2.7,coveralls,extension-coveralls
     - TOXENV=2.7-nocover
-    - TOXENV=3.3,coveralls
+    - TOXENV=3.3,coveralls,extension-coveralls
     - TOXENV=3.3-nocover
-    - TOXENV=3.4,coveralls
+    - TOXENV=3.4,coveralls,extension-coveralls
     - TOXENV=3.4-nocover
-    - TOXENV=pypy,coveralls
+    - TOXENV=pypy,coveralls,extension-coveralls
     - TOXENV=pypy-nocover
 before_install:
   - python --version
