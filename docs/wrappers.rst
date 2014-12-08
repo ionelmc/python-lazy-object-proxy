@@ -10,7 +10,7 @@ The lazy object proxy class is available as ``lazy_object_proxy.Proxy``.
 
     >>> table = {}
     >>> import lazy_object_proxy
-    >>> proxy = lazy_object_proxy.Proxy(table)
+    >>> proxy = lazy_object_proxy.Proxy(lambda: table)
     >>> proxy['key-1'] = 'value-1'
     >>> proxy['key-2'] = 'value-2'
 
@@ -32,7 +32,7 @@ arithmetic operations, rich comparison and hashing.
 ::
 
     >>> value = 1
-    >>> proxy = lazy_object_proxy.Proxy(value)
+    >>> proxy = lazy_object_proxy.Proxy(lambda: value)
 
     >>> proxy + 1
     2
@@ -57,7 +57,7 @@ proxy object.
 ::
 
     >>> value = 1
-    >>> proxy = lazy_object_proxy.Proxy(value)
+    >>> proxy = lazy_object_proxy.Proxy(lambda: value)
     >>> type(proxy)
     <... 'Proxy'>
 
@@ -83,14 +83,14 @@ of any derived class type if creating a custom object proxy.
 ::
 
     >>> value = 1
-    >>> proxy = lazy_object_proxy.Proxy(value)
+    >>> proxy = lazy_object_proxy.Proxy(lambda: value)
     >>> type(proxy)
     <... 'Proxy'>
 
     >>> class CustomProxy(lazy_object_proxy.Proxy):
     ...     pass
 
-    >>> proxy = CustomProxy(1)
+    >>> proxy = CustomProxy(lambda: 1)
 
     >>> type(proxy)
     <class '...CustomProxy'>
@@ -126,7 +126,7 @@ to determine if an object is an object proxy.
     >>> class CustomProxy(lazy_object_proxy.Proxy):
     ...     pass
 
-    >>> proxy = CustomProxy(1)
+    >>> proxy = CustomProxy(lambda: 1)
 
     >>> isinstance(proxy, lazy_object_proxy.Proxy)
     True
@@ -153,7 +153,7 @@ some specific behaviour of the proxy.
     ...         finally:
     ...             print(('exiting', self.__wrapped__.__name__))
 
-    >>> proxy = CallableWrapper(function)
+    >>> proxy = CallableWrapper(lambda: function)
 
     >>> proxy()
     ('entering', 'function')
@@ -178,7 +178,7 @@ change will also be reflected in the wrapped object.
 
 ::
 
-    >>> proxy = CallableWrapper(function)
+    >>> proxy = CallableWrapper(lambda: function)
 
     >>> hasattr(function, 'attribute')
     False
@@ -233,7 +233,7 @@ be prefixed with ``_self_``.
     ...       finally:
     ...           print('exiting', wrapped.__name__)
 
-    >>> proxy = CallableWrapper(function, wrapper)
+    >>> proxy = CallableWrapper((lambda: function), wrapper)
 
     >>> proxy._self_wrapper
     <function wrapper at 0x...>
@@ -266,7 +266,7 @@ definition.
     ...     def attribute(self):
     ...        del self._self_attribute
 
-    >>> proxy = CustomProxy(1)
+    >>> proxy = CustomProxy(lambda: 1)
     >>> proxy.attribute
     1
     >>> proxy.attribute = 2
@@ -290,7 +290,7 @@ that then being overidden if necessary, with a specific value in the
     ...         super(CustomProxy, self).__init__(wrapped)
     ...         self.attribute = 1
 
-    >>> proxy = CustomProxy(1)
+    >>> proxy = CustomProxy(lambda: 1)
     >>> proxy.attribute
     1
     >>> proxy.attribute = 2
@@ -302,4 +302,3 @@ that then being overidden if necessary, with a specific value in the
 
 Just be aware that although the attribute can be deleted from the instance
 of the custom proxy, lookup will then fallback to using the class attribute.
-
