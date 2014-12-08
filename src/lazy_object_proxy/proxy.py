@@ -66,19 +66,31 @@ class _ProxyMetaType(type):
 
 
 class Proxy(with_metaclass(_ProxyMetaType)):
-    __slots__ = '__wrapped__'
+    __slots__ = '__target__', '__factory__'
 
-    def __init__(self, wrapped):
-        object.__setattr__(self, '__wrapped__', wrapped)
+    def __init__(self, factory):
+        object.__setattr__(self, '__factory__', factory)
 
-        # Python 3.2+ has the __qualname__ attribute, but it does not
-        # allow it to be overridden using a property and it must instead
-        # be an actual string object instead.
-
+    @property
+    def __wrapped__(self, __missing__=object(), __getattr__=object.__getattribute__, __setattr__=object.__setattr__):
         try:
-            object.__setattr__(self, '__qualname__', wrapped.__qualname__)
+            return __getattr__(self, '__target__')
         except AttributeError:
-            pass
+            target = __getattr__(self, '__factory__')()
+            __setattr__(self, '__target__', target)
+
+            # Python 3.2+ has the __qualname__ attribute, but it does not
+            # allow it to be overridden using a property and it must instead
+            # be an actual string object instead.
+            try:
+                __setattr__(self, '__qualname__', target.__qualname__)
+            except AttributeError:
+                pass
+            return target
+
+    @__wrapped__.setter
+    def __wrapped__(self, target, __setattr__=object.__setattr__):
+        __setattr__(self, '__target__', target)
 
     @property
     def __name__(self):

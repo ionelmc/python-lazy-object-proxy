@@ -30,7 +30,7 @@ lazy-object-proxy
     :target: https://readthedocs.org/projects/python-lazy-object-proxy
     :alt: Documentation Status
 
-A lazy object proxy
+A lazy object proxy.
 
 * Free software: BSD license
 
