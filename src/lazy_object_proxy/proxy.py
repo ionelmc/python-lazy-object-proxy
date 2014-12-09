@@ -76,7 +76,11 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         try:
             return __getattr__(self, '__target__')
         except AttributeError:
-            target = __getattr__(self, '__factory__')()
+            try:
+                factory = __getattr__(self, '__factory__')
+            except AttributeError:
+                raise ValueError("Proxy hasn't been initiated: __factory__ is missing.")
+            target = factory()
             __setattr__(self, '__target__', target)
 
             # Python 3.2+ has the __qualname__ attribute, but it does not

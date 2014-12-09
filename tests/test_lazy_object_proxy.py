@@ -1624,3 +1624,12 @@ def test_fractions_round(lazy_object_proxy):
 
     assert round(instance) == round(proxy)
 
+
+def test_new(lazy_object_proxy):
+    a = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
+    b = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
+    # NOW KISS
+    pytest.raises(ValueError, lambda: a.__wrapped__)
+    pytest.raises(ValueError, lambda: a + b)
+    # no segfault, yay
+
