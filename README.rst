@@ -2,7 +2,7 @@
 lazy-object-proxy
 ===============================
 
-| |docs| |travis| |appveyor| |coveralls| |landscape|
+| |docs| |travis| |appveyor| |coveralls| |landscape| |scrutinizer|
 | |version| |downloads| |wheel| |supported-versions| |supported-implementations|
 
 .. |docs| image:: https://readthedocs.org/projects/python-lazy-object-proxy/badge/?style=flat
@@ -21,7 +21,7 @@ lazy-object-proxy
     :alt: Coverage Status
     :target: https://coveralls.io/r/ionelmc/python-lazy-object-proxy
 
-.. |landscape| image:: https://landscape.io/github/ionelmc/python-lazy-object-proxy/master/landscape.png?style=flat
+.. |landscape| image:: https://landscape.io/github/ionelmc/python-lazy-object-proxy/master/landscape.svg?style=flat
     :target: https://landscape.io/github/ionelmc/python-lazy-object-proxy/master
     :alt: Code Quality Status
 
@@ -44,6 +44,10 @@ lazy-object-proxy
 .. |supported-implementations| image:: https://pypip.in/implementation/lazy-object-proxy/badge.png?style=flat
     :alt: Supported imlementations
     :target: https://pypi.python.org/pypi/lazy-object-proxy
+
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/python-lazy-object-proxy/master.png?style=flat
+    :alt: Scrtinizer Status
+    :target: https://scrutinizer-ci.com/g/ionelmc/python-lazy-object-proxy/
 
 An example package. Replace this with a proper project description. Generated with https://github.com/ionelmc/cookiecutter-pylibrary
 
