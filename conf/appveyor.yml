@@ -19,3 +19,4 @@ test_script:
   - "c:\\python27\\Scripts\\virtualenv --version"
   - "c:\\python27\\Scripts\\pip --version"
   - "c:\\python27\\Scripts\\tox"
+
