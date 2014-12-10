@@ -1,0 +1,34 @@
+build: false
+environment:
+  global:
+    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\ci\\appveyor-with-compiler.cmd"
+  matrix:
+    - TOXENV: check
+{% for env, config in tox_environments|dictsort %}{% if env.startswith('2.7') or env.startswith('3.4') or env.startswith('3.3') %}
+    - TOXENV: "{{ env }}"
+      TOXPYTHON: "C:\\Python{{ env[:3].replace('.', '') }}\\python.exe"
+      PYTHON_VERSION: "{{ env[:3].replace('.', '') }}"
+      PYTHON_ARCH: "32"
+    - TOXENV: "{{ env }}"
+      PYTHON_BIN: "C:\\Python{{ env[:3].replace('.', '') }}-x64\\python.exe"
+      PYTHON_VERSION: "{{ env[:3].replace('.', '') }}"
+      PYTHON_ARCH: "64"
+{% endif %}{% endfor %}
+init:
+  - "ECHO %TOXENV%"
+  - ps: "ls C:\\Python*"
+install:
+  - ps: Invoke-WebRequest "https://bootstrap.pypa.io/ez_setup.py" -OutFile "c:\\ez_setup.py"
+  - ps: Invoke-WebRequest "https://bootstrap.pypa.io/get-pip.py" -OutFile "c:\\get-pip.py"
+  - "c:\\python27\\python c:\\ez_setup.py"
+  - "c:\\python27\\python c:\\get-pip.py"
+  - "c:\\python27\\Scripts\\pip install tox virtualenv"
+test_script:
+  - "c:\\python27\\Scripts\\tox --version"
+  - "c:\\python27\\Scripts\\virtualenv --version"
+  - "c:\\python27\\Scripts\\pip --version"
+  - "%WITH_COMPILER% c:\\python27\\Scripts\\tox"
+after_test:
+  - "%WITH_COMPILER% %TOXPYTHON% setup.py bdist_wheel"
+artifacts:
+  - path: dist\*
