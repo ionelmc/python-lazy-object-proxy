@@ -7,11 +7,11 @@ environment:
 {% for env, config in tox_environments|dictsort %}{% if env.startswith('2.7') or env.startswith('3.4') or env.startswith('3.3') %}
     - TOXENV: "{{ env }}"
       TOXPYTHON: "C:\\Python{{ env[:3].replace('.', '') }}\\python.exe"
-      PYTHON_VERSION: "{{ env[:3].replace('.', '') }}"
+      PYTHON_VERSION: "{{ env[:3] }}"
       PYTHON_ARCH: "32"
     - TOXENV: "{{ env }}"
       PYTHON_BIN: "C:\\Python{{ env[:3].replace('.', '') }}-x64\\python.exe"
-      PYTHON_VERSION: "{{ env[:3].replace('.', '') }}"
+      PYTHON_VERSION: "{{ env[:3] }}"
       PYTHON_ARCH: "64"
 {% endif %}{% endfor %}
 init:
