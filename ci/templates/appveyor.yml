@@ -1,12 +1,6 @@
 version: '{build}'
-shallow_clone: true
+clone_depth: 1
 build: off
-deploy:
-- provider: GitHub
-  artifact: dist\*
-  draft: true
-  on:
-    branch: master
 environment:
   global:
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\ci\\appveyor-with-compiler.cmd"
