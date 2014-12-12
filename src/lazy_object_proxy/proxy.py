@@ -174,7 +174,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         if name.startswith('_self_'):
             object.__setattr__(self, name, value)
 
-        elif name == '__wrapped__':
+        elif name in ('__factory__', '__target__'):
             object.__setattr__(self, name, value)
             try:
                 object.__delattr__(self, '__qualname__')
