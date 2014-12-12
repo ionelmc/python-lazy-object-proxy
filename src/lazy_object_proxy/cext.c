@@ -1332,7 +1332,7 @@ PyTypeObject Proxy_Type = {
 #if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
-    "_proxy",         /* m_name */
+    "cext",              /* m_name */
     NULL,                /* m_doc */
     -1,                  /* m_size */
     NULL,                /* m_methods */
@@ -1351,7 +1351,7 @@ moduleinit(void)
 #if PY_MAJOR_VERSION >= 3
     module = PyModule_Create(&moduledef);
 #else
-    module = Py_InitModule3("_proxy", NULL, NULL);
+    module = Py_InitModule3("cext", NULL, NULL);
 #endif
 
     if (module == NULL)
@@ -1370,12 +1370,12 @@ moduleinit(void)
 }
 
 #if PY_MAJOR_VERSION < 3
-PyMODINIT_FUNC init_proxy(void)
+PyMODINIT_FUNC initcext(void)
 {
     moduleinit();
 }
 #else
-PyMODINIT_FUNC PyInit__proxy(void)
+PyMODINIT_FUNC PyInit_cext(void)
 {
     return moduleinit();
 }
