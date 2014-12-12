@@ -1012,12 +1012,7 @@ static int Proxy_set_wrapped(ProxyObject *self,
 {
     Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
-    if (!value) {
-        PyErr_SetString(PyExc_TypeError, "__wrapped__ must be an object");
-        return -1;
-    }
-
-    Py_INCREF(value);
+    if (value) Py_INCREF(value);
     Py_DECREF(self->wrapped);
 
     self->wrapped = value;
@@ -1100,26 +1095,6 @@ static int Proxy_setattro(
         startswith_str = PyString_InternFromString("startswith");
 #endif
     }
-
-    if (!self_str) {
-#if PY_MAJOR_VERSION >= 3
-        self_str = PyUnicode_InternFromString("_self_");
-#else
-        self_str = PyString_InternFromString("_self_");
-#endif
-    }
-
-    match = PyObject_CallMethodObjArgs(name, startswith_str, self_str, NULL);
-
-    if (match == Py_True) {
-        Py_DECREF(match);
-
-        return PyObject_GenericSetAttr((PyObject *)self, name, value);
-    }
-    else if (!match)
-        PyErr_Clear();
-
-    Py_XDECREF(match);
 
     if (!wrapped_str) {
 #if PY_MAJOR_VERSION >= 3

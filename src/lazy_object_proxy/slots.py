@@ -72,7 +72,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         object.__setattr__(self, '__factory__', factory)
 
     @property
-    def __wrapped__(self, __missing__=object(), __getattr__=object.__getattribute__, __setattr__=object.__setattr__):
+    def __wrapped__(self, __getattr__=object.__getattribute__, __setattr__=object.__setattr__, __delattr__=object.__delattr__):
         try:
             return __getattr__(self, '__target__')
         except AttributeError:
@@ -86,15 +86,27 @@ class Proxy(with_metaclass(_ProxyMetaType)):
             # Python 3.2+ has the __qualname__ attribute, but it does not
             # allow it to be overridden using a property and it must instead
             # be an actual string object instead.
-            try:
-                __setattr__(self, '__qualname__', target.__qualname__)
-            except AttributeError:
-                pass
+            # try:
+            #     qualname = target.__qualname__
+            # except AttributeError:
+            #     __delattr__(self, '__qualname__')
+            # else:
+            #     __setattr__(self, '__qualname__', qualname)
             return target
+
+    @__wrapped__.deleter
+    def __wrapped__(self, __delattr__=object.__delattr__):
+        __delattr__(self, '__target__')
 
     @__wrapped__.setter
     def __wrapped__(self, target, __setattr__=object.__setattr__):
         __setattr__(self, '__target__', target)
+        # try:
+        #     qualname = target.__qualname__
+        # except AttributeError:
+        #     __delattr__(self, '__qualname__')
+        # else:
+        #     __setattr__(self, '__qualname__', qualname)
 
     @property
     def __name__(self):
@@ -199,20 +211,12 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __getattr__(self, name):
         return getattr(self.__wrapped__, name)
 
-    def __delattr__(self, name):
-        if name.startswith('_self_'):
-            object.__delattr__(self, name)
-
-        elif name == '__wrapped__':
-            raise TypeError('__wrapped__ must be an object')
-
-        elif name == '__qualname__':
-            object.__delattr__(self, name)
+    def __delattr__(self, name, __delattr__=object.__delattr__):
+        if name == '__qualname__':
+            __delattr__(self, name)
             delattr(self.__wrapped__, name)
-
         elif hasattr(type(self), name):
-            object.__delattr__(self, name)
-
+            __delattr__(self, name)
         else:
             delattr(self.__wrapped__, name)
 

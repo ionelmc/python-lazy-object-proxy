@@ -209,77 +209,8 @@ still reflected in what is available via the proxy.
     >>> proxy.attribute
     2
 
-If creating a custom proxy and it needs to keep attributes of its own which
-should not be saved through to the wrapped object, those attributes should
-be prefixed with ``_self_``.
-
-::
-
-    >>> def function():
-    ...     print('executing', function.__name__)
-
-    >>> class CallableWrapper(lazy_object_proxy.Proxy):
-    ...     def __init__(self, wrapped, wrapper):
-    ...         super(CallableWrapper, self).__init__(wrapped)
-    ...         self._self_wrapper = wrapper
-    ...
-    ...     def __call__(self, *args, **kwargs):
-    ...         return self._self_wrapper(self.__wrapped__, args, kwargs)
-
-    >>> def wrapper(wrapped, args, kwargs):
-    ...       print('entering', wrapped.__name__)
-    ...       try:
-    ...           return wrapped(*args, **kwargs)
-    ...       finally:
-    ...           print('exiting', wrapped.__name__)
-
-    >>> proxy = CallableWrapper((lambda: function), wrapper)
-
-    >>> proxy._self_wrapper
-    <function wrapper at 0x...>
-
-    >>> function._self_wrapper
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-    AttributeError: 'function' object has no attribute '_self_wrapper'
-
-If an attribute local to the proxy must be available under a name without
-this special prefix, then a ``@property`` can be used in the class
-definition.
-
-::
-
-    >>> class CustomProxy(lazy_object_proxy.Proxy):
-    ...     def __init__(self, wrapped):
-    ...         super(CustomProxy, self).__init__(wrapped)
-    ...         self._self_attribute = 1
-    ...
-    ...     @property
-    ...     def attribute(self):
-    ...         return self._self_attribute
-    ...
-    ...     @attribute.setter
-    ...     def attribute(self, value):
-    ...         self._self_attribute = value
-    ...
-    ...     @attribute.deleter
-    ...     def attribute(self):
-    ...        del self._self_attribute
-
-    >>> proxy = CustomProxy(lambda: 1)
-    >>> proxy.attribute
-    1
-    >>> proxy.attribute = 2
-    >>> proxy.attribute
-    2
-    >>> del proxy.attribute
-    >>> proxy.attribute
-    Traceback (most recent call last):
-      ...
-    AttributeError: 'int' object has no attribute 'attribute'
-
-Alternatively, the attribute can be specified as a class attribute, with
-that then being overidden if necessary, with a specific value in the
+Custom attributes can be specified as a class attribute, with
+that then being overridden if necessary, with a specific value in the
 ``__init__()`` method of the class.
 
 ::

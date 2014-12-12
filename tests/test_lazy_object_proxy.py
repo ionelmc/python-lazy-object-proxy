@@ -110,39 +110,6 @@ def test_set_wrapped(lazy_object_proxy):
         assert function2.__qualname__ == function3.__qualname__
 
 
-def test_delete_wrapped(lazy_object_proxy):
-    def function1(*args, **kwargs):
-        return args, kwargs
-
-    function2 = lazy_object_proxy.Proxy(lambda: function1)
-
-    def run(*args):
-        del function2.__wrapped__
-
-    pytest.raises(TypeError, run, ())
-
-
-def test_proxy_attribute(lazy_object_proxy):
-    def function1(*args, **kwargs):
-        return args, kwargs
-
-    function2 = lazy_object_proxy.Proxy(lambda: function1)
-
-    function2._self_variable = True
-
-    assert not hasattr(function1, '_self_variable')
-    assert hasattr(function2, '_self_variable')
-
-    assert function2._self_variable == True
-
-    del function2._self_variable
-
-    assert not hasattr(function1, '_self_variable')
-    assert not hasattr(function2, '_self_variable')
-
-    assert getattr(function2, '_self_variable', None) == None
-
-
 def test_wrapped_attribute(lazy_object_proxy):
     def function1(*args, **kwargs):
         return args, kwargs
@@ -1393,18 +1360,6 @@ def test_derived_new(lazy_object_proxy):
     obj = DerivedObjectProxy(lambda: function)
 
 
-def test_derived_setattr(lazy_object_proxy):
-    class DerivedObjectProxy(lazy_object_proxy.Proxy):
-        def __init__(self, wrapped):
-            self._self_attribute = True
-            super(DerivedObjectProxy, self).__init__(wrapped)
-
-    def function():
-        pass
-
-    obj = DerivedObjectProxy(lambda: function)
-
-
 def test_setup_class_attributes(lazy_object_proxy):
     def function():
         pass
@@ -1451,55 +1406,6 @@ def test_override_class_attributes(lazy_object_proxy):
     assert obj.ATTRIBUTE == 2
     assert not hasattr(function, 'ATTRIBUTE')
 
-
-def test_class_properties(lazy_object_proxy):
-    def function():
-        pass
-
-    class DerivedObjectProxy(lazy_object_proxy.Proxy):
-        def __init__(self, wrapped):
-            super(DerivedObjectProxy, self).__init__(wrapped)
-            self._self_attribute = 1
-
-        @property
-        def ATTRIBUTE(self):
-            return self._self_attribute
-
-        @ATTRIBUTE.setter
-        def ATTRIBUTE(self, value):
-            self._self_attribute = value
-
-        @ATTRIBUTE.deleter
-        def ATTRIBUTE(self):
-            del self._self_attribute
-
-    obj = DerivedObjectProxy(lambda: function)
-
-    assert obj.ATTRIBUTE == 1
-
-    obj.ATTRIBUTE = 2
-
-    assert obj.ATTRIBUTE == 2
-    assert not hasattr(function, 'ATTRIBUTE')
-
-    del obj.ATTRIBUTE
-
-    assert not hasattr(obj, 'ATTRIBUTE')
-    assert not hasattr(function, 'ATTRIBUTE')
-
-    obj.ATTRIBUTE = 1
-
-    assert obj.ATTRIBUTE == 1
-
-    obj.ATTRIBUTE = 2
-
-    assert obj.ATTRIBUTE == 2
-    assert not hasattr(function, 'ATTRIBUTE')
-
-    del obj.ATTRIBUTE
-
-    assert not hasattr(obj, 'ATTRIBUTE')
-    assert not hasattr(function, 'ATTRIBUTE')
 
 
 def test_attr_functions(lazy_object_proxy):
@@ -1631,8 +1537,24 @@ def test_fractions_round(lazy_object_proxy):
 
 
 def test_readonly(lazy_object_proxy):
-    proxy = lazy_object_proxy.Proxy(lambda: object)
-    assert proxy.__qualname__.endswith('object')
+    class Foo(object):
+        if PY2:
+            @property
+            def __qualname__(self):
+                return 'object'
+    proxy = lazy_object_proxy.Proxy(lambda: Foo() if PY2 else object)
+    assert proxy.__qualname__ == 'object'
+
+
+def test_del_wrapped(lazy_object_proxy):
+    class Foo(object):
+        pass
+    proxy = lazy_object_proxy.Proxy(lambda: Foo)
+    str(proxy)
+    assert proxy.__wrapped__
+    print(type(proxy), hasattr(type(proxy), '__wrapped__'))
+    del proxy.__wrapped__
+
 
 def test_new(lazy_object_proxy):
     a = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
