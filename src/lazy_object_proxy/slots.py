@@ -82,16 +82,6 @@ class Proxy(with_metaclass(_ProxyMetaType)):
                 raise ValueError("Proxy hasn't been initiated: __factory__ is missing.")
             target = factory()
             __setattr__(self, '__target__', target)
-
-            # Python 3.2+ has the __qualname__ attribute, but it does not
-            # allow it to be overridden using a property and it must instead
-            # be an actual string object instead.
-            # try:
-            #     qualname = target.__qualname__
-            # except AttributeError:
-            #     __delattr__(self, '__qualname__')
-            # else:
-            #     __setattr__(self, '__qualname__', qualname)
             return target
 
     @__wrapped__.deleter
@@ -101,12 +91,6 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     @__wrapped__.setter
     def __wrapped__(self, target, __setattr__=object.__setattr__):
         __setattr__(self, '__target__', target)
-        # try:
-        #     qualname = target.__qualname__
-        # except AttributeError:
-        #     __delattr__(self, '__qualname__')
-        # else:
-        #     __setattr__(self, '__qualname__', qualname)
 
     @property
     def __name__(self):
@@ -182,29 +166,11 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __bool__(self):
         return bool(self.__wrapped__)
 
-    def __setattr__(self, name, value):
-        if name.startswith('_self_'):
-            object.__setattr__(self, name, value)
-
-        elif name in ('__factory__', '__target__'):
-            object.__setattr__(self, name, value)
-            try:
-                object.__delattr__(self, '__qualname__')
-            except AttributeError:
-                pass
-            object.__setattr__(self, name, value)
-            try:
-                object.__setattr__(self, '__qualname__', value.__qualname__)
-            except AttributeError:
-                pass
-
-        elif name == '__qualname__':
-            setattr(self.__wrapped__, name, value)
-            object.__setattr__(self, name, value)
-
+    def __setattr__(self, name, value, __setattr__=object.__setattr__):
+        if name in ('__factory__', '__target__'):
+            __setattr__(self, name, value)
         elif hasattr(type(self), name):
-            object.__setattr__(self, name, value)
-
+            __setattr__(self, name, value)
         else:
             setattr(self.__wrapped__, name, value)
 
@@ -212,10 +178,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return getattr(self.__wrapped__, name)
 
     def __delattr__(self, name, __delattr__=object.__delattr__):
-        if name == '__qualname__':
-            __delattr__(self, name)
-            delattr(self.__wrapped__, name)
-        elif hasattr(type(self), name):
+        if hasattr(type(self), name):
             __delattr__(self, name)
         else:
             delattr(self.__wrapped__, name)
