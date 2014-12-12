@@ -167,9 +167,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return bool(self.__wrapped__)
 
     def __setattr__(self, name, value, __setattr__=object.__setattr__):
-        if name in ('__factory__', '__target__'):
-            __setattr__(self, name, value)
-        elif hasattr(type(self), name):
+        if hasattr(type(self), name):
             __setattr__(self, name, value)
         else:
             setattr(self.__wrapped__, name, value)
