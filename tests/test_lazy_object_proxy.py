@@ -1633,3 +1633,29 @@ def test_new(lazy_object_proxy):
     pytest.raises(ValueError, lambda: a + b)
     # no segfault, yay
 
+
+def test_lazy_object_proxy(lazy_object_proxy, benchmark):
+    obj = "foobar"
+    proxied = lazy_object_proxy.Proxy(lambda: obj)
+    with benchmark:
+        result = str(proxied)
+    assert result == obj
+
+
+def test_django_simplelazyobject(benchmark):
+    SimpleLazyObject = pytest.importorskip("django.utils.functional").SimpleLazyObject
+    obj = "foobar"
+    proxied = SimpleLazyObject(lambda: obj)
+    with benchmark:
+        result = str(proxied)
+    assert result == obj
+
+
+def test_objproxies(benchmark):
+    LazyProxy = pytest.importorskip("objproxies").LazyProxy
+    obj = "foobar"
+    proxied = LazyProxy(lambda: obj)
+    with benchmark:
+        result = str(proxied)
+    assert result == obj
+
