@@ -25,19 +25,26 @@ objects = imp.new_module('objects')
 exec_(OBJECTS_CODE, objects.__dict__, objects.__dict__)
 
 
-@pytest.fixture(scope="module", params=["pure-python", "c-extension"])
+@pytest.fixture(scope="module", params=[
+    "slots", "cext",
+    # "external-django", "external-objproxies"
+])
 def lazy_object_proxy(request):
     class mod:
-        if request.param == "pure-python":
-            from lazy_object_proxy.proxy import Proxy
-        elif request.param == "c-extension":
+        if request.param == "slots":
+            from lazy_object_proxy.slots import Proxy
+        elif request.param == "cext":
             try:
-                from lazy_object_proxy._proxy import Proxy
+                from lazy_object_proxy.cext import Proxy
             except ImportError:
                 if PYPY:
                     pytest.skip(msg="C Extension not available.")
                 else:
                     raise
+        elif request.param == "external-objproxies":
+            Proxy = pytest.importorskip("objproxies").LazyProxy
+        elif request.param == "external-django":
+            Proxy = pytest.importorskip("django.utils.functional").SimpleLazyObject
         else:
             raise RuntimeError("Unsupported param: %r." % request.param)
 
@@ -73,7 +80,7 @@ def test_set_wrapped(lazy_object_proxy):
     function2 = lazy_object_proxy.Proxy(lambda: function1)
 
     assert function2 == function1
-    assert function2.__wrapped__ == function1
+    assert function2.__wrapped__ is function1
     assert function2.__name__ == function1.__name__
 
     if PY3:
@@ -84,7 +91,7 @@ def test_set_wrapped(lazy_object_proxy):
     assert not hasattr(function1, '__wrapped__')
 
     assert function2 == None
-    assert function2.__wrapped__ == None
+    assert function2.__wrapped__ is None
     assert not hasattr(function2, '__name__')
 
     if PY3:
@@ -1555,7 +1562,6 @@ def test_proxy_is_callable(lazy_object_proxy):
     assert not callable(proxy)
 
 
-@skipcallable
 def test_callable_proxy_hasattr_call(lazy_object_proxy):
     proxy = lazy_object_proxy.Proxy(lambda: None)
 
@@ -1569,7 +1575,6 @@ def test_callable_proxy_getattr_call(lazy_object_proxy):
     assert getattr(proxy, '__call__', None) is None
 
 
-@skipcallable
 def test_callable_proxy_is_callable(lazy_object_proxy):
     proxy = lazy_object_proxy.Proxy(lambda: None)
 
@@ -1625,29 +1630,34 @@ def test_fractions_round(lazy_object_proxy):
     assert round(instance) == round(proxy)
 
 
+def test_readonly(lazy_object_proxy):
+    proxy = lazy_object_proxy.Proxy(lambda: object)
+    assert proxy.__qualname__.endswith('object')
+
 def test_new(lazy_object_proxy):
     a = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
     b = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
     # NOW KISS
-    pytest.raises(ValueError, lambda: a.__wrapped__)
     pytest.raises(ValueError, lambda: a + b)
     # no segfault, yay
+    pytest.raises(ValueError, lambda: a.__wrapped__)
 
 
 def test_lazy_object_proxy(lazy_object_proxy, benchmark):
     obj = "foobar"
     proxied = lazy_object_proxy.Proxy(lambda: obj)
     with benchmark:
-        result = str(proxied)
+        result = "%s" % proxied
     assert result == obj
 
 
 def test_django_simplelazyobject(benchmark):
+    from django.utils.functional import SimpleLazyObject
     SimpleLazyObject = pytest.importorskip("django.utils.functional").SimpleLazyObject
     obj = "foobar"
     proxied = SimpleLazyObject(lambda: obj)
     with benchmark:
-        result = str(proxied)
+        result = "%s" % proxied
     assert result == obj
 
 
@@ -1656,6 +1666,5 @@ def test_objproxies(benchmark):
     obj = "foobar"
     proxied = LazyProxy(lambda: obj)
     with benchmark:
-        result = str(proxied)
+        result = "%s" % proxied
     assert result == obj
-
