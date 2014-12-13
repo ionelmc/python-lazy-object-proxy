@@ -52,13 +52,6 @@ class _ProxyMethods(object):
     def __doc__(self, value):
         self.__wrapped__.__doc__ = value
 
-    # We similar use a property for __dict__. We need __dict__ to be
-    # explicit to ensure that vars() works as expected.
-
-    @property
-    def __dict__(self):
-        return self.__wrapped__.__dict__
-
     # Need to also propagate the special __weakref__ attribute for case
     # where decorating classes which will define this. If do not define
     # it and use a function like inspect.getmembers() on a decorator
@@ -77,17 +70,18 @@ class _ProxyMetaType(type):
         # duplicating the implementation for them in all derived classes.
 
         dictionary.update(vars(_ProxyMethods))
+        dictionary.pop('__dict__')
 
         return type.__new__(cls, name, bases, dictionary)
 
 
 class Proxy(with_metaclass(_ProxyMetaType)):
     def __init__(self, factory):
-        object.__getattribute__(self, '__dict__')['__factory__'] = factory
+        self.__dict__['__factory__'] = factory
 
     @cached_property
-    def __wrapped__(self, __getattr__=object.__getattribute__):
-        self = __getattr__(self, '__dict__')
+    def __wrapped__(self):
+        self = self.__dict__
         if '__factory__' in self:
             factory = self['__factory__']
             return factory()
@@ -99,7 +93,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __class__ = property(make_proxy_method(operator.attrgetter('__class__')))
     __annotations__ = property(make_proxy_method(operator.attrgetter('__anotations__')))
     __dir__ = make_proxy_method(dir)
-    __str__ = make_proxy_method(operator.attrgetter('str'))
+    __str__ = make_proxy_method(str)
 
     if PY3:
         __bytes__ = make_proxy_method(bytes)
@@ -126,7 +120,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __bool__ = make_proxy_method(bool)
 
     def __setattr__(self, name, value):
-        if hasattr(type(self), name):
+        if name in ['__factory__', '__wrapped__']:
             self.__dict__[name] = value
         else:
             setattr(self.__wrapped__, name, value)
@@ -135,7 +129,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return getattr(self.__wrapped__, name)
 
     def __delattr__(self, name):
-        if hasattr(type(self), name):
+        if name in ['__factory__', '__wrapped__']:
             del self.__dict__[name]
         else:
             delattr(self.__wrapped__, name)
@@ -148,7 +142,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __floordiv__ = make_proxy_method(operator.floordiv)
     __mod__ = make_proxy_method(operator.mod)
     __divmod__ = make_proxy_method(divmod)
-    __pow__ = make_proxy_method(operator.pow)
+    __pow__ = make_proxy_method(pow)
     __lshift__ = make_proxy_method(operator.lshift)
     __rshift__ = make_proxy_method(operator.rshift)
     __and__ = make_proxy_method(operator.and_)

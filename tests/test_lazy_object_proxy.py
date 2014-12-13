@@ -1,4 +1,5 @@
 from __future__ import print_function
+from functools import wraps
 
 import imp
 import sys
@@ -27,12 +28,16 @@ exec_(OBJECTS_CODE, objects.__dict__, objects.__dict__)
 
 @pytest.fixture(scope="module", params=[
     "slots", "cext",
+    "simple",
     # "external-django", "external-objproxies"
 ])
 def lazy_object_proxy(request):
     class mod:
+        type = request.param
         if request.param == "slots":
             from lazy_object_proxy.slots import Proxy
+        elif request.param == "simple":
+            from lazy_object_proxy.simple import Proxy
         elif request.param == "cext":
             try:
                 from lazy_object_proxy.cext import Proxy
@@ -49,6 +54,15 @@ def lazy_object_proxy(request):
             raise RuntimeError("Unsupported param: %r." % request.param)
 
     return mod
+
+
+def xfail_simple(test_func):
+    from lazy_object_proxy.simple import Proxy
+    @wraps(test_func)
+    def xfail_wrapper(lazy_object_proxy):
+        if lazy_object_proxy.Proxy is Proxy:
+            pytest.xfail(reason="The lazy_object_proxy.simple.Proxy has some limitations.")
+    return xfail_wrapper
 
 
 def test_attributes(lazy_object_proxy):
@@ -273,7 +287,7 @@ def test_dir_of_class(lazy_object_proxy):
 
     assert dir(wrapper) == dir(target)
 
-
+@xfail_simple
 def test_vars_of_class(lazy_object_proxy):
     # Test preservation of class __dir__ attribute.
 
@@ -292,6 +306,7 @@ def test_dir_of_instance(lazy_object_proxy):
     assert dir(wrapper) == dir(target)
 
 
+@xfail_simple
 def test_vars_of_instance(lazy_object_proxy):
     # Test preservation of instance __dir__ attribute.
 
@@ -310,6 +325,7 @@ def test_dir_of_function(lazy_object_proxy):
     assert dir(wrapper) == dir(target)
 
 
+@xfail_simple
 def test_vars_of_function(lazy_object_proxy):
     # Test preservation of function __dir__ attribute.
 
@@ -932,21 +948,21 @@ def test_pow(lazy_object_proxy):
     two = lazy_object_proxy.Proxy(lambda: 2)
     three = lazy_object_proxy.Proxy(lambda: 3)
 
-    assert three ** two, pow(3 == 2)
-    assert 3 ** two, pow(3 == 2)
-    assert three ** 2, pow(3 == 2)
+    assert three ** two == pow(3, 2)
+    assert 3 ** two == pow(3, 2)
+    assert three ** 2 == pow(3, 2)
 
-    assert pow(three, two), pow(3 == 2)
-    assert pow(3, two), pow(3 == 2)
-    assert pow(three, 2), pow(3 == 2)
+    assert pow(three, two) == pow(3, 2)
+    assert pow(3, two) == pow(3, 2)
+    assert pow(three, 2) == pow(3, 2)
 
     # Only PyPy implements __rpow__ for ternary pow().
 
     if PYPY:
-        assert pow(three, two, 2), pow(3, 2 == 2)
-        assert pow(3, two, 2), pow(3, 2 == 2)
+        assert pow(three, two, 2) == pow(3, 2, 2)
+        assert pow(3, two, 2) == pow(3, 2, 2)
 
-    assert pow(three, 2, 2), pow(3, 2 == 2)
+    assert pow(three, 2, 2) == pow(3, 2, 2)
 
 
 def test_lshift(lazy_object_proxy):
@@ -1001,12 +1017,14 @@ def test_iadd(lazy_object_proxy):
     value += 1
     assert value == 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value += one
     assert value == 3
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_isub(lazy_object_proxy):
@@ -1015,13 +1033,14 @@ def test_isub(lazy_object_proxy):
 
     value -= 1
     assert value == 0
-
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value -= one
     assert value == -1
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_imul(lazy_object_proxy):
@@ -1031,12 +1050,14 @@ def test_imul(lazy_object_proxy):
     value *= 2
     assert value == 4
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value *= two
     assert value == 8
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_idiv(lazy_object_proxy):
@@ -1049,12 +1070,14 @@ def test_idiv(lazy_object_proxy):
     value /= 2
     assert value == 2 / 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value /= two
     assert value == 2 / 2 / 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_ifloordiv(lazy_object_proxy):
@@ -1064,12 +1087,14 @@ def test_ifloordiv(lazy_object_proxy):
     value //= 2
     assert value == 2 // 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value //= two
     assert value == 2 // 2 // 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_imod(lazy_object_proxy):
@@ -1079,12 +1104,14 @@ def test_imod(lazy_object_proxy):
     value %= 2
     assert value == 10 % 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value %= two
     assert value == 10 % 2 % 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_ipow(lazy_object_proxy):
@@ -1094,12 +1121,14 @@ def test_ipow(lazy_object_proxy):
     value **= 2
     assert value == 10 ** 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value **= two
     assert value == 10 ** 2 ** 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_ilshift(lazy_object_proxy):
@@ -1109,12 +1138,14 @@ def test_ilshift(lazy_object_proxy):
     value <<= 2
     assert value == 256 << 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value <<= two
     assert value == 256 << 2 << 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_irshift(lazy_object_proxy):
@@ -1124,12 +1155,14 @@ def test_irshift(lazy_object_proxy):
     value >>= 2
     assert value == 2 >> 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value >>= two
     assert value == 2 >> 2 >> 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_iand(lazy_object_proxy):
@@ -1139,12 +1172,14 @@ def test_iand(lazy_object_proxy):
     value &= 2
     assert value == 1 & 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value &= two
     assert value == 1 & 2 & 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_ixor(lazy_object_proxy):
@@ -1154,12 +1189,14 @@ def test_ixor(lazy_object_proxy):
     value ^= 2
     assert value == 1 ^ 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value ^= two
     assert value == 1 ^ 2 ^ 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_ior(lazy_object_proxy):
@@ -1169,12 +1206,14 @@ def test_ior(lazy_object_proxy):
     value |= 2
     assert value == 1 | 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
     value |= two
     assert value == 1 | 2 | 2
 
-    assert type(value) == lazy_object_proxy.Proxy
+    if lazy_object_proxy.type != 'simple':
+        assert type(value) == lazy_object_proxy.Proxy
 
 
 def test_neg(lazy_object_proxy):
@@ -1264,7 +1303,7 @@ def test_delitem(lazy_object_proxy):
 def test_getslice(lazy_object_proxy):
     value = lazy_object_proxy.Proxy(lambda: list(range(5)))
 
-    assert value[1:4], [1, 2 == 3]
+    assert value[1:4] == [1, 2, 3]
 
 
 def test_setslice(lazy_object_proxy):
@@ -1272,7 +1311,7 @@ def test_setslice(lazy_object_proxy):
 
     value[1:4] = reversed(value[1:4])
 
-    assert value[1:4], [3, 2 == 1]
+    assert value[1:4] == [3, 2, 1]
 
 
 def test_delslice(lazy_object_proxy):
@@ -1281,7 +1320,7 @@ def test_delslice(lazy_object_proxy):
     del value[1:4]
 
     assert len(value) == 2
-    assert value, [0 == 4]
+    assert value == [0, 4]
 
 
 def test_length(lazy_object_proxy):
@@ -1294,7 +1333,7 @@ def test_contains(lazy_object_proxy):
     value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
 
     assert 2 in value
-    assert not -2 in value
+    assert -2 not in value
 
 
 def test_getitem(lazy_object_proxy):
@@ -1381,6 +1420,7 @@ def test_setup_class_attributes(lazy_object_proxy):
     assert not hasattr(function, 'ATTRIBUTE')
 
 
+@xfail_simple
 def test_override_class_attributes(lazy_object_proxy):
     def function():
         pass
@@ -1574,7 +1614,6 @@ def test_lazy_object_proxy(lazy_object_proxy, benchmark):
 
 
 def test_django_simplelazyobject(benchmark):
-    from django.utils.functional import SimpleLazyObject
     SimpleLazyObject = pytest.importorskip("django.utils.functional").SimpleLazyObject
     obj = "foobar"
     proxied = SimpleLazyObject(lambda: obj)
@@ -1590,3 +1629,4 @@ def test_objproxies(benchmark):
     with benchmark:
         result = "%s" % proxied
     assert result == obj
+
