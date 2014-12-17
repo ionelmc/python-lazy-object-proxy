@@ -26,19 +26,14 @@ objects = imp.new_module('objects')
 exec_(OBJECTS_CODE, objects.__dict__, objects.__dict__)
 
 
-@pytest.fixture(scope="module", params=[
-    "slots", "cext",
-    "simple",
-    # "external-django", "external-objproxies"
-])
-def lazy_object_proxy(request):
+def load_implementation(name):
     class mod:
-        type = request.param
-        if request.param == "slots":
+        type = name
+        if name == "slots":
             from lazy_object_proxy.slots import Proxy
-        elif request.param == "simple":
+        elif name == "simple":
             from lazy_object_proxy.simple import Proxy
-        elif request.param == "cext":
+        elif name == "cext":
             try:
                 from lazy_object_proxy.cext import Proxy
             except ImportError:
@@ -46,14 +41,22 @@ def lazy_object_proxy(request):
                     pytest.skip(msg="C Extension not available.")
                 else:
                     raise
-        elif request.param == "external-objproxies":
+        elif name == "objproxies":
             Proxy = pytest.importorskip("objproxies").LazyProxy
-        elif request.param == "external-django":
+        elif name == "django":
             Proxy = pytest.importorskip("django.utils.functional").SimpleLazyObject
         else:
-            raise RuntimeError("Unsupported param: %r." % request.param)
-
+            raise RuntimeError("Unsupported param: %r." % name)
     return mod
+
+
+@pytest.fixture(scope="module", params=[
+    "slots", "cext",
+    "simple",
+    # "external-django", "external-objproxies"
+])
+def lazy_object_proxy(request):
+    return load_implementation(request.param)
 
 
 def xfail_simple(test_func):
@@ -1605,28 +1608,68 @@ def test_new(lazy_object_proxy):
     pytest.raises(ValueError, lambda: a.__wrapped__)
 
 
-def test_lazy_object_proxy(lazy_object_proxy, benchmark):
+@pytest.mark.parametrize("name", ["slots", "cext", "simple", "django", "objproxies"])
+def test_perf(benchmark, name):
+    implementation = load_implementation(name)
     obj = "foobar"
-    proxied = lazy_object_proxy.Proxy(lambda: obj)
+    proxied = implementation.Proxy(lambda: obj)
     with benchmark:
-        result = "%s" % proxied
+        result = str(proxied)
     assert result == obj
 
+empty = object()
 
-def test_django_simplelazyobject(benchmark):
-    SimpleLazyObject = pytest.importorskip("django.utils.functional").SimpleLazyObject
+@pytest.fixture(scope="module", params=["SimpleProxy", "CachedPropertyProxy", "LocalsSimpleProxy", "LocalsCachedPropertyProxy"])
+def prototype(request):
+    from lazy_object_proxy.simple import cached_property
+    name = request.param
+
+    if name == "SimpleProxy":
+        class SimpleProxy(object):
+            def __init__(self, factory):
+                self.factory = factory
+                self.object = empty
+            def __str__(self):
+                if self.object is empty:
+                    self.object = self.factory()
+                return str(self.object)
+        return SimpleProxy
+    elif name == "CachedPropertyProxy":
+        class CachedPropertyProxy(object):
+            def __init__(self, factory):
+                self.factory = factory
+            @cached_property
+            def object(self):
+                return self.factory()
+            def __str__(self):
+                return str(self.object)
+        return CachedPropertyProxy
+    elif name == "LocalsSimpleProxy":
+        class LocalsSimpleProxy(object):
+            def __init__(self, factory):
+                self.factory = factory
+                self.object = empty
+            def __str__(self, func=str):
+                if self.object is empty:
+                    self.object = self.factory()
+                return func(self.object)
+        return LocalsSimpleProxy
+    elif name == "LocalsCachedPropertyProxy":
+        class LocalsCachedPropertyProxy(object):
+            def __init__(self, factory):
+                self.factory = factory
+            @cached_property
+            def object(self):
+                return self.factory()
+            def __str__(self):
+                return str(self.object)
+        return LocalsCachedPropertyProxy
+
+
+@pytest.mark.benchmark(group="prototypes")
+def test_proto(benchmark, prototype):
     obj = "foobar"
-    proxied = SimpleLazyObject(lambda: obj)
+    proxied = prototype(lambda: obj)
     with benchmark:
-        result = "%s" % proxied
+        result = str(proxied)
     assert result == obj
-
-
-def test_objproxies(benchmark):
-    LazyProxy = pytest.importorskip("objproxies").LazyProxy
-    obj = "foobar"
-    proxied = LazyProxy(lambda: obj)
-    with benchmark:
-        result = "%s" % proxied
-    assert result == obj
-
