@@ -1,5 +1,6 @@
 from __future__ import print_function
 from functools import wraps
+from functools import partial
 
 import imp
 import sys
@@ -1613,13 +1614,11 @@ def test_perf(benchmark, name):
     implementation = load_implementation(name)
     obj = "foobar"
     proxied = implementation.Proxy(lambda: obj)
-    with benchmark:
-        result = str(proxied)
-    assert result == obj
+    assert benchmark(partial(str, proxied)) == obj
 
 empty = object()
 
-@pytest.fixture(scope="module", params=["SimpleProxy", "CachedPropertyProxy", "LocalsSimpleProxy", "LocalsCachedPropertyProxy"])
+@pytest.fixture(scope="module", params=["SimpleProxy", "LocalsSimpleProxy", "CachedPropertyProxy", "LocalsCachedPropertyProxy"])
 def prototype(request):
     from lazy_object_proxy.simple import cached_property
     name = request.param
@@ -1670,6 +1669,4 @@ def prototype(request):
 def test_proto(benchmark, prototype):
     obj = "foobar"
     proxied = prototype(lambda: obj)
-    with benchmark:
-        result = str(proxied)
-    assert result == obj
+    assert benchmark(partial(str, proxied)) == obj
