@@ -1661,8 +1661,8 @@ def prototype(request):
             @cached_property
             def object(self):
                 return self.factory()
-            def __str__(self):
-                return str(self.object)
+            def __str__(self, func=str):
+                return func(self.object)
         return LocalsCachedPropertyProxy
 
 
