@@ -17,6 +17,10 @@
 #define Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self) if (!Proxy__ensure_wrapped(self)) return NULL;
 #define Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self) if (!Proxy__ensure_wrapped(self)) return -1;
 
+#if PY_MAJOR_VERSION < 3
+#define Py_hash_t long
+#endif
+
 /* ------------------------------------------------------------------------- */
 
 typedef struct {
@@ -156,7 +160,7 @@ static PyObject *Proxy_repr(ProxyObject *self)
 
 /* ------------------------------------------------------------------------- */
 
-static long Proxy_hash(ProxyObject *self)
+static Py_hash_t Proxy_hash(ProxyObject *self)
 {
     Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
 
