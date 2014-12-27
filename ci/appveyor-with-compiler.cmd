@@ -17,6 +17,7 @@
 ::
 :: Author: Olivier Grisel
 :: License: CC0 1.0 Universal: http://creativecommons.org/publicdomain/zero/1.0/
+@ECHO OFF
 
 SET COMMAND_TO_RUN=%*
 SET WIN_SDK_ROOT=C:\Program Files\Microsoft SDKs\Windows
