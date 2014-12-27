@@ -27,7 +27,7 @@ The lazy object proxy class is available as ``lazy_object_proxy.Proxy``.
 This ability for a proxy to stand in for the original goes as far as
 arithmetic operations, rich comparison and hashing.
 
-::
+.. code:: pycon
 
     >>> value = 1
     >>> proxy = lazy_object_proxy.Proxy(lambda: value)
@@ -52,7 +52,7 @@ the original value is effectively copied into the proxy object and any
 operation which updates the value will only update the value held by the
 proxy object.
 
-::
+.. code:: pycon
 
     >>> value = 1
     >>> proxy = lazy_object_proxy.Proxy(lambda: value)
@@ -78,7 +78,7 @@ Type Comparison
 The type of an instance of the object proxy will be ``ObjectProxy``, or that
 of any derived class type if creating a custom object proxy.
 
-::
+.. code:: pycon
 
     >>> value = 1
     >>> proxy = lazy_object_proxy.Proxy(lambda: value)
@@ -99,7 +99,7 @@ for 'duck typing' preferred. Instead of direct type comparison, the
 comparison of the type of the object proxy will properly evaluate against
 the wrapped object.
 
-::
+.. code:: pycon
 
     >>> isinstance(proxy, int)
     True
@@ -107,7 +107,7 @@ the wrapped object.
 This works because the ``__class__`` attribute actually returns the class
 type for the wrapped object.
 
-::
+.. code:: pycon
 
     >>> proxy.__class__
     <... 'int'>
@@ -116,7 +116,7 @@ Note that ``isinstance()`` will still also succeed if comparing to the
 ``ObjectProxy`` type. It is therefore still possible to use ``isinstance()``
 to determine if an object is an object proxy.
 
-::
+.. code:: pycon
 
     >>> isinstance(proxy, lazy_object_proxy.Proxy)
     True
@@ -138,7 +138,7 @@ Custom Object Proxies
 A custom proxy is where one creates a derived object proxy and overrides
 some specific behaviour of the proxy.
 
-::
+.. code:: pycon
 
     >>> def function():
     ...     print(('executing', function.__name__))
@@ -174,7 +174,7 @@ named attribute would in normal circumstances be accessed from the wrapped
 object. When updating an attributes value, or deleting the attribute, that
 change will also be reflected in the wrapped object.
 
-::
+.. code:: pycon
 
     >>> proxy = CallableWrapper(lambda: function)
 
@@ -198,7 +198,7 @@ change will also be reflected in the wrapped object.
 If an attribute was updated on the wrapped object directly, that change is
 still reflected in what is available via the proxy.
 
-::
+.. code:: pycon
 
     >>> function.attribute = 2
 
@@ -211,7 +211,7 @@ Custom attributes can be specified as a class attribute, with
 that then being overridden if necessary, with a specific value in the
 ``__init__()`` method of the class.
 
-::
+.. code:: pycon
 
     >>> class CustomProxy(lazy_object_proxy.Proxy):
     ...     attribute = None
