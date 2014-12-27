@@ -1596,7 +1596,7 @@ def test_del_wrapped(lazy_object_proxy):
     proxy = lazy_object_proxy.Proxy(lambda: Foo)
     str(proxy)
     assert proxy.__wrapped__
-    print(type(proxy), hasattr(type(proxy), '__wrapped__'))
+    # print(type(proxy), hasattr(type(proxy), '__wrapped__'))
     del proxy.__wrapped__
 
 
@@ -1617,6 +1617,7 @@ def test_perf(benchmark, name):
     assert benchmark(partial(str, proxied)) == obj
 
 empty = object()
+
 
 @pytest.fixture(scope="module", params=["SimpleProxy", "LocalsSimpleProxy", "CachedPropertyProxy", "LocalsCachedPropertyProxy"])
 def prototype(request):
