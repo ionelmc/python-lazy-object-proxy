@@ -77,8 +77,6 @@ Benchmarks
 
 The tested implementations:
 
-They include these less complete proxy implementations:
-
 * ``lazy_object_proxy.slots.Proxy``, available as ``lazy_object_proxy.Proxy`` if the C extension is not available.
 * ``lazy_object_proxy.cext.Proxy``, available as ``lazy_object_proxy.Proxy``.
 * `objproxies <https://pypi.python.org/pypi/objproxies>`_ - fork of PJE's `ProxyTypes <https://pypi.python.org/pypi/ProxyTypes>`_ with Python 3 support. [1]_
