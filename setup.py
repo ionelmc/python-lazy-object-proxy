@@ -89,7 +89,7 @@ setup(
         "Topic :: Utilities",
     ],
     keywords=[
-        # eg: "keyword1", "keyword2", "keyword3",
+        "lazy object proxy", "lazy", "object", "proxy"
     ],
     install_requires=[
         # eg: "aspectlib==1.1.1", "six>=1.7",
