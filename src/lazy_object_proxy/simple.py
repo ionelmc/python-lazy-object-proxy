@@ -16,6 +16,8 @@ class cached_property(object):
         self.func = func
 
     def __get__(self, obj, cls):
+        if obj is None:
+            return self
         value = obj.__dict__[self.func.__name__] = self.func(obj)
         return value
 
@@ -120,7 +122,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __bool__ = make_proxy_method(bool)
 
     def __setattr__(self, name, value):
-        if name in ['__factory__', '__wrapped__']:
+        if hasattr(type(self), name):
             self.__dict__[name] = value
         else:
             setattr(self.__wrapped__, name, value)
@@ -129,7 +131,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return getattr(self.__wrapped__, name)
 
     def __delattr__(self, name):
-        if name in ['__factory__', '__wrapped__']:
+        if hasattr(type(self), name):
             del self.__dict__[name]
         else:
             delattr(self.__wrapped__, name)

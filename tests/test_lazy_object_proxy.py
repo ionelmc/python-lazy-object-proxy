@@ -90,7 +90,6 @@ def test_get_wrapped(lazy_object_proxy):
 
     assert function3.__wrapped__ == function1
 
-
 def test_set_wrapped(lazy_object_proxy):
     def function1(*args, **kwargs):
         return args, kwargs
@@ -106,7 +105,8 @@ def test_set_wrapped(lazy_object_proxy):
 
     function2.__wrapped__ = None
 
-    assert not hasattr(function1, '__wrapped__')
+    if lazy_object_proxy.type != 'simple':
+        assert not hasattr(function1, '__wrapped__')
 
     assert function2 == None
     assert function2.__wrapped__ is None
@@ -1424,7 +1424,6 @@ def test_setup_class_attributes(lazy_object_proxy):
     assert not hasattr(function, 'ATTRIBUTE')
 
 
-@xfail_simple
 def test_override_class_attributes(lazy_object_proxy):
     def function():
         pass
