@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.0.1 (2014-12-28)
+------------------
+
+* Fix access via class bug in the ``__wrapped__`` property from ``lazy_object_proxy.simple.Proxy``.
+
 1.0.0 (2014-12-27)
 ------------------
 
