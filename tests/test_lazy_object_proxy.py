@@ -105,8 +105,7 @@ def test_set_wrapped(lazy_object_proxy):
 
     function2.__wrapped__ = None
 
-    if lazy_object_proxy.type != 'simple':
-        assert not hasattr(function1, '__wrapped__')
+    assert not hasattr(function1, '__wrapped__')
 
     assert function2 == None
     assert function2.__wrapped__ is None
