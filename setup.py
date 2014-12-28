@@ -60,7 +60,7 @@ setup(
     name="lazy-object-proxy",
     version="1.0.1",
     license="BSD",
-    description="A lazy object proxy",
+    description="A fast and thorough lazy object proxy",
     long_description="%s\n%s" % (read("README.rst"), re.sub(":obj:`~?(.*?)`", r"``\1``", read("CHANGELOG.rst"))),
     author="Ionel Cristian Mărieș",
     author_email="contact@ionelmc.ro",

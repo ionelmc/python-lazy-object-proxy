@@ -49,7 +49,7 @@ lazy-object-proxy
     :alt: Scrtinizer Status
     :target: https://scrutinizer-ci.com/g/ionelmc/python-lazy-object-proxy/
 
-An example package. Replace this with a proper project description. Generated with https://github.com/ionelmc/cookiecutter-pylibrary
+A fast and thorough lazy object proxy.
 
 * Free software: BSD license
 
