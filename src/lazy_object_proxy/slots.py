@@ -61,6 +61,20 @@ class _ProxyMetaType(type):
 
 
 class Proxy(with_metaclass(_ProxyMetaType)):
+    """
+    A proxy implementation in pure Python, using slots. You can subclass this to add
+    local methods or attributes, or enable __dict__.
+
+    The most important internals:
+
+    * ``__factory__`` is the callback that "materializes" the object we proxy to.
+    * ``__target__`` will contain the object we proxy to, once it's "materialized".
+    * ``__wrapped__`` is a property that does either:
+
+      * return ``__target__`` if it's set.
+      * calls ``__factory__``, saves result to ``__target__`` and returns said result.
+    """
+
     __slots__ = '__target__', '__factory__'
 
     def __init__(self, factory):
