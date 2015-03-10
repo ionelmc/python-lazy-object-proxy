@@ -1618,6 +1618,31 @@ def test_patching_the_factory(lazy_object_proxy):
     pytest.raises(AttributeError, proxy)
     assert proxy.__wrapped__ is foo
 
+def test_deleting_the_factory(lazy_object_proxy):
+    proxy = lazy_object_proxy.Proxy(None)
+    assert proxy.__factory__ is None
+    proxy.__factory__ = None
+    assert proxy.__factory__ is None
+
+    pytest.raises(TypeError, str, proxy)
+    del proxy.__factory__
+    pytest.raises(ValueError, str, proxy)
+
+
+def test_patching_the_factory_with_none(lazy_object_proxy):
+    proxy = lazy_object_proxy.Proxy(None)
+    assert proxy.__factory__ is None
+    proxy.__factory__ = None
+    assert proxy.__factory__ is None
+    proxy.__factory__ = None
+    assert proxy.__factory__ is None
+    def foo():
+        return 1
+    proxy.__factory__ = foo
+    assert proxy.__factory__ is foo
+    assert proxy.__wrapped__ == 1
+    assert str(proxy) == '1'
+
 
 def test_new(lazy_object_proxy):
     a = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
