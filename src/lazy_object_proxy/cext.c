@@ -1109,29 +1109,6 @@ static int Proxy_setattro(
         ProxyObject *self, PyObject *name, PyObject *value)
 {
     static PyObject *self_str = NULL;
-    static PyObject *wrapped_str = NULL;
-    static PyObject *startswith_str = NULL;
-
-    PyObject *match = NULL;
-
-    if (!startswith_str) {
-#if PY_MAJOR_VERSION >= 3
-        startswith_str = PyUnicode_InternFromString("startswith");
-#else
-        startswith_str = PyString_InternFromString("startswith");
-#endif
-    }
-
-    if (!wrapped_str) {
-#if PY_MAJOR_VERSION >= 3
-        wrapped_str = PyUnicode_InternFromString("__wrapped__");
-#else
-        wrapped_str = PyString_InternFromString("__wrapped__");
-#endif
-    }
-
-    if (PyObject_RichCompareBool(name, wrapped_str, Py_EQ) == 1)
-        return PyObject_GenericSetAttr((PyObject *)self, name, value);
 
     if (PyObject_HasAttr((PyObject *)Py_TYPE(self), name))
         return PyObject_GenericSetAttr((PyObject *)self, name, value);
