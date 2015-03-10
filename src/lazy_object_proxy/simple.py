@@ -72,6 +72,8 @@ class _ProxyMetaType(type):
 
 
 class Proxy(with_metaclass(_ProxyMetaType)):
+    __factory__ = None
+
     def __init__(self, factory):
         self.__dict__['__factory__'] = factory
 
@@ -122,7 +124,10 @@ class Proxy(with_metaclass(_ProxyMetaType)):
             setattr(self.__wrapped__, name, value)
 
     def __getattr__(self, name):
-        return getattr(self.__wrapped__, name)
+        if name in ('__wrapped__', '__factory__'):
+            raise AttributeError(name)
+        else:
+            return getattr(self.__wrapped__, name)
 
     def __delattr__(self, name):
         if hasattr(type(self), name):

@@ -1598,6 +1598,15 @@ def test_del_wrapped(lazy_object_proxy):
     del proxy.__wrapped__
 
 
+def test_raise_attribute_error(lazy_object_proxy):
+    def foo():
+        raise AttributeError("boom!")
+    proxy = lazy_object_proxy.Proxy(foo)
+    pytest.raises(AttributeError, str, proxy)
+    pytest.raises(AttributeError, lambda: proxy.__wrapped__)
+    assert proxy.__factory__ is foo
+
+
 def test_new(lazy_object_proxy):
     a = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
     b = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)

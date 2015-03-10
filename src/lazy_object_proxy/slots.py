@@ -182,7 +182,10 @@ class Proxy(with_metaclass(_ProxyMetaType)):
             setattr(self.__wrapped__, name, value)
 
     def __getattr__(self, name):
-        return getattr(self.__wrapped__, name)
+        if name in ('__wrapped__', '__factory__'):
+            raise AttributeError(name)
+        else:
+            return getattr(self.__wrapped__, name)
 
     def __delattr__(self, name, __delattr__=object.__delattr__):
         if hasattr(type(self), name):
