@@ -1026,6 +1026,28 @@ static int Proxy_set_wrapped(ProxyObject *self,
 
 /* ------------------------------------------------------------------------- */
 
+static PyObject *Proxy_get_factory(
+        ProxyObject *self)
+{
+    Py_INCREF(self->factory);
+    return self->factory;
+}
+
+/* ------------------------------------------------------------------------- */
+
+static int Proxy_set_factory(ProxyObject *self,
+        PyObject *value)
+{
+    if (value) Py_INCREF(value);
+    Py_DECREF(self->factory);
+
+    self->factory = value;
+
+    return 0;
+}
+
+/* ------------------------------------------------------------------------- */
+
 static PyObject *Proxy_getattro(
         ProxyObject *self, PyObject *name)
 {
@@ -1253,6 +1275,8 @@ static PyGetSetDef Proxy_getset[] = {
                             (setter)Proxy_set_annotations, 0 },
     { "__wrapped__",        (getter)Proxy_get_wrapped,
                             (setter)Proxy_set_wrapped, 0 },
+    { "__factory__",        (getter)Proxy_get_factory,
+                            (setter)Proxy_set_factory, 0 },
     { NULL },
 };
 

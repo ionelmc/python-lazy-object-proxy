@@ -1607,6 +1607,18 @@ def test_raise_attribute_error(lazy_object_proxy):
     assert proxy.__factory__ is foo
 
 
+def test_patching_the_factory(lazy_object_proxy):
+    def foo():
+        raise AttributeError("boom!")
+    proxy = lazy_object_proxy.Proxy(foo)
+    pytest.raises(AttributeError, lambda: proxy.__wrapped__)
+    assert proxy.__factory__ is foo
+
+    proxy.__factory__ = lambda: foo
+    pytest.raises(AttributeError, proxy)
+    assert proxy.__wrapped__ is foo
+
+
 def test_new(lazy_object_proxy):
     a = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
     b = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
