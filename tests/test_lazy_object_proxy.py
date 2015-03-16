@@ -1677,6 +1677,20 @@ def test_new(lazy_object_proxy):
     pytest.raises(ValueError, lambda: a.__wrapped__)
 
 
+def test_set_wrapped_via_new(lazy_object_proxy):
+    obj = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
+    obj.__wrapped__ = 1
+    assert str(obj) == '1'
+    assert obj + 1 == 2
+
+
+def test_set_wrapped(lazy_object_proxy):
+    obj = lazy_object_proxy.Proxy(None)
+    obj.__wrapped__ = 1
+    assert str(obj) == '1'
+    assert obj + 1 == 2
+
+
 @pytest.mark.parametrize("name", ["slots", "cext", "simple", "django", "objproxies"])
 def test_perf(benchmark, name):
     implementation = load_implementation(name)

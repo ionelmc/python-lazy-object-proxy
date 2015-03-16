@@ -1014,10 +1014,8 @@ static PyObject *Proxy_get_wrapped(
 static int Proxy_set_wrapped(ProxyObject *self,
         PyObject *value)
 {
-    Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self);
-
     if (value) Py_INCREF(value);
-    Py_DECREF(self->wrapped);
+    if (self->wrapped) Py_DECREF(self->wrapped);
 
     self->wrapped = value;
 
