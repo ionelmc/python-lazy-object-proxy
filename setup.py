@@ -97,11 +97,6 @@ setup(
     extras_require={
         # eg: "rst": ["docutils>=0.11"],
     },
-    entry_points={
-        "console_scripts": [
-            "lazy_object_proxy = lazy_object_proxy.__main__:main"
-        ]
-    },
     cmdclass={"build_ext": optional_build_ext},
     ext_modules=[
         Extension(
