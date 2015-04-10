@@ -58,7 +58,7 @@ class optional_build_ext(build_ext):
 
 setup(
     name="lazy-object-proxy",
-    version="1.0.1",
+    version="1.0.2",
     license="BSD",
     description="A fast and thorough lazy object proxy",
     long_description="%s\n%s" % (read("README.rst"), re.sub(":obj:`~?(.*?)`", r"``\1``", read("CHANGELOG.rst"))),
