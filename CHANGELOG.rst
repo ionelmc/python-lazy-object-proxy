@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.0.2 (2015-04-11)
+------------------
+
+* Remove the bogus ``lazy_object_proxy`` console script (contributed by Tin Tvrtković in `#4 <https://github.com/ionelmc/python-lazy-object-proxy/pull/4>`_).
+
 1.0.1 (2014-12-28)
 ------------------
 
