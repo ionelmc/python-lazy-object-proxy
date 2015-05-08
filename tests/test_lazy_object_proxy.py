@@ -803,6 +803,15 @@ def test_iteration(lazy_object_proxy):
 
     assert result == items
 
+    with pytest.raises(TypeError):
+        for _ in lazy_object_proxy.Proxy(lambda: 1):
+            pass
+
+
+def test_iter_builtin(lazy_object_proxy):
+    iter(lazy_object_proxy.Proxy(lambda: [1, 2]))
+    pytest.raises(TypeError, iter, lazy_object_proxy.Proxy(lambda: 1))
+
 
 def test_context_manager(lazy_object_proxy):
     class Class(object):
