@@ -1622,13 +1622,21 @@ def test_readonly(lazy_object_proxy):
 
 
 def test_del_wrapped(lazy_object_proxy):
-    class Foo(object):
-        pass
-    proxy = lazy_object_proxy.Proxy(lambda: Foo)
+    foo = object()
+    called = []
+
+    def make_foo():
+        called.append(1)
+        return foo
+
+    proxy = lazy_object_proxy.Proxy(make_foo)
     str(proxy)
-    assert proxy.__wrapped__
+    assert called == [1]
+    assert proxy.__wrapped__ is foo
     # print(type(proxy), hasattr(type(proxy), '__wrapped__'))
     del proxy.__wrapped__
+    str(proxy)
+    assert called == [1, 1]
 
 
 def test_raise_attribute_error(lazy_object_proxy):
