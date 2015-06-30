@@ -136,7 +136,7 @@ static int Proxy_traverse(ProxyObject *self,
 {
     Py_VISIT(self->dict);
     Py_VISIT(self->wrapped);
-
+    Py_VISIT(self->factory);
     return 0;
 }
 
@@ -146,7 +146,7 @@ static int Proxy_clear(ProxyObject *self)
 {
     Py_CLEAR(self->dict);
     Py_CLEAR(self->wrapped);
-
+    Py_VISIT(self->factory);
     return 0;
 }
 
