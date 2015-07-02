@@ -1106,8 +1106,6 @@ static PyObject *Proxy_getattr(
 static int Proxy_setattro(
         ProxyObject *self, PyObject *name, PyObject *value)
 {
-    static PyObject *self_str = NULL;
-
     if (PyObject_HasAttr((PyObject *)Py_TYPE(self), name))
         return PyObject_GenericSetAttr((PyObject *)self, name, value);
 
