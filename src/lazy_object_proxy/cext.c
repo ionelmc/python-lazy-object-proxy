@@ -33,6 +33,26 @@ typedef struct {
 
 PyTypeObject Proxy_Type;
 
+
+/* ------------------------------------------------------------------------- */
+
+static PyObject *identity_ref = NULL;
+static PyObject *
+identity(PyObject *self, PyObject *value)
+{
+    Py_INCREF(value);
+    return value;
+}
+
+/* ------------------------------------------------------------------------- */
+
+PyDoc_STRVAR(identity_doc, "Indentity function: returns the single argument.");
+
+static struct PyMethodDef module_functions[] = {
+    {"identity", identity, METH_O, identity_doc},
+    {NULL,       NULL}
+};
+
 /* ------------------------------------------------------------------------- */
 
 static PyObject *Proxy__ensure_wrapped(ProxyObject *self)
@@ -845,6 +865,15 @@ static PyObject *Proxy_reversed(
 }
 
 /* ------------------------------------------------------------------------- */
+static PyObject *Proxy_reduce(
+        ProxyObject *self, PyObject *args)
+{
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+
+    return Py_BuildValue("(O(O))", identity_ref, self->wrapped);
+}
+
+/* ------------------------------------------------------------------------- */
 
 #if PY_MAJOR_VERSION >= 3
 static PyObject *Proxy_round(
@@ -1227,6 +1256,8 @@ static PyMethodDef Proxy_methods[] = {
                     METH_VARARGS , 0 },
     { "__bytes__",  (PyCFunction)Proxy_bytes, METH_NOARGS, 0 },
     { "__reversed__", (PyCFunction)Proxy_reversed, METH_NOARGS, 0 },
+    { "__reduce__", (PyCFunction)Proxy_reduce, METH_NOARGS, 0 },
+    { "__reduce_ex__", (PyCFunction)Proxy_reduce, METH_O, 0 },
 #if PY_MAJOR_VERSION >= 3
     { "__round__",  (PyCFunction)Proxy_round, METH_NOARGS, 0 },
 #endif
@@ -1308,14 +1339,14 @@ PyTypeObject Proxy_Type = {
 #if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
-    "cext",              /* m_name */
-    NULL,                /* m_doc */
-    -1,                  /* m_size */
-    NULL,                /* m_methods */
-    NULL,                /* m_reload */
-    NULL,                /* m_traverse */
-    NULL,                /* m_clear */
-    NULL,                /* m_free */
+    "lazy_object_proxy.cext", /* m_name */
+    NULL,                     /* m_doc */
+    -1,                       /* m_size */
+    module_functions,         /* m_methods */
+    NULL,                     /* m_reload */
+    NULL,                     /* m_traverse */
+    NULL,                     /* m_clear */
+    NULL,                     /* m_free */
 };
 #endif
 
@@ -1323,11 +1354,12 @@ static PyObject *
 moduleinit(void)
 {
     PyObject *module;
+    PyObject *dict;
 
 #if PY_MAJOR_VERSION >= 3
     module = PyModule_Create(&moduledef);
 #else
-    module = Py_InitModule3("cext", NULL, NULL);
+    module = Py_InitModule3("lazy_object_proxy.cext", module_functions, NULL);
 #endif
 
     if (module == NULL)
@@ -1338,6 +1370,14 @@ moduleinit(void)
 
     if (PyType_Ready(&Proxy_Type) < 0)
         return NULL;
+
+    dict = PyModule_GetDict(module);
+    if (dict == NULL)
+        return NULL;
+    identity_ref = PyDict_GetItemString(dict, "identity");
+    if (identity_ref == NULL)
+        return NULL;
+    Py_INCREF(identity_ref);
 
     Py_INCREF(&Proxy_Type);
     PyModule_AddObject(module, "Proxy",

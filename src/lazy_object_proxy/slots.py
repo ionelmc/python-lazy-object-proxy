@@ -3,6 +3,7 @@ import operator
 from .compat import PY2
 from .compat import PY3
 from .compat import with_metaclass
+from .utils import identity
 
 
 class _ProxyMethods(object):
@@ -81,7 +82,8 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         object.__setattr__(self, '__factory__', factory)
 
     @property
-    def __wrapped__(self, __getattr__=object.__getattribute__, __setattr__=object.__setattr__, __delattr__=object.__delattr__):
+    def __wrapped__(self, __getattr__=object.__getattribute__, __setattr__=object.__setattr__,
+                    __delattr__=object.__delattr__):
         try:
             return __getattr__(self, '__target__')
         except AttributeError:
@@ -395,3 +397,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __call__(self, *args, **kwargs):
         return self.__wrapped__(*args, **kwargs)
+
+    def __reduce__(self):
+        return identity, (self.__wrapped__,)
+
+    def __reduce_ex__(self, protocol):
+        return identity, (self.__wrapped__,)

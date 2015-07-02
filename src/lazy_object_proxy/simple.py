@@ -3,22 +3,14 @@ import operator
 from .compat import PY2
 from .compat import PY3
 from .compat import with_metaclass
-
-
-class cached_property(object):
-    def __init__(self, func):
-        self.func = func
-
-    def __get__(self, obj, cls):
-        if obj is None:
-            return self
-        value = obj.__dict__[self.func.__name__] = self.func(obj)
-        return value
+from .utils import cached_property
+from .utils import identity
 
 
 def make_proxy_method(code):
     def proxy_wrapper(self, *args):
         return code(self.__wrapped__, *args)
+
     return proxy_wrapper
 
 
@@ -85,7 +77,6 @@ class Proxy(with_metaclass(_ProxyMetaType)):
             return factory()
         else:
             raise ValueError("Proxy hasn't been initiated: __factory__ is missing.")
-
 
     __name__ = property(make_proxy_method(operator.attrgetter('__name__')))
     __class__ = property(make_proxy_method(operator.attrgetter('__class__')))
@@ -240,3 +231,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __call__(self, *args, **kwargs):
         return self.__wrapped__(*args, **kwargs)
+
+    def __reduce__(self):
+        return identity, (self.__wrapped__,)
+
+    def __reduce_ex__(self, protocol):
+        return identity, (self.__wrapped__,)
