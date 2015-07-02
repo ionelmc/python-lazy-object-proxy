@@ -1,4 +1,4 @@
-version: '{build}'
+version: '{branch}-{build}'
 build: off
 environment:
   global:
@@ -94,3 +94,4 @@ after_test:
   - "IF \"%TOXENV:~-8,8%\" == \"-nocover\" %WITH_COMPILER% %TOXPYTHON% setup.py bdist_wheel"
 artifacts:
   - path: dist\*
+
