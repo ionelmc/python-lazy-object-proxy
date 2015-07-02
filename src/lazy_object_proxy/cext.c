@@ -146,7 +146,7 @@ static int Proxy_clear(ProxyObject *self)
 {
     Py_CLEAR(self->dict);
     Py_CLEAR(self->wrapped);
-    Py_VISIT(self->factory);
+    Py_CLEAR(self->factory);
     return 0;
 }
 

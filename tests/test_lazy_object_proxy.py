@@ -2,11 +2,14 @@ from __future__ import print_function
 
 import imp
 import pickle
+import platform
 import sys
+import weakref
 from datetime import date
 from datetime import datetime
 from decimal import Decimal
 from functools import partial
+import gc
 
 import pytest
 
@@ -31,7 +34,7 @@ exec_(OBJECTS_CODE, objects.__dict__, objects.__dict__)
 
 
 def load_implementation(name):
-    class mod:
+    class FakeModule:
         subclass = False
         kind = name
         if name == "slots":
@@ -53,7 +56,9 @@ def load_implementation(name):
         else:
             raise RuntimeError("Unsupported param: %r." % name)
 
-    return mod
+        Proxy
+
+    return FakeModule
 
 
 @pytest.fixture(scope="module", params=[
@@ -1742,6 +1747,20 @@ def test_pickling(lazy_object_proxy, obj, pickler, level):
     dump = pickler.dumps(proxy, protocol=level)
     result = pickler.loads(dump)
     assert obj == result
+
+
+@pytest.mark.skipif(platform.python_implementation() != 'CPython',
+                    reason="Interpreter doesn't have reference counting")
+def test_garbage_collection(lazy_object_proxy):
+    leaky = lambda: "foobar"
+    proxy = lazy_object_proxy.Proxy(leaky)
+    leaky.leak = proxy
+    ref = weakref.ref(leaky)
+    assert proxy == "foobar"
+    del leaky
+    del proxy
+    gc.collect()
+    assert ref() is None
 
 
 @pytest.mark.parametrize("name", ["slots", "cext", "simple", "django", "objproxies"])
