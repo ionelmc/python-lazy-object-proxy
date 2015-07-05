@@ -1749,6 +1749,18 @@ def test_pickling(lazy_object_proxy, obj, pickler, level):
     assert obj == result
 
 
+@pytest.mark.parametrize("level", range(pickle.HIGHEST_PROTOCOL + 1))
+def test_pickling_exception(lazy_object_proxy, pickler, level):
+    class BadStuff(Exception):
+        pass
+
+    def trouble_maker():
+        raise BadStuff("foo")
+
+    proxy = lazy_object_proxy.Proxy(trouble_maker)
+    pytest.raises(BadStuff, pickler.dumps, proxy, protocol=level)
+
+
 @pytest.mark.skipif(platform.python_implementation() != 'CPython',
                     reason="Interpreter doesn't have reference counting")
 def test_garbage_collection(lazy_object_proxy):
