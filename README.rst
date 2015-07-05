@@ -57,7 +57,7 @@ lazy-object-proxy
     :target: https://pypi.python.org/pypi/lazy-object-proxy
 
 .. |supported-implementations| image:: https://pypip.in/implementation/lazy-object-proxy/badge.svg?style=flat
-    :alt: Supported imlementations
+    :alt: Supported implementations
     :target: https://pypi.python.org/pypi/lazy-object-proxy
 
 .. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/python-lazy-object-proxy/master.svg?style=flat
@@ -86,3 +86,9 @@ Development
 To run the all tests run::
 
     tox
+
+Acknowledgements
+================
+
+This project is based on some code from `wrapt <https://github.com/GrahamDumpleton/wrapt>`_
+as you can see in the git history.
