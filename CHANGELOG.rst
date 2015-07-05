@@ -2,7 +2,7 @@
 Changelog
 =========
 
-1.1.0 (2015-07-04)
+1.1.0 (2015-07-05)
 ------------------
 
 * Added support for pickling. The pickled value is going to be the wrapped object *without* any Proxy container.
