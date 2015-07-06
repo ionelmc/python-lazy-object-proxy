@@ -295,6 +295,31 @@ def test_class_of_class(lazy_object_proxy):
     assert isinstance(wrapper, type(target))
 
 
+def test_revert_class_proxying(lazy_object_proxy):
+    class ProxyWithOldStyleIsInstance(lazy_object_proxy.Proxy):
+        __class__ = object.__dict__['__class__']
+
+    target = objects.Target()
+    wrapper = ProxyWithOldStyleIsInstance(lambda: target)
+
+    assert wrapper.__class__ is ProxyWithOldStyleIsInstance
+
+    assert isinstance(wrapper, ProxyWithOldStyleIsInstance)
+    assert not isinstance(wrapper, objects.Target)
+    assert not isinstance(wrapper, objects.TargetBaseClass)
+
+    class ProxyWithOldStyleIsInstance2(ProxyWithOldStyleIsInstance):
+        pass
+
+    wrapper = ProxyWithOldStyleIsInstance2(lambda: target)
+
+    assert wrapper.__class__ is ProxyWithOldStyleIsInstance2
+
+    assert isinstance(wrapper, ProxyWithOldStyleIsInstance2)
+    assert not isinstance(wrapper, objects.Target)
+    assert not isinstance(wrapper, objects.TargetBaseClass)
+
+
 def test_class_of_instance(lazy_object_proxy):
     # Test preservation of instance __class__ attribute.
 
