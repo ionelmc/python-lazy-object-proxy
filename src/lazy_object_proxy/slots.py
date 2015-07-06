@@ -137,11 +137,20 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         def __bytes__(self):
             return bytes(self.__wrapped__)
 
-    def __repr__(self):
-        return '<%s at 0x%x for %s at 0x%x>' % (
-            type(self).__name__, id(self),
-            type(self.__wrapped__).__name__,
-            id(self.__wrapped__))
+    def __repr__(self, __getattr__=object.__getattribute__):
+        try:
+            target = __getattr__(self, '__target__')
+        except AttributeError:
+            return '<%s at 0x%x with factory %r>' % (
+                type(self).__name__, id(self),
+                self.__factory__
+            )
+        else:
+            return '<%s at 0x%x wrapping %r at 0x%x with factory %r>' % (
+                type(self).__name__, id(self),
+                target, id(target),
+                self.__factory__
+            )
 
     def __reversed__(self):
         return reversed(self.__wrapped__)

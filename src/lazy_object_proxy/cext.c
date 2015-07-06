@@ -165,17 +165,44 @@ static void Proxy_dealloc(ProxyObject *self)
 
 static PyObject *Proxy_repr(ProxyObject *self)
 {
-    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
-#if PY_MAJOR_VERSION >= 3
-    return PyUnicode_FromFormat("<%s at %p for %s at %p>",
-            Py_TYPE(self)->tp_name, self,
-            Py_TYPE(self->wrapped)->tp_name, self->wrapped);
-#else
-    return PyString_FromFormat("<%s at %p for %s at %p>",
-            Py_TYPE(self)->tp_name, self,
-            Py_TYPE(self->wrapped)->tp_name, self->wrapped);
+#if PY_MAJOR_VERSION < 3
+    PyObject *factory_repr;
+
+    factory_repr = PyObject_Repr(self->factory);
+    if (factory_repr == NULL)
+        return NULL;
 #endif
+
+    if (self->wrapped) {
+#if PY_MAJOR_VERSION >= 3
+        return PyUnicode_FromFormat("<%s at %p wrapping %R at %p with factory %R>",
+                Py_TYPE(self)->tp_name, self,
+                self->wrapped, self->wrapped,
+                self->factory);
+#else
+        PyObject *wrapped_repr;
+
+        wrapped_repr = PyObject_Repr(self->wrapped);
+        if (wrapped_repr == NULL)
+            return NULL;
+
+        return PyString_FromFormat("<%s at %p wrapping %s at %p with factory %s>",
+                Py_TYPE(self)->tp_name, self,
+                PyString_AS_STRING(wrapped_repr), self->wrapped,
+                PyString_AS_STRING(factory_repr));
+#endif
+    } else {
+#if PY_MAJOR_VERSION >= 3
+        return PyUnicode_FromFormat("<%s at %p with factory %R>",
+                Py_TYPE(self)->tp_name, self,
+                self->factory);
+#else
+        return PyString_FromFormat("<%s at %p with factory %s>",
+                Py_TYPE(self)->tp_name, self,
+                PyString_AS_STRING(factory_repr));
+#endif
+    }
 }
 
 /* ------------------------------------------------------------------------- */

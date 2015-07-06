@@ -290,7 +290,7 @@ def test_class_of_class(lazy_object_proxy):
     target = objects.Target
     wrapper = lazy_object_proxy.Proxy(lambda: target)
 
-    assert wrapper.__class__ == target.__class__
+    assert wrapper.__class__ is target.__class__
 
     assert isinstance(wrapper, type(target))
 
@@ -301,7 +301,7 @@ def test_class_of_instance(lazy_object_proxy):
     target = objects.Target()
     wrapper = lazy_object_proxy.Proxy(lambda: target)
 
-    assert wrapper.__class__ == target.__class__
+    assert wrapper.__class__ is target.__class__
 
     assert isinstance(wrapper, objects.Target)
     assert isinstance(wrapper, objects.TargetBaseClass)
@@ -313,7 +313,7 @@ def test_class_of_function(lazy_object_proxy):
     target = objects.target
     wrapper = lazy_object_proxy.Proxy(lambda: target)
 
-    assert wrapper.__class__ == target.__class__
+    assert wrapper.__class__ is target.__class__
 
     assert isinstance(wrapper, type(target))
 
@@ -1427,10 +1427,23 @@ def test_str(lazy_object_proxy):
 
 
 def test_repr(lazy_object_proxy):
-    number = 10
-    value = lazy_object_proxy.Proxy(lambda: number)
+    class Foobar:
+        pass
 
-    assert repr(value).find('Proxy at') != -1
+    value = lazy_object_proxy.Proxy(lambda: Foobar())
+    str(value)
+    representation = repr(value)
+    print(representation)
+    assert 'Proxy at' in representation
+    assert 'lambda' in representation
+    assert 'Foobar' in representation
+
+
+def test_repr_doesnt_consume(lazy_object_proxy):
+    consumed = []
+    value = lazy_object_proxy.Proxy(lambda: consumed.append(1))
+    print(repr(value))
+    assert not consumed
 
 
 def test_derived_new(lazy_object_proxy):

@@ -87,11 +87,18 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     if PY3:
         __bytes__ = make_proxy_method(bytes)
 
-    def __repr__(self):
-        return '<%s at 0x%x for %s at 0x%x>' % (
-            type(self).__name__, id(self),
-            type(self.__wrapped__).__name__,
-            id(self.__wrapped__))
+    def __repr__(self, __getattr__=object.__getattribute__):
+        if '__wrapped__' in self.__dict__:
+            return '<%s at 0x%x wrapping %r at 0x%x with factory %r>' % (
+                type(self).__name__, id(self),
+                self.__wrapped__, id(self.__wrapped__),
+                self.__factory__
+            )
+        else:
+            return '<%s at 0x%x with factory %r>' % (
+                type(self).__name__, id(self),
+                self.__factory__
+            )
 
     __reversed__ = make_proxy_method(reversed)
 
