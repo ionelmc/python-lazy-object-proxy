@@ -98,6 +98,11 @@ def lazy_object_proxy(request, lop_subclass):
     return lop_subclass
 
 
+def test_round(lazy_object_proxy):
+    proxy = lazy_object_proxy.Proxy(lambda: 1.2)
+    assert round(proxy) == 1
+
+
 def test_attributes(lazy_object_proxy):
     def function1(*args, **kwargs):
         return args, kwargs
