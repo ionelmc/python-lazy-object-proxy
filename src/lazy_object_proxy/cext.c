@@ -65,7 +65,6 @@ static PyObject *Proxy__ensure_wrapped(ProxyObject *self)
         if (self->factory) {
             wrapped = PyObject_CallFunctionObjArgs(self->factory, NULL);
             if (wrapped) {
-                Py_INCREF(wrapped);
                 self->wrapped = wrapped;
                 return wrapped;
             } else {
@@ -75,8 +74,6 @@ static PyObject *Proxy__ensure_wrapped(ProxyObject *self)
             PyErr_SetString(PyExc_ValueError, "Proxy hasn't been initiated: __factory__ is missing.");
             return NULL;
         }
-
-
     }
 }
 
@@ -1071,7 +1068,7 @@ static int Proxy_set_wrapped(ProxyObject *self,
         PyObject *value)
 {
     if (value) Py_INCREF(value);
-    if (self->wrapped) Py_DECREF(self->wrapped);
+    Py_XDECREF(self->wrapped);
 
     self->wrapped = value;
 
@@ -1093,7 +1090,7 @@ static int Proxy_set_factory(ProxyObject *self,
         PyObject *value)
 {
     if (value) Py_INCREF(value);
-    Py_DECREF(self->factory);
+    Py_XDECREF(self->factory);
 
     self->factory = value;
 
@@ -1390,9 +1387,6 @@ moduleinit(void)
 #endif
 
     if (module == NULL)
-        return NULL;
-
-    if (PyType_Ready(&Proxy_Type) < 0)
         return NULL;
 
     if (PyType_Ready(&Proxy_Type) < 0)
