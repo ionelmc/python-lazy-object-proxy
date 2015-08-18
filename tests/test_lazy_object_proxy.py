@@ -1818,6 +1818,16 @@ def test_garbage_collection(lazy_object_proxy):
     assert ref() is None
 
 
+@pytest.mark.skipif(platform.python_implementation() != 'CPython',
+                    reason="Interpreter doesn't have reference counting")
+def test_garbage_collection_count(lazy_object_proxy):
+    obj = object()
+    count = sys.getrefcount(obj)
+    for _ in range(100):
+        str(lazy_object_proxy.Proxy(lambda: obj))
+    assert count == sys.getrefcount(obj)
+
+
 @pytest.mark.parametrize("name", ["slots", "cext", "simple", "django", "objproxies"])
 def test_perf(benchmark, name):
     implementation = load_implementation(name)
