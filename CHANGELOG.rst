@@ -2,10 +2,16 @@
 Changelog
 =========
 
+1.2.1 (2015-08-18)
+------------------
+
+* Fix a memory leak (the wrapped object would get bogus references). Contributed by Astrum Kuo in
+  `#10 <https://github.com/ionelmc/python-lazy-object-proxy/pull/10>`_.
+
 1.2.0 (2015-07-06)
 ------------------
 
-* Don't instantiate the object when __repr__ is called. This aids with debugging (allows one to see exactly in 
+* Don't instantiate the object when __repr__ is called. This aids with debugging (allows one to see exactly in
   what state the proxy is).
 
 1.1.0 (2015-07-05)
