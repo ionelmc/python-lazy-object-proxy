@@ -8,7 +8,7 @@ environment:
       PYTHON_HOME: "C:\\Python27"
       PYTHON_VERSION: "2.7"
       PYTHON_ARCH: "32"
-{% for env, config in tox_environments|dictsort %}{% if env.startswith('2.7') or env.startswith('3.4') or env.startswith('3.3') %}
+{% for env, config in tox_environments|dictsort %}{% if env.startswith(('2.7', '3.3', '3.4', '3.5')) %}
     - TOXENV: "{{ env }}"
       TOXPYTHON: "C:\\Python{{ env[:3].replace('.', '') }}\\python.exe"
       WINDOWS_SDK_VERSION: "v7.{{ '1' if env[0] == '3' else '0' }}"
