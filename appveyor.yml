@@ -108,7 +108,7 @@ init:
   - "ECHO %TOXENV%"
   - ps: "ls C:\\Python*"
 install:
-  - "powershell ci\\appveyor-bootstrap.ps1"
+  - "python -u ci\\appveyor-bootstrap.py"
 test_script:
   - "%PYTHON_HOME%\\Scripts\\tox --version"
   - "%PYTHON_HOME%\\Scripts\\virtualenv --version"
