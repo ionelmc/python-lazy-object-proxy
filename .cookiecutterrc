@@ -5,8 +5,11 @@
 
 default_context:
 
+    appveyor:                  'yes'
     c_extension_optional:      'yes'
     c_extension_support:       'yes'
+    codacy:                    'yes'
+    codeclimate:               'yes'
     codecov:                   'yes'
     command_line_interface:    'no'
     coveralls:                 'yes'
@@ -18,12 +21,14 @@ default_context:
     package_name:              'lazy_object_proxy'
     project_name:              'lazy-object-proxy'
     project_short_description: 'A fast and thorough lazy object proxy.'
-    release_date:              '2015-04-11'
+    release_date:              '2015-08-18'
     repo_name:                 'python-lazy-object-proxy'
+    requiresio:                'yes'
     scrutinizer:               'yes'
     sphinx_theme:              'sphinx-py3doc-enhanced-theme'
     test_matrix_configurator:  'yes'
     test_runner:               'pytest'
-    version:                   '1.0.2'
+    travis:                    'yes'
+    version:                   '1.2.1'
     website:                   'http://blog.ionelmc.ro'
     year:                      '2014-2015'

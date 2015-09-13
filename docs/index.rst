@@ -1,5 +1,5 @@
 Welcome to lazy-object-proxy's documentation!
-======================================
+===============================================
 
 Contents:
 
