@@ -42,13 +42,14 @@ lazy-object-proxy
     :target: https://landscape.io/github/ionelmc/python-lazy-object-proxy/master
     :alt: Code Quality Status
 
-.. |codacy| image:: https://img.shields.io/codacy/REPLACE_WITH_PROJECT_ID.svg?style=flat
+.. |codacy| image:: https://img.shields.io/codacy/94771967986e41cf89a8d5e59dbcc29e.svg?style=flat
     :target: https://www.codacy.com/app/ionelmc/python-lazy-object-proxy
     :alt: Codacy Code Quality Status
 
 .. |codeclimate| image:: https://codeclimate.com/github/ionelmc/python-lazy-object-proxy/badges/gpa.svg
    :target: https://codeclimate.com/github/ionelmc/python-lazy-object-proxy
    :alt: CodeClimate Quality Status
+
 .. |version| image:: https://img.shields.io/pypi/v/lazy-object-proxy.svg?style=flat
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/lazy-object-proxy
