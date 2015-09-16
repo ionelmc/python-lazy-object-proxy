@@ -19,18 +19,29 @@
 :: License: CC0 1.0 Universal: http://creativecommons.org/publicdomain/zero/1.0/
 SET COMMAND_TO_RUN=%*
 SET WIN_SDK_ROOT=C:\Program Files\Microsoft SDKs\Windows
+SET WIN_WDK="c:\Program Files (x86)\Windows Kits\10\Include\wdf"
+SET WIN_WDK_TMP="c:\Program Files (x86)\Windows Kits\10\Include\0wdf"
 ECHO SDK: %WINDOWS_SDK_VERSION% ARCH: %PYTHON_ARCH%
 
-IF "%PYTHON_VERSION%"=="3.5" GOTO main
 
-IF "%PYTHON_ARCH%"=="32" GOTO main
+IF "%PYTHON_VERSION%"=="3.5" (
+    IF EXISTS %WIN_WDK% (
+        REM See: https://connect.microsoft.com/VisualStudio/feedback/details/1610302/
+        RENAME %WIN_WDK% %WIN_WDK_TMP%
+    )
+    GOTO main
+)
+
+IF "%PYTHON_ARCH%"=="32" (
+    GOTO main
+)
 
 SET DISTUTILS_USE_SDK=1
 SET MSSdk=1
 "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Setup\WindowsSdkVer.exe" -q -version:%WINDOWS_SDK_VERSION%
-call "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Bin\SetEnv.cmd" /x64 /release
+CALL "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Bin\SetEnv.cmd" /x64 /release
 
 :main
 
 ECHO Executing: %COMMAND_TO_RUN%
-call %COMMAND_TO_RUN% || EXIT 1
+CALL %COMMAND_TO_RUN% || EXIT 1
