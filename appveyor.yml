@@ -14,10 +14,11 @@ init:
   - ps: 'ls C:\Python*'
 install:
   - python -u ci\appveyor-bootstrap.py
-test_script:
-  - '%PYTHON_HOME%\Scripts\tox --version'
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
+  - '%PYTHON_HOME%\Scripts\easy_install --version'
   - '%PYTHON_HOME%\Scripts\pip --version'
+  - '%PYTHON_HOME%\Scripts\tox --version'
+test_script:
   - '%WITH_COMPILER% %PYTHON_HOME%\Scripts\tox'
 after_test:
   - 'IF "%TOXENV:~-8,8%" == "-nocover" %WITH_COMPILER% %TOXPYTHON% setup.py bdist_wheel'

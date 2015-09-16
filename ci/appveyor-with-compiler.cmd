@@ -20,14 +20,13 @@
 SET COMMAND_TO_RUN=%*
 SET WIN_SDK_ROOT=C:\Program Files\Microsoft SDKs\Windows
 SET WIN_WDK="c:\Program Files (x86)\Windows Kits\10\Include\wdf"
-SET WIN_WDK_TMP="c:\Program Files (x86)\Windows Kits\10\Include\0wdf"
 ECHO SDK: %WINDOWS_SDK_VERSION% ARCH: %PYTHON_ARCH%
 
 
 IF "%PYTHON_VERSION%"=="3.5" (
     IF EXIST %WIN_WDK% (
         REM See: https://connect.microsoft.com/VisualStudio/feedback/details/1610302/
-        RENAME %WIN_WDK% %WIN_WDK_TMP%
+        REN %WIN_WDK% 0wdf
     )
     GOTO main
 )
