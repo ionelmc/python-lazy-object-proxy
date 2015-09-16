@@ -10,8 +10,8 @@ environment:
       PYTHON_VERSION: '3.5'
       PYTHON_ARCH: '64'
 init:
-  - ECHO %TOXENV%
-  - ps: ls C:\Python
+  - ps: 'echo $env:TOXENV'
+  - ps: 'ls C:\Python*'
 install:
   - python -u ci\appveyor-bootstrap.py
 test_script:
