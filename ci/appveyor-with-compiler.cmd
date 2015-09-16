@@ -28,7 +28,7 @@ IF "%PYTHON_ARCH%"=="32" GOTO main
 SET DISTUTILS_USE_SDK=1
 SET MSSdk=1
 "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Setup\WindowsSdkVer.exe" -q -version:%WINDOWS_SDK_VERSION%
-"%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Bin\SetEnv.cmd" /x64 /release
+call "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Bin\SetEnv.cmd" /x64 /release
 
 :main
 
