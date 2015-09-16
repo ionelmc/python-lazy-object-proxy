@@ -25,7 +25,7 @@ ECHO SDK: %WINDOWS_SDK_VERSION% ARCH: %PYTHON_ARCH%
 
 
 IF "%PYTHON_VERSION%"=="3.5" (
-    IF EXISTS %WIN_WDK% (
+    IF EXIST %WIN_WDK% (
         REM See: https://connect.microsoft.com/VisualStudio/feedback/details/1610302/
         RENAME %WIN_WDK% %WIN_WDK_TMP%
     )
