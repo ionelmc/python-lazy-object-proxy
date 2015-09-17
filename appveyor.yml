@@ -8,6 +8,30 @@ environment:
       PYTHON_HOME: C:\Python27
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '32'
+    - TOXENV: '2.6,codecov'
+      TOXPYTHON: C:\python26\python.exe
+      WINDOWS_SDK_VERSION: v7.0
+      PYTHON_HOME: C:\python26
+      PYTHON_VERSION: '2.6'
+      PYTHON_ARCH: '32'
+    - TOXENV: '2.6,codecov'
+      TOXPYTHON: C:\python26-x64\python.exe
+      WINDOWS_SDK_VERSION: v7.0
+      PYTHON_HOME: C:\python26-x64
+      PYTHON_VERSION: '2.6'
+      PYTHON_ARCH: '64'
+    - TOXENV: '2.6-nocover'
+      TOXPYTHON: C:\python26\python.exe
+      WINDOWS_SDK_VERSION: v7.0
+      PYTHON_HOME: C:\python26
+      PYTHON_VERSION: '2.6'
+      PYTHON_ARCH: '32'
+    - TOXENV: '2.6-nocover'
+      TOXPYTHON: C:\python26-x64\python.exe
+      WINDOWS_SDK_VERSION: v7.0
+      PYTHON_HOME: C:\python26-x64
+      PYTHON_VERSION: '2.6'
+      PYTHON_ARCH: '64'
     - TOXENV: '2.7,codecov'
       TOXPYTHON: C:\python27\python.exe
       WINDOWS_SDK_VERSION: v7.0
