@@ -1,7 +1,3 @@
-__version__ = "1.2.1"
-
-__all__ = "Proxy",
-
 try:
     import copy_reg as copyreg
 except ImportError:
@@ -18,3 +14,7 @@ except ImportError:
     from .slots import Proxy
 else:
     copyreg.constructor(identity)
+
+__version__ = "1.2.1"
+
+__all__ = "Proxy",
