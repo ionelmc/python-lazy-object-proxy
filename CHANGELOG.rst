@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.2.2 (2016-04-14)
+------------------
+
+* Added `manylinux <https://www.python.org/dev/peps/pep-0513/>`_ wheels.
+* Minor cleanup in readme.
+
 1.2.1 (2015-08-18)
 ------------------
 
