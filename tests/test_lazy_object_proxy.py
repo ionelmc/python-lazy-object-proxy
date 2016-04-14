@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import gc
 import imp
 import pickle
 import platform
@@ -9,11 +10,12 @@ from datetime import date
 from datetime import datetime
 from decimal import Decimal
 from functools import partial
-import gc
 
 import pytest
 
-from compat import PY2, PY3, exec_
+from compat import PY2
+from compat import PY3
+from compat import exec_
 
 PYPY = '__pypy__' in sys.builtin_module_names
 
