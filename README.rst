@@ -1,6 +1,8 @@
-=================
-lazy-object-proxy
-=================
+========
+Overview
+========
+
+.. start-badges
 
 .. list-table::
     :stub-columns: 1
@@ -42,7 +44,7 @@ lazy-object-proxy
     :target: https://landscape.io/github/ionelmc/python-lazy-object-proxy/master
     :alt: Code Quality Status
 
-.. |codacy| image:: https://img.shields.io/codacy/94771967986e41cf89a8d5e59dbcc29e.svg?style=flat
+.. |codacy| image:: https://img.shields.io/codacy/REPLACE_WITH_PROJECT_ID.svg?style=flat
     :target: https://www.codacy.com/app/ionelmc/python-lazy-object-proxy
     :alt: Codacy Code Quality Status
 
@@ -73,6 +75,9 @@ lazy-object-proxy
 .. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/python-lazy-object-proxy/master.svg?style=flat
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/ionelmc/python-lazy-object-proxy/
+
+
+.. end-badges
 
 A fast and thorough lazy object proxy.
 

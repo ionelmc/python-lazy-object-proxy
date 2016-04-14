@@ -10,122 +10,109 @@ environment:
       PYTHON_HOME: C:\Python27
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '32'
-    - TOXENV: '2.6,codecov'
-      TOXPYTHON: C:\python26\python.exe
-      WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\python26
-      PYTHON_VERSION: '2.6'
-      PYTHON_ARCH: '32'
-    - TOXENV: '2.6,codecov'
-      TOXPYTHON: C:\python26-x64\python.exe
-      WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\python26-x64
-      PYTHON_VERSION: '2.6'
-      PYTHON_ARCH: '64'
-    - TOXENV: '2.6-nocover'
-      TOXPYTHON: C:\python26\python.exe
-      WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\python26
-      PYTHON_VERSION: '2.6'
-      PYTHON_ARCH: '32'
-    - TOXENV: '2.6-nocover'
-      TOXPYTHON: C:\python26-x64\python.exe
-      WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\python26-x64
-      PYTHON_VERSION: '2.6'
-      PYTHON_ARCH: '64'
+
     - TOXENV: '2.7,codecov'
-      TOXPYTHON: C:\python27\python.exe
-      WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\python27
+      TOXPYTHON: C:\Python27\python.exe
+      PYTHON_HOME: C:\Python27
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '32'
+
     - TOXENV: '2.7,codecov'
-      TOXPYTHON: C:\python27-x64\python.exe
+      TOXPYTHON: C:\Python27-x64\python.exe
       WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\python27-x64
+      PYTHON_HOME: C:\Python27-x64
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '64'
+
     - TOXENV: '2.7-nocover'
-      TOXPYTHON: C:\python27\python.exe
-      WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\python27
+      TOXPYTHON: C:\Python27\python.exe
+      PYTHON_HOME: C:\Python27
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '32'
+
     - TOXENV: '2.7-nocover'
-      TOXPYTHON: C:\python27-x64\python.exe
+      TOXPYTHON: C:\Python27-x64\python.exe
       WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\python27-x64
+      PYTHON_HOME: C:\Python27-x64
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '64'
+
     - TOXENV: '3.3,codecov'
-      TOXPYTHON: C:\python33\python.exe
-      WINDOWS_SDK_VERSION: v7.1
-      PYTHON_HOME: C:\python33
+      TOXPYTHON: C:\Python33\python.exe
+      PYTHON_HOME: C:\Python33
       PYTHON_VERSION: '3.3'
       PYTHON_ARCH: '32'
+
     - TOXENV: '3.3,codecov'
-      TOXPYTHON: C:\python33-x64\python.exe
+      TOXPYTHON: C:\Python33-x64\python.exe
       WINDOWS_SDK_VERSION: v7.1
-      PYTHON_HOME: C:\python33-x64
+      PYTHON_HOME: C:\Python33-x64
       PYTHON_VERSION: '3.3'
       PYTHON_ARCH: '64'
+
     - TOXENV: '3.3-nocover'
-      TOXPYTHON: C:\python33\python.exe
-      WINDOWS_SDK_VERSION: v7.1
-      PYTHON_HOME: C:\python33
+      TOXPYTHON: C:\Python33\python.exe
+      PYTHON_HOME: C:\Python33
       PYTHON_VERSION: '3.3'
       PYTHON_ARCH: '32'
+
     - TOXENV: '3.3-nocover'
-      TOXPYTHON: C:\python33-x64\python.exe
+      TOXPYTHON: C:\Python33-x64\python.exe
       WINDOWS_SDK_VERSION: v7.1
-      PYTHON_HOME: C:\python33-x64
+      PYTHON_HOME: C:\Python33-x64
       PYTHON_VERSION: '3.3'
       PYTHON_ARCH: '64'
+
     - TOXENV: '3.4,codecov'
-      TOXPYTHON: C:\python34\python.exe
-      WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\python34
+      TOXPYTHON: C:\Python34\python.exe
+      PYTHON_HOME: C:\Python34
       PYTHON_VERSION: '3.4'
       PYTHON_ARCH: '32'
+
     - TOXENV: '3.4,codecov'
-      TOXPYTHON: C:\python34-x64\python.exe
+      TOXPYTHON: C:\Python34-x64\python.exe
       WINDOWS_SDK_VERSION: v7.1
-      PYTHON_HOME: C:\python34-x64
+      PYTHON_HOME: C:\Python34-x64
       PYTHON_VERSION: '3.4'
       PYTHON_ARCH: '64'
+
     - TOXENV: '3.4-nocover'
-      TOXPYTHON: C:\python34\python.exe
-      WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\python34
+      TOXPYTHON: C:\Python34\python.exe
+      PYTHON_HOME: C:\Python34
       PYTHON_VERSION: '3.4'
       PYTHON_ARCH: '32'
+
     - TOXENV: '3.4-nocover'
-      TOXPYTHON: C:\python34-x64\python.exe
+      TOXPYTHON: C:\Python34-x64\python.exe
       WINDOWS_SDK_VERSION: v7.1
-      PYTHON_HOME: C:\python34-x64
+      PYTHON_HOME: C:\Python34-x64
       PYTHON_VERSION: '3.4'
       PYTHON_ARCH: '64'
+
     - TOXENV: '3.5,codecov'
-      TOXPYTHON: C:\python35\python.exe
-      PYTHON_HOME: C:\python35
+      TOXPYTHON: C:\Python35\python.exe
+      PYTHON_HOME: C:\Python35
       PYTHON_VERSION: '3.5'
       PYTHON_ARCH: '32'
+
     - TOXENV: '3.5,codecov'
-      TOXPYTHON: C:\python35-x64\python.exe
-      PYTHON_HOME: C:\python35-x64
+      TOXPYTHON: C:\Python35-x64\python.exe
+      PYTHON_HOME: C:\Python35-x64
       PYTHON_VERSION: '3.5'
       PYTHON_ARCH: '64'
+
     - TOXENV: '3.5-nocover'
-      TOXPYTHON: C:\python35\python.exe
-      PYTHON_HOME: C:\python35
+      TOXPYTHON: C:\Python35\python.exe
+      PYTHON_HOME: C:\Python35
       PYTHON_VERSION: '3.5'
       PYTHON_ARCH: '32'
+
     - TOXENV: '3.5-nocover'
-      TOXPYTHON: C:\python35-x64\python.exe
-      PYTHON_HOME: C:\python35-x64
+      TOXPYTHON: C:\Python35-x64\python.exe
+      PYTHON_HOME: C:\Python35-x64
       PYTHON_VERSION: '3.5'
       PYTHON_ARCH: '64'
+
 init:
   - ps: echo $env:TOXENV
   - ps: ls C:\Python*
@@ -139,13 +126,14 @@ test_script:
   - '%WITH_COMPILER% %PYTHON_HOME%\Scripts\tox'
 
 after_test:
-  - IF "%TOXENV:~-8,8%" == "-nocover" %WITH_COMPILER% %TOXPYTHON% setup.py bdist_wheel
+  - IF "%TOXENV:~-8,8%" == "-nocov" %WITH_COMPILER% %TOXPYTHON% setup.py bdist_wheel
 
 on_failure:
   - ps: dir "env:"
   - ps: get-content .tox\*\log\*
 artifacts:
   - path: dist\*
-### To enable remote debugging uncomment this:
-#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
+### To enable remote debugging uncomment this (also, see: http://www.appveyor.com/docs/how-to/rdp-to-build-worker):
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

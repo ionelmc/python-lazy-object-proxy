@@ -1,7 +1,6 @@
-Welcome to lazy-object-proxy's documentation!
-===============================================
-
-Contents:
+========
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
