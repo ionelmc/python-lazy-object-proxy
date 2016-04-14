@@ -34,7 +34,6 @@ extlinks = {
     'issue': ('https://github.com/ionelmc/python-lazy-object-proxy/issues/%s', '#'),
     'pr': ('https://github.com/ionelmc/python-lazy-object-proxy/pull/%s', 'PR #'),
 }
->>>>>>> f0a6974... Upgrade skel.
 import sphinx_py3doc_enhanced_theme
 html_theme = "sphinx_py3doc_enhanced_theme"
 html_theme_path = [sphinx_py3doc_enhanced_theme.get_html_theme_path()]
