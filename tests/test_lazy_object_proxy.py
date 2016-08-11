@@ -1904,3 +1904,42 @@ def test_proto(benchmark, prototype):
     obj = "foobar"
     proxied = prototype(lambda: obj)
     assert benchmark(partial(str, proxied)) == obj
+
+
+def test_subclassing_with_local_attr(lazy_object_proxy):
+    class Foo:
+        pass
+    called = []
+
+    class LazyProxy(lazy_object_proxy.Proxy):
+        name = None
+
+        def __init__(self, func, **lazy_attr):
+            super(LazyProxy, self).__init__(func)
+            for attr, val in lazy_attr.items():
+                setattr(self, attr, val)
+
+    proxy = LazyProxy(lambda: called.append(1) or Foo(), name='bar')
+    assert proxy.name == 'bar'
+    assert not called
+
+
+def test_subclassing_dynamic_with_local_attr(lazy_object_proxy):
+    if lazy_object_proxy.kind == 'cext':
+        pytest.skip("Not possible.")
+
+    class Foo:
+        pass
+
+    called = []
+
+    class LazyProxy(lazy_object_proxy.Proxy):
+        def __init__(self, func, **lazy_attr):
+            super(LazyProxy, self).__init__(func)
+            for attr, val in lazy_attr.items():
+                object.__setattr__(self, attr, val)
+
+    proxy = LazyProxy(lambda: called.append(1) or Foo(), name='bar')
+    assert proxy.name == 'bar'
+    assert not called
+
