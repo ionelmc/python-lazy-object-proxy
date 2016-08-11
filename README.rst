@@ -93,7 +93,7 @@ Installation
 Documentation
 =============
 
-https://python-lazy-object-proxy.readthedocs.org/
+https://python-lazy-object-proxy.readthedocs.io/
 
 Development
 ===========

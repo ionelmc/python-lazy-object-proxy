@@ -9,7 +9,7 @@ cookiecutter:
     codeclimate: 'yes'
     codecov: 'yes'
     command_line_interface: 'no'
-    command_line_interface_bin_name: lazy-object-proxy
+    command_line_interface_bin_name: '-'
     coveralls: 'yes'
     distribution_name: lazy-object-proxy
     email: contact@ionelmc.ro
