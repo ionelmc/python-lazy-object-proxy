@@ -418,7 +418,7 @@ def test_function_no_args(lazy_object_proxy):
 
     result = wrapper()
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_function_args(lazy_object_proxy):
@@ -432,7 +432,7 @@ def test_function_args(lazy_object_proxy):
 
     result = wrapper(*_args)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_function_kwargs(lazy_object_proxy):
@@ -446,7 +446,7 @@ def test_function_kwargs(lazy_object_proxy):
 
     result = wrapper(**_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_function_args_plus_kwargs(lazy_object_proxy):
@@ -460,7 +460,7 @@ def test_function_args_plus_kwargs(lazy_object_proxy):
 
     result = wrapper(*_args, **_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_instancemethod_no_args(lazy_object_proxy):
@@ -475,7 +475,7 @@ def test_instancemethod_no_args(lazy_object_proxy):
 
     result = wrapper()
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_instancemethod_args(lazy_object_proxy):
@@ -490,7 +490,7 @@ def test_instancemethod_args(lazy_object_proxy):
 
     result = wrapper(*_args)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_instancemethod_kwargs(lazy_object_proxy):
@@ -505,7 +505,7 @@ def test_instancemethod_kwargs(lazy_object_proxy):
 
     result = wrapper(**_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_instancemethod_args_plus_kwargs(lazy_object_proxy):
@@ -520,7 +520,7 @@ def test_instancemethod_args_plus_kwargs(lazy_object_proxy):
 
     result = wrapper(*_args, **_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_instancemethod_via_class_no_args(lazy_object_proxy):
@@ -535,7 +535,7 @@ def test_instancemethod_via_class_no_args(lazy_object_proxy):
 
     result = wrapper(Class())
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_instancemethod_via_class_args(lazy_object_proxy):
@@ -550,7 +550,7 @@ def test_instancemethod_via_class_args(lazy_object_proxy):
 
     result = wrapper(Class(), *_args)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_instancemethod_via_class_kwargs(lazy_object_proxy):
@@ -565,7 +565,7 @@ def test_instancemethod_via_class_kwargs(lazy_object_proxy):
 
     result = wrapper(Class(), **_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_instancemethod_via_class_args_plus_kwargs(lazy_object_proxy):
@@ -580,7 +580,7 @@ def test_instancemethod_via_class_args_plus_kwargs(lazy_object_proxy):
 
     result = wrapper(Class(), *_args, **_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_classmethod_no_args(lazy_object_proxy):
@@ -596,7 +596,7 @@ def test_classmethod_no_args(lazy_object_proxy):
 
     result = wrapper()
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_classmethod_args(lazy_object_proxy):
@@ -612,7 +612,7 @@ def test_classmethod_args(lazy_object_proxy):
 
     result = wrapper(*_args)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_classmethod_kwargs(lazy_object_proxy):
@@ -628,7 +628,7 @@ def test_classmethod_kwargs(lazy_object_proxy):
 
     result = wrapper(**_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_classmethod_args_plus_kwargs(lazy_object_proxy):
@@ -644,7 +644,7 @@ def test_classmethod_args_plus_kwargs(lazy_object_proxy):
 
     result = wrapper(*_args, **_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_classmethod_via_class_no_args(lazy_object_proxy):
@@ -660,7 +660,7 @@ def test_classmethod_via_class_no_args(lazy_object_proxy):
 
     result = wrapper()
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_classmethod_via_class_args(lazy_object_proxy):
@@ -676,7 +676,7 @@ def test_classmethod_via_class_args(lazy_object_proxy):
 
     result = wrapper(*_args)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_classmethod_via_class_kwargs(lazy_object_proxy):
@@ -692,7 +692,7 @@ def test_classmethod_via_class_kwargs(lazy_object_proxy):
 
     result = wrapper(**_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_classmethod_via_class_args_plus_kwargs(lazy_object_proxy):
@@ -708,7 +708,7 @@ def test_classmethod_via_class_args_plus_kwargs(lazy_object_proxy):
 
     result = wrapper(*_args, **_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_staticmethod_no_args(lazy_object_proxy):
@@ -724,7 +724,7 @@ def test_staticmethod_no_args(lazy_object_proxy):
 
     result = wrapper()
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_staticmethod_args(lazy_object_proxy):
@@ -740,7 +740,7 @@ def test_staticmethod_args(lazy_object_proxy):
 
     result = wrapper(*_args)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_staticmethod_kwargs(lazy_object_proxy):
@@ -756,7 +756,7 @@ def test_staticmethod_kwargs(lazy_object_proxy):
 
     result = wrapper(**_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_staticmethod_args_plus_kwargs(lazy_object_proxy):
@@ -772,7 +772,7 @@ def test_staticmethod_args_plus_kwargs(lazy_object_proxy):
 
     result = wrapper(*_args, **_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_staticmethod_via_class_no_args(lazy_object_proxy):
@@ -788,7 +788,7 @@ def test_staticmethod_via_class_no_args(lazy_object_proxy):
 
     result = wrapper()
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_staticmethod_via_class_args(lazy_object_proxy):
@@ -804,7 +804,7 @@ def test_staticmethod_via_class_args(lazy_object_proxy):
 
     result = wrapper(*_args)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_staticmethod_via_class_kwargs(lazy_object_proxy):
@@ -820,7 +820,7 @@ def test_staticmethod_via_class_kwargs(lazy_object_proxy):
 
     result = wrapper(**_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_staticmethod_via_class_args_plus_kwargs(lazy_object_proxy):
@@ -836,7 +836,7 @@ def test_staticmethod_via_class_args_plus_kwargs(lazy_object_proxy):
 
     result = wrapper(*_args, **_kwargs)
 
-    assert result, (_args == _kwargs)
+    assert result == (_args, _kwargs)
 
 
 def test_iteration(lazy_object_proxy):
