@@ -83,9 +83,21 @@ A fast and thorough lazy object proxy.
 
 * Free software: BSD license
 
-Note that this is based on `wrapt`_'s ObjectProxy with one big change: it calls a function the first time the proxy object is used, while `wrapt.ObjectProxy` just forwards the method calls to the target object.
+Note that this is based on `wrapt`_'s ObjectProxy with one big change: it calls a function the first time the proxy object is
+used, while `wrapt.ObjectProxy` just forwards the method calls to the target object.
 
-In other words, you use `lazy-object-proxy` when you only have the object way later and you use `wrapt.ObjectProxy` when you want to override few methods (by subclassing) and forward everything else to the target object.
+In other words, you use `lazy-object-proxy` when you only have the object way later and you use `wrapt.ObjectProxy` when you
+want to override few methods (by subclassing) and forward everything else to the target object.
+
+Example::
+
+    def expensive_func():
+        # create expensive object
+        return stuff
+
+    obj = lazy_object_proxy.Proxy(expensive_func)
+    # function is called only when object is actually used
+    print(obj.foobar)  # now expensive_func is called
 
 Installation
 ============
