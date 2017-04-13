@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.2.3 (unreleased)
+------------------
+
+* Speed up arithmetic operations involving ``Proxy`` subclasses.
+
 1.2.2 (2016-04-14)
 ------------------
 
