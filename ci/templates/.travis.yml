@@ -11,7 +11,7 @@ env:
 matrix:
   include:
 {%- for env, config in tox_environments|dictsort %}{{ '' }}
-    - python: '{{ '{0[0]}-5.4'.format(env.split('-')) if env.startswith('pypy') else env.split('-')[0] }}'
+    - python: '{{ env.split('-')[0] }}'
       env:
         - TOXENV={{ env }}{% if config.cover %},report,extension-coveralls,coveralls,codecov{% endif -%}
 {% endfor %}
@@ -26,6 +26,27 @@ install:
   - easy_install --version
   - pip --version
   - tox --version
+  - |
+    set -ex
+    if [[ $TRAVIS_PYTHON_VERSION == 'pypy' ]]; then
+        (cd $HOME
+         wget https://bitbucket.org/squeaky/portable-pypy/downloads/pypy-5.7.1-linux_x86_64-portable.tar.bz2
+         tar xf pypy-5.7.1-linux_x86_64-portable.tar.bz2
+         pypy-5.7.1-linux_x86_64-portable/bin/pypy -m ensurepip
+         pypy-5.7.1-linux_x86_64-portable/bin/pypy -m pip install -U virtualenv)
+        export PATH=$HOME/pypy-5.7.1-linux_x86_64-portable/bin/:$PATH
+        export TOXPYTHON=$HOME/pypy-5.7.1-linux_x86_64-portable/bin/pypy
+    fi
+    if [[ $TRAVIS_PYTHON_VERSION == 'pypy3' ]]; then
+        (cd $HOME
+         wget https://bitbucket.org/squeaky/portable-pypy/downloads/pypy3.5-5.7.1-beta-linux_x86_64-portable.tar.bz2
+         tar xf pypy3.5-5.7.1-beta-linux_x86_64-portable.tar.bz2
+         pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/pypy3 -m ensurepip
+         pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/pypy3 -m pip install -U virtualenv)
+        export PATH=$HOME/pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/:$PATH
+        export TOXPYTHON=$HOME/pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/pypy3
+    fi
+    set +x
 script:
   - tox -v
 after_failure:
