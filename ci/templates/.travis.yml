@@ -1,6 +1,6 @@
 language: python
-python: '3.5'
 sudo: false
+cache: pip
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
@@ -8,8 +8,12 @@ env:
   matrix:
     - TOXENV=check
     - TOXENV=docs
-{% for env, config in tox_environments|dictsort %}{{ '' }}
-    - TOXENV={{ env }}{% if config.cover %},extension-coveralls,coveralls,codecov{% endif -%}
+matrix:
+  include:
+{%- for env, config in tox_environments|dictsort %}{{ '' }}
+    - python: '{{ '{0[0]}-5.4'.format(env.split('-')) if env.startswith('pypy') else env.split('-')[0] }}'
+      env:
+        - TOXENV={{ env }}{% if config.cover %},report,extension-coveralls,coveralls,codecov{% endif -%}
 {% endfor %}
 
 before_install:
@@ -27,11 +31,6 @@ script:
 after_failure:
   - more .tox/log/* | cat
   - more .tox/*/log/* | cat
-before_cache:
-  - rm -rf $HOME/.cache/pip/log
-cache:
-  directories:
-    - $HOME/.cache/pip
 notifications:
   email:
     on_success: never
