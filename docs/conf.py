@@ -26,7 +26,7 @@ project = 'lazy-object-proxy'
 year = '2014-2017'
 author = 'Ionel Cristian Mărieș'
 copyright = '{0}, {1}'.format(year, author)
-version = release = '1.2.2'
+version = release = '1.3.0'
 
 pygments_style = 'trac'
 templates_path = ['.']

@@ -57,9 +57,9 @@ Overview
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/lazy-object-proxy
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-lazy-object-proxy/v1.2.2.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-lazy-object-proxy/v1.3.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/ionelmc/python-lazy-object-proxy/compare/v1.2.2...master
+    :target: https://github.com/ionelmc/python-lazy-object-proxy/compare/v1.3.0...master
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/lazy-object-proxy.svg
     :alt: PyPI Wheel
