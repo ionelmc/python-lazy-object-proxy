@@ -2,10 +2,10 @@
 Changelog
 =========
 
-1.2.3 (unreleased)
+1.3.0 (2017-05-02)
 ------------------
 
-* Speed up arithmetic operations involving ``Proxy`` subclasses.
+* Speed up arithmetic operations involving ``cext.Proxy`` subclasses.
 
 1.2.2 (2016-04-14)
 ------------------
