@@ -16,7 +16,6 @@ environment:
       PYTHON_HOME: C:\{{ config.python.replace('.', '').capitalize() }}
       PYTHON_VERSION: '{{ config.python[-3:] }}'
       PYTHON_ARCH: '32'
-
     - TOXENV: '{{ env }}{% if config.cover %},codecov{% endif %}'
       TOXPYTHON: C:\{{ config.python.replace('.', '').capitalize() }}-x64\python.exe
       {%- if config.python != 'python3.5' %}
