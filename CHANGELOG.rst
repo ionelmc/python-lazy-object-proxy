@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.3.1 (2017-05-05)
+------------------
+
+* Fix broken release (``sdist`` had a broken ``MANIFEST.in``).
+
 1.3.0 (2017-05-02)
 ------------------
 
