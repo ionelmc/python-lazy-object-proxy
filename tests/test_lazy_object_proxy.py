@@ -1576,7 +1576,7 @@ def test_override_getattr(lazy_object_proxy):
 
 
 skipcallable = pytest.mark.xfail(
-    reason="Don't know how to make this work. This tests the existance of the __call__ method.")
+    reason="Don't know how to make this work. This tests the existence of the __call__ method.")
 
 
 @skipcallable
