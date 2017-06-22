@@ -92,13 +92,22 @@ want to override few methods (by subclassing) and forward everything else to the
 
 Example::
 
+    import lazy_object_proxy
+
     def expensive_func():
-        # create expensive object
-        return stuff
+        from time import sleep
+        print('starting calculation')
+        # just as example for a very slow computation
+        sleep(2)
+        print('finished calculation')
+        # return the result of the calculation
+        return 10
 
     obj = lazy_object_proxy.Proxy(expensive_func)
     # function is called only when object is actually used
-    print(obj.foobar)  # now expensive_func is called
+    print(obj)  # now expensive_func is called
+
+    print(obj)  # the result without calling the expensive_func
 
 Installation
 ============
