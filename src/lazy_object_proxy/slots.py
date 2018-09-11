@@ -141,12 +141,12 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         try:
             target = __getattr__(self, '__target__')
         except AttributeError:
-            return '<%s at 0x%x with factory %r>' % (
+            return '<{} at 0x{:x} with factory {!r}>'.format(
                 type(self).__name__, id(self),
                 self.__factory__
             )
         else:
-            return '<%s at 0x%x wrapping %r at 0x%x with factory %r>' % (
+            return '<{} at 0x{:x} wrapping {!r} at 0x{:x} with factory {!r}>'.format(
                 type(self).__name__, id(self),
                 target, id(target),
                 self.__factory__

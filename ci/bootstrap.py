@@ -12,7 +12,7 @@ from os.path import join
 
 if __name__ == "__main__":
     base_path = dirname(dirname(abspath(__file__)))
-    print("Project path: {0}".format(base_path))
+    print("Project path: {}".format(base_path))
     env_path = join(base_path, ".tox", "bootstrap")
     if sys.platform == "win32":
         bin_path = join(env_path, "Scripts")
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     if not exists(env_path):
         import subprocess
 
-        print("Making bootstrap env in: {0} ...".format(env_path))
+        print("Making bootstrap env in: {} ...".format(env_path))
         try:
             subprocess.check_call(["virtualenv", env_path])
         except subprocess.CalledProcessError:

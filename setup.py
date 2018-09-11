@@ -62,7 +62,7 @@ setup(
     version='1.3.1',
     license='BSD',
     description='A fast and thorough lazy object proxy.',
-    long_description='%s\n%s' % (
+    long_description='{}\n{}'.format(
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
         re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
     ),
