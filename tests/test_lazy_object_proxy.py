@@ -12,7 +12,6 @@ from decimal import Decimal
 from functools import partial
 
 import pytest
-
 from compat import PY2
 from compat import PY3
 from compat import exec_
@@ -1942,4 +1941,3 @@ def test_subclassing_dynamic_with_local_attr(lazy_object_proxy):
     proxy = LazyProxy(lambda: called.append(1) or Foo(), name='bar')
     assert proxy.name == 'bar'
     assert not called
-
