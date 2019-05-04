@@ -23,9 +23,9 @@ if os.getenv('SPELLCHECK'):
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'lazy-object-proxy'
-year = '2014-2017'
+year = '2014-2019'
 author = 'Ionel Cristian Mărieș'
-copyright = '{}, {}'.format(year, author)
+copyright = '{0}, {1}'.format(year, author)
 version = release = '1.3.1'
 
 pygments_style = 'trac'
@@ -47,7 +47,7 @@ html_split_index = False
 html_sidebars = {
    '**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html'],
 }
-html_short_title = '{}-{}'.format(project, version)
+html_short_title = '%s-%s' % (project, version)
 
 napoleon_use_ivar = True
 napoleon_use_rtype = False

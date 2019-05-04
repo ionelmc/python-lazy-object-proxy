@@ -1,49 +1,57 @@
 language: python
-sudo: false
-cache: pip
+dist: xenial
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
-  matrix:
-    - TOXENV=check
-    - TOXENV=docs
 matrix:
   include:
-    - python: '2.7'
-      env:
-        - TOXENV=2.7-cover,report,extension-coveralls,coveralls,codecov
-    - python: '2.7'
-      env:
-        - TOXENV=2.7-nocov
-    - python: '3.4'
-      env:
-        - TOXENV=3.4-cover,report,extension-coveralls,coveralls,codecov
-    - python: '3.4'
-      env:
-        - TOXENV=3.4-nocov
-    - python: '3.5'
-      env:
-        - TOXENV=3.5-cover,report,extension-coveralls,coveralls,codecov
-    - python: '3.5'
-      env:
-        - TOXENV=3.5-nocov
     - python: '3.6'
       env:
-        - TOXENV=3.6-cover,report,extension-coveralls,coveralls,codecov
+        - TOXENV=check
     - python: '3.6'
       env:
-        - TOXENV=3.6-nocov
-    - python: 'pypy'
+        - TOXENV=docs
+    - python: '2.7'
+      env:
+        - TOXENV=py27-cover,report,extension-coveralls,coveralls,codecov
+    - python: '2.7'
+      env:
+        - TOXENV=py27-nocov
+    - python: '3.4'
+      env:
+        - TOXENV=py34-cover,report,extension-coveralls,coveralls,codecov
+    - python: '3.4'
+      env:
+        - TOXENV=py34-nocov
+    - python: '3.5'
+      env:
+        - TOXENV=py35-cover,report,extension-coveralls,coveralls,codecov
+    - python: '3.5'
+      env:
+        - TOXENV=py35-nocov
+    - python: '3.6'
+      env:
+        - TOXENV=py36-cover,report,extension-coveralls,coveralls,codecov
+    - python: '3.6'
+      env:
+        - TOXENV=py36-nocov
+    - python: '3.7'
+      env:
+        - TOXENV=py37-cover,report,extension-coveralls,coveralls,codecov
+    - python: '3.7'
+      env:
+        - TOXENV=py37-nocov
+    - python: 'pypy2.7-6.0'
       env:
         - TOXENV=pypy-cover,report,extension-coveralls,coveralls,codecov
-    - python: 'pypy'
+    - python: 'pypy2.7-6.0'
       env:
         - TOXENV=pypy-nocov
-    - python: 'pypy3'
+    - python: 'pypy3.5-6.0'
       env:
         - TOXENV=pypy3-cover,report,extension-coveralls,coveralls,codecov
-    - python: 'pypy3'
+    - python: 'pypy3.5-6.0'
       env:
         - TOXENV=pypy3-nocov
 before_install:
@@ -51,32 +59,11 @@ before_install:
   - uname -a
   - lsb_release -a
 install:
-  - pip install -U tox virtualenv
+  - pip install tox
   - virtualenv --version
   - easy_install --version
   - pip --version
   - tox --version
-  - |
-    set -ex
-    if [[ $TRAVIS_PYTHON_VERSION == 'pypy' ]]; then
-        (cd $HOME
-         wget https://bitbucket.org/squeaky/portable-pypy/downloads/pypy-5.7.1-linux_x86_64-portable.tar.bz2
-         tar xf pypy-5.7.1-linux_x86_64-portable.tar.bz2
-         pypy-5.7.1-linux_x86_64-portable/bin/pypy -m ensurepip
-         pypy-5.7.1-linux_x86_64-portable/bin/pypy -m pip install -U virtualenv)
-        export PATH=$HOME/pypy-5.7.1-linux_x86_64-portable/bin/:$PATH
-        export TOXPYTHON=$HOME/pypy-5.7.1-linux_x86_64-portable/bin/pypy
-    fi
-    if [[ $TRAVIS_PYTHON_VERSION == 'pypy3' ]]; then
-        (cd $HOME
-         wget https://bitbucket.org/squeaky/portable-pypy/downloads/pypy3.5-5.7.1-beta-linux_x86_64-portable.tar.bz2
-         tar xf pypy3.5-5.7.1-beta-linux_x86_64-portable.tar.bz2
-         pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/pypy3 -m ensurepip
-         pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/pypy3 -m pip install -U virtualenv)
-        export PATH=$HOME/pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/:$PATH
-        export TOXPYTHON=$HOME/pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/pypy3
-    fi
-    set +x
 script:
   - tox -v
 after_failure:

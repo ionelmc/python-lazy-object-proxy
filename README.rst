@@ -12,11 +12,9 @@ Overview
     * - tests
       - | |travis| |appveyor| |requires|
         | |coveralls| |codecov|
-        | |landscape| |scrutinizer| |codacy| |codeclimate|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
-
 .. |docs| image:: https://readthedocs.org/projects/python-lazy-object-proxy/badge/?style=flat
     :target: https://readthedocs.org/projects/python-lazy-object-proxy
     :alt: Documentation Status
@@ -41,21 +39,9 @@ Overview
     :alt: Coverage Status
     :target: https://codecov.io/github/ionelmc/python-lazy-object-proxy
 
-.. |landscape| image:: https://landscape.io/github/ionelmc/python-lazy-object-proxy/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/ionelmc/python-lazy-object-proxy/master
-    :alt: Code Quality Status
-
-.. |codacy| image:: https://img.shields.io/codacy/REPLACE_WITH_PROJECT_ID.svg
-    :target: https://www.codacy.com/app/ionelmc/python-lazy-object-proxy
-    :alt: Codacy Code Quality Status
-
-.. |codeclimate| image:: https://codeclimate.com/github/ionelmc/python-lazy-object-proxy/badges/gpa.svg
-   :target: https://codeclimate.com/github/ionelmc/python-lazy-object-proxy
-   :alt: CodeClimate Quality Status
-
 .. |version| image:: https://img.shields.io/pypi/v/lazy-object-proxy.svg
     :alt: PyPI Package latest release
-    :target: https://pypi.python.org/pypi/lazy-object-proxy
+    :target: https://pypi.org/project/lazy-object-proxy
 
 .. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-lazy-object-proxy/v1.3.1.svg
     :alt: Commits since latest release
@@ -63,19 +49,15 @@ Overview
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/lazy-object-proxy.svg
     :alt: PyPI Wheel
-    :target: https://pypi.python.org/pypi/lazy-object-proxy
+    :target: https://pypi.org/project/lazy-object-proxy
 
 .. |supported-versions| image:: https://img.shields.io/pypi/pyversions/lazy-object-proxy.svg
     :alt: Supported versions
-    :target: https://pypi.python.org/pypi/lazy-object-proxy
+    :target: https://pypi.org/project/lazy-object-proxy
 
 .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/lazy-object-proxy.svg
     :alt: Supported implementations
-    :target: https://pypi.python.org/pypi/lazy-object-proxy
-
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/python-lazy-object-proxy/master.svg
-    :alt: Scrutinizer Status
-    :target: https://scrutinizer-ci.com/g/ionelmc/python-lazy-object-proxy/
+    :target: https://pypi.org/project/lazy-object-proxy
 
 
 .. end-badges

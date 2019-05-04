@@ -18,14 +18,14 @@ BASE_URL = "https://www.python.org/ftp/python/"
 GET_PIP_URL = "https://bootstrap.pypa.io/get-pip.py"
 GET_PIP_PATH = "C:\get-pip.py"
 URLS = {
-    ("2.7", "64"): BASE_URL + "2.7.10/python-2.7.13.amd64.msi",
-    ("2.7", "32"): BASE_URL + "2.7.10/python-2.7.13.msi",
-    ("3.4", "64"): BASE_URL + "3.4.3/python-3.4.6.amd64.msi",
-    ("3.4", "32"): BASE_URL + "3.4.3/python-3.4.6.msi",
-    ("3.5", "64"): BASE_URL + "3.5.0/python-3.5.3-amd64.exe",
-    ("3.5", "32"): BASE_URL + "3.5.0/python-3.5.3.exe",
-    ("3.6", "64"): BASE_URL + "3.6.0/python-3.6.0-amd64.exe",
-    ("3.6", "32"): BASE_URL + "3.6.0/python-3.6.0.exe",
+    ("2.7", "64"): BASE_URL + "2.7.13/python-2.7.13.amd64.msi",
+    ("2.7", "32"): BASE_URL + "2.7.13/python-2.7.13.msi",
+    ("3.4", "64"): BASE_URL + "3.4.4/python-3.4.4.amd64.msi",
+    ("3.4", "32"): BASE_URL + "3.4.4/python-3.4.4.msi",
+    ("3.5", "64"): BASE_URL + "3.5.4/python-3.5.4-amd64.exe",
+    ("3.5", "32"): BASE_URL + "3.5.4/python-3.5.4.exe",
+    ("3.6", "64"): BASE_URL + "3.6.2/python-3.6.2-amd64.exe",
+    ("3.6", "32"): BASE_URL + "3.6.2/python-3.6.2.exe",
 }
 INSTALL_CMD = {
     # Commands are allowed to fail only if they are not the last command.  Eg: uninstall (/x) allowed to fail.
