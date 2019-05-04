@@ -143,7 +143,7 @@ def test_set_wrapped(lazy_object_proxy):
 
     assert not hasattr(function1, '__wrapped__')
 
-    assert function2 == None
+    assert function2 == None  # noqa
     assert function2.__wrapped__ is None
     assert not hasattr(function2, '__name__')
 
@@ -174,14 +174,14 @@ def test_wrapped_attribute(lazy_object_proxy):
     assert hasattr(function1, 'variable')
     assert hasattr(function2, 'variable')
 
-    assert function2.variable == True
+    assert function2.variable is True
 
     del function2.variable
 
     assert not hasattr(function1, 'variable')
     assert not hasattr(function2, 'variable')
 
-    assert getattr(function2, 'variable', None) == None
+    assert getattr(function2, 'variable', None) is None
 
 
 def test_class_object_name(lazy_object_proxy):
@@ -949,7 +949,7 @@ def test_int(lazy_object_proxy):
     assert int(one) == 1
 
     if not PY3:
-        assert long(one) == 1
+        assert long(one) == 1  # noqa
 
 
 def test_float(lazy_object_proxy):
@@ -997,7 +997,7 @@ def test_div(lazy_object_proxy):
     assert two / 3 == 2 / 3
 
 
-def test_mod(lazy_object_proxy):
+def test_divdiv(lazy_object_proxy):
     two = lazy_object_proxy.Proxy(lambda: 2)
     three = lazy_object_proxy.Proxy(lambda: 3)
 
@@ -1353,7 +1353,7 @@ def test_contains(lazy_object_proxy):
     value = lazy_object_proxy.Proxy(lambda: list(range(3)))
 
     assert 2 in value
-    assert not -2 in value
+    assert -2 not in value
 
 
 def test_getitem(lazy_object_proxy):
@@ -1403,33 +1403,33 @@ def test_delslice(lazy_object_proxy):
     assert value == [0, 4]
 
 
-def test_length(lazy_object_proxy):
+def test_dict_length(lazy_object_proxy):
     value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
 
     assert len(value) == 3
 
 
-def test_contains(lazy_object_proxy):
+def test_dict_contains(lazy_object_proxy):
     value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
 
     assert 2 in value
     assert -2 not in value
 
 
-def test_getitem(lazy_object_proxy):
+def test_dict_getitem(lazy_object_proxy):
     value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
 
-    assert value[1] == False
+    assert value[1] is False
 
 
-def test_setitem(lazy_object_proxy):
+def test_dict_setitem(lazy_object_proxy):
     value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
     value[1] = True
 
-    assert value[1] == True
+    assert value[1] is True
 
 
-def test_delitem(lazy_object_proxy):
+def test_dict_delitem(lazy_object_proxy):
     value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
 
     assert len(value) == 3
@@ -1482,14 +1482,16 @@ def test_derived_new(lazy_object_proxy):
         def __new__(cls, wrapped):
             instance = super(DerivedObjectProxy, cls).__new__(cls)
             instance.__init__(wrapped)
+            return instance
 
         def __init__(self, wrapped):
             super(DerivedObjectProxy, self).__init__(wrapped)
 
     def function():
-        pass
+        return 123
 
     obj = DerivedObjectProxy(lambda: function)
+    assert obj() == 123
 
 
 def test_setup_class_attributes(lazy_object_proxy):
@@ -1589,7 +1591,7 @@ def test_proxy_hasattr_call(lazy_object_proxy):
 def test_proxy_getattr_call(lazy_object_proxy):
     proxy = lazy_object_proxy.Proxy(lambda: None)
 
-    assert getattr(proxy, '__call__', None) == None
+    assert getattr(proxy, '__call__', None) is None
 
 
 @skipcallable
@@ -1763,7 +1765,7 @@ def test_set_wrapped_via_new(lazy_object_proxy):
     assert obj + 1 == 2
 
 
-def test_set_wrapped(lazy_object_proxy):
+def test_set_wrapped_regular(lazy_object_proxy):
     obj = lazy_object_proxy.Proxy(None)
     obj.__wrapped__ = 1
     assert str(obj) == '1'
@@ -1808,7 +1810,7 @@ def test_pickling_exception(lazy_object_proxy, pickler, level):
 @pytest.mark.skipif(platform.python_implementation() != 'CPython',
                     reason="Interpreter doesn't have reference counting")
 def test_garbage_collection(lazy_object_proxy):
-    leaky = lambda: "foobar"
+    leaky = lambda: "foobar"  # noqa
     proxy = lazy_object_proxy.Proxy(leaky)
     leaky.leak = proxy
     ref = weakref.ref(leaky)

@@ -211,7 +211,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __int__ = make_proxy_method(int)
 
     if PY2:
-        __long__ = make_proxy_method(long)  # flake8: noqa
+        __long__ = make_proxy_method(long)  # noqa
 
     __float__ = make_proxy_method(float)
     __oct__ = make_proxy_method(oct)

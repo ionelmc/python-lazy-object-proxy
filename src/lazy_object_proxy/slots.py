@@ -115,7 +115,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __class__(self):
         return self.__wrapped__.__class__
 
-    @__class__.setter
+    @__class__.setter  # noqa
     def __class__(self, value):
         self.__wrapped__.__class__ = value
 
@@ -357,7 +357,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     if PY2:
         def __long__(self):
-            return long(self.__wrapped__)  # flake8: noqa
+            return long(self.__wrapped__)  # noqa
 
     def __float__(self):
         return float(self.__wrapped__)
