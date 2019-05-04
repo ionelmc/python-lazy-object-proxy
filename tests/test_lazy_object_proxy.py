@@ -86,12 +86,12 @@ def lop_subclass(request, lop_implementation):
 
 @pytest.fixture(scope="function")
 def lazy_object_proxy(request, lop_subclass):
-    if request.node.get_marker('xfail_subclass'):
+    if request.node.get_closest_marker('xfail_subclass'):
         request.applymarker(pytest.mark.xfail(
             reason="This test can't work because subclassing disables certain "
                    "features like __doc__ and __module__ proxying."
         ))
-    if request.node.get_marker('xfail_simple'):
+    if request.node.get_closest_marker('xfail_simple'):
         request.applymarker(pytest.mark.xfail(
             reason="The lazy_object_proxy.simple.Proxy has some limitations."
         ))
