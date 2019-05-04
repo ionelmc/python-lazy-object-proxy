@@ -2,6 +2,14 @@
 Changelog
 =========
 
+1.4.0 (2019-05-05)
+------------------
+
+* Fixed ``__mod__`` for the slots backend. Contributed by Ran Benita in
+  `#28 <https://github.com/ionelmc/python-lazy-object-proxy/pull/28>`_.
+* Dropped support for Python 2.6 and 3.3. Contributed by "hugovk" in
+  `#24 <https://github.com/ionelmc/python-lazy-object-proxy/pull/24>`_.
+
 1.3.1 (2017-05-05)
 ------------------
 
