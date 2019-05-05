@@ -46,7 +46,7 @@ matrix:
 before_install:
   - python --version
   - uname -a
-  - lsb_release -a
+  - lsb_release -a || true
   - |
     if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
       [[ $TOXENV =~ py3 ]] && brew upgrade python
