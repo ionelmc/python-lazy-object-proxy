@@ -1,10 +1,11 @@
 """
-AppVeyor will at least have few Pythons around so there's no point of implementing a bootstrapper in PowerShell.
+AppVeyor will at least have few Pythons around so there"s no point of implementing a bootstrapper in PowerShell.
 
 This is a port of https://github.com/pypa/python-packaging-user-guide/blob/master/source/code/install.ps1
-with various fixes and improvements that just weren't feasible to implement in PowerShell.
+with various fixes and improvements that just weren"t feasible to implement in PowerShell.
 """
 from __future__ import print_function
+
 from os import environ
 from os.path import exists
 from subprocess import check_call
@@ -38,6 +39,11 @@ INSTALL_CMD = {
 }
 
 
+def verbose_check_call(cmd):
+    print("Running:", cmd)
+    check_call(cmd)
+
+
 def download_file(url, path):
     print("Downloading: {} (into {})".format(url, path))
     progress = [0, 0]
@@ -62,9 +68,8 @@ def install_python(version, arch, home):
     success = False
     for cmd in INSTALL_CMD[version]:
         cmd = [part.format(home=home, path=path) for part in cmd]
-        print("Running:", " ".join(cmd))
         try:
-            check_call(cmd)
+            verbose_check_call(cmd)
         except Exception as exc:
             print("Failed command", cmd, "with:", exc)
             if exists("install.log"):
@@ -91,22 +96,22 @@ def install_pip(home):
     pip_path = home + "/Scripts/pip.exe"
     python_path = home + "/python.exe"
     if exists(pip_path):
-        print("pip already installed.")
+        print("Upgrading pip...")
+        verbose_check_call([python_path, "-mpip", "install", "--upgrade", "pip", "setuptools"])
     else:
         print("Installing pip...")
         download_file(GET_PIP_URL, GET_PIP_PATH)
-        print("Executing:", python_path, GET_PIP_PATH)
-        check_call([python_path, GET_PIP_PATH])
+        verbose_check_call([python_path, GET_PIP_PATH])
 
 
 def install_packages(home, *packages):
     cmd = [home + "/Scripts/pip.exe", "install"]
     cmd.extend(packages)
-    check_call(cmd)
+    verbose_check_call(cmd)
 
 
 if __name__ == "__main__":
-    install_python(environ['PYTHON_VERSION'], environ['PYTHON_ARCH'], environ['PYTHON_HOME'])
-    install_pip(environ['PYTHON_HOME'])
-    install_packages(environ['PYTHON_HOME'], '--upgrade', 'pip')
-    install_packages(environ['PYTHON_HOME'], '--upgrade', 'tox-wheel', 'twine')
+    install_python(environ["PYTHON_VERSION"], environ["PYTHON_ARCH"], environ["PYTHON_HOME"])
+    install_pip(environ["PYTHON_HOME"])
+    install_packages(environ["PYTHON_HOME"], "--upgrade", "pip")
+    install_packages(environ["PYTHON_HOME"], "--upgrade", "tox-wheel", "twine")
