@@ -4,6 +4,9 @@ cache:
   - '%LOCALAPPDATA%\pip\Cache'
 environment:
   global:
+    TWINE_PASSWORD:
+      secure: fDwCnDhQiptm9a4ZcFpgyQ==
+    TWINE_USERNAME: ionel
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
     - TOXENV: check
@@ -17,6 +20,9 @@ environment:
       PYTHON_HOME: C:\Python{{ env[2:4] }}
       PYTHON_VERSION: '{{ env[2] }}.{{ env[3] }}'
       PYTHON_ARCH: '32'
+{% if "nocov" in env %}
+      WHEEL_PATH: .tox/dist
+{% endif %}
     - TOXENV: '{{ env }}{% if env.endswith('-cover') %},report,codecov{% endif %}'
       TOXPYTHON: C:\Python{{ env[2:4] }}-x64\python.exe
       {%- if env.startswith(('py2', 'py34')) %}
@@ -27,7 +33,9 @@ environment:
       PYTHON_HOME: C:\Python{{ env[2:4] }}-x64
       PYTHON_VERSION: '{{ env[2] }}.{{ env[3] }}'
       PYTHON_ARCH: '64'
-{% endif %}{% endfor %}
+{% if "nocov" in env %}
+      WHEEL_PATH: .tox/dist
+{% endif %}{% endif %}{% endfor %}
 init:
   - ps: echo $env:TOXENV
   - ps: ls C:\Python*
@@ -38,14 +46,14 @@ install:
   - '%PYTHON_HOME%\Scripts\pip --version'
   - '%PYTHON_HOME%\Scripts\tox --version'
 test_script:
-  - '%WITH_COMPILER% %PYTHON_HOME%\Scripts\tox'
-
-after_test:
-  - IF "%TOXENV:~-6,6%" == "-nocov" %WITH_COMPILER% %TOXPYTHON% setup.py bdist_wheel
+  - cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd %PYTHON_HOME%\Scripts\tox
 
 on_failure:
   - ps: dir "env:"
   - ps: get-content .tox\*\log\*
+on_success:
+  - IF DEFINED WHEEL_PATH %PYTHON_HOME%\Scripts\twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing %WHEEL_PATH%/*.whl
+
 artifacts:
   - path: dist\*
 

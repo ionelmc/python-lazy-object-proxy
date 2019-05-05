@@ -15,33 +15,79 @@ matrix:
     - python: '2.7'
       env:
         - TOXENV=py27-cover,report,extension-coveralls,coveralls,codecov
+    - os: osx
+      language: generic
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
+          - $HOME/Library/Caches/pip
+      env:
+        - TOXENV=py27-cover
     - python: '2.7'
       env:
         - TOXENV=py27-nocov
+        - WHEEL_MANYLINUX1=cp27
+        - WHEEL_PATH=wheelhouse
+    - os: osx
+      language: generic
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
+          - $HOME/Library/Caches/pip
+      env:
+        - TOXENV=py27-nocov
+        - WHEEL_PATH=.tox/dist
     - python: '3.4'
       env:
         - TOXENV=py34-cover,report,extension-coveralls,coveralls,codecov
     - python: '3.4'
       env:
         - TOXENV=py34-nocov
+        - WHEEL_MANYLINUX1=cp34
+        - WHEEL_PATH=wheelhouse
     - python: '3.5'
       env:
         - TOXENV=py35-cover,report,extension-coveralls,coveralls,codecov
     - python: '3.5'
       env:
         - TOXENV=py35-nocov
+        - WHEEL_MANYLINUX1=cp35
+        - WHEEL_PATH=wheelhouse
     - python: '3.6'
       env:
         - TOXENV=py36-cover,report,extension-coveralls,coveralls,codecov
     - python: '3.6'
       env:
         - TOXENV=py36-nocov
+        - WHEEL_MANYLINUX1=cp36
+        - WHEEL_PATH=wheelhouse
     - python: '3.7'
       env:
         - TOXENV=py37-cover,report,extension-coveralls,coveralls,codecov
+      dist: xenial
+    - os: osx
+      language: generic
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
+          - $HOME/Library/Caches/pip
+      env:
+        - TOXENV=py37-cover
     - python: '3.7'
       env:
         - TOXENV=py37-nocov
+        - WHEEL_MANYLINUX1=cp37
+        - WHEEL_PATH=wheelhouse
+      dist: xenial
+    - os: osx
+      language: generic
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
+          - $HOME/Library/Caches/pip
+      env:
+        - TOXENV=py37-nocov
+        - WHEEL_PATH=.tox/dist
     - python: 'pypy2.7-6.0'
       env:
         - TOXENV=pypy-cover,report,extension-coveralls,coveralls,codecov
@@ -58,14 +104,32 @@ before_install:
   - python --version
   - uname -a
   - lsb_release -a
+  - |
+    if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
+      [[ $TOXENV =~ py3 ]] && brew upgrade python
+      [[ $TOXENV =~ py2 ]] && brew install python@2
+      export PATH="/usr/local/opt/python/libexec/bin:${PATH}"
+    fi
 install:
-  - pip install tox
+  - pip install twine tox-wheel
   - virtualenv --version
   - easy_install --version
   - pip --version
   - tox --version
 script:
-  - tox -v
+  - |
+    (
+    set -eux
+    if [[ -n ${WHEEL_MANYLINUX1:-} ]]; then
+      docker run --rm --user $UID -itv $(pwd):/code ionelmc/manylinux $WHEEL_MANYLINUX1
+      tox --installpkg $WHEEL_PATH/*.whl -v
+    else
+      tox -v
+    fi
+    if [[ -n ${WHEEL_PATH:-} ]]; then
+      twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing $WHEEL_PATH/*.whl
+    fi
+    )
 after_failure:
   - more .tox/log/* | cat
   - more .tox/*/log/* | cat
