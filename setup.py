@@ -60,7 +60,7 @@ class optional_build_ext(build_ext):
 
 setup(
     name='lazy-object-proxy',
-    version='1.3.1',
+    version='1.4.0',
     license='BSD 2-Clause License',
     description='A fast and thorough lazy object proxy.',
     long_description='%s\n%s' % (
