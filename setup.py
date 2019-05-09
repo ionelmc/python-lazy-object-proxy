@@ -60,7 +60,11 @@ class optional_build_ext(build_ext):
 
 setup(
     name='lazy-object-proxy',
-    version='1.4.0',
+    use_scm_version={
+        'local_scheme': 'dirty-tag',
+        'write_to': 'src/lazy_object_proxy/version.py',
+        'fallback_version': '1.4.0',
+    },
     license='BSD 2-Clause License',
     description='A fast and thorough lazy object proxy.',
     long_description='%s\n%s' % (
