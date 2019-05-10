@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.4.1 (2019-05-10)
+------------------
+
+* Fixed wheels being built with ``-coverage`` cflags. No more issues about bogus ``cext.gcda`` files.
+* Removed useless C file from wheels.
+* Changed ``setup.py`` to use setuptools-scm.
+
 1.4.0 (2019-05-05)
 ------------------
 
