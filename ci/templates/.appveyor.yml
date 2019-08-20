@@ -1,61 +1,57 @@
 version: '{branch}-{build}'
 build: off
-cache:
-  - '%LOCALAPPDATA%\pip\Cache'
 environment:
   global:
-    TWINE_PASSWORD:
-      secure: fDwCnDhQiptm9a4ZcFpgyQ==
     TWINE_USERNAME: ionel
-    WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
+    COVERALLS_EXTRAS: '-v'
+    COVERALLS_REPO_TOKEN: 6picUzuGNWKI5w3rsEyZGNvyMZ47Cz9hZ
   matrix:
     - TOXENV: check
       TOXPYTHON: C:\Python36\python.exe
       PYTHON_HOME: C:\Python36
       PYTHON_VERSION: '3.6'
       PYTHON_ARCH: '32'
-{% for env in tox_environments %}{{ '' }}{% if env.startswith(('py2', 'py3')) %}
-    - TOXENV: '{{ env }}{% if env.endswith('-cover') %},report,codecov{% endif %}'
+{% for env in tox_environments %}
+{% if env.startswith(('py2', 'py3')) %}
+    - TOXENV: {{ env }}{% if env.endswith('-cover') %},codecov,coveralls{% endif %}
+
       TOXPYTHON: C:\Python{{ env[2:4] }}\python.exe
       PYTHON_HOME: C:\Python{{ env[2:4] }}
       PYTHON_VERSION: '{{ env[2] }}.{{ env[3] }}'
       PYTHON_ARCH: '32'
-{% if "nocov" in env %}
+{% if 'nocov' in env %}
       WHEEL_PATH: .tox/dist
 {% endif %}
-    - TOXENV: '{{ env }}{% if env.endswith('-cover') %},report,codecov{% endif %}'
+    - TOXENV: {{ env }}{% if env.endswith('-cover') %},codecov,coveralls{% endif %}
+
       TOXPYTHON: C:\Python{{ env[2:4] }}-x64\python.exe
-      {%- if env.startswith(('py2', 'py34')) %}
-
-      WINDOWS_SDK_VERSION: v7.{{ '1' if env.startswith('py3') else '0' }}
-      {%- endif %}
-
       PYTHON_HOME: C:\Python{{ env[2:4] }}-x64
       PYTHON_VERSION: '{{ env[2] }}.{{ env[3] }}'
       PYTHON_ARCH: '64'
-{% if "nocov" in env %}
+{% if 'nocov' in env %}
       WHEEL_PATH: .tox/dist
-{% endif %}{% endif %}{% endfor %}
+{% endif %}
+{% if env.startswith(('py2', 'py34')) %}
+      WINDOWS_SDK_VERSION: v7.{{ '1' if env.startswith('py3') else '0' }}
+{% endif %}
+{% endif %}{% endfor %}
 init:
   - ps: echo $env:TOXENV
   - ps: ls C:\Python*
 install:
-  - python -u ci\appveyor-bootstrap.py
+  - '%PYTHON_HOME%\python -mpip install --progress-bar=off --verbose twine tox-wheel -rci/requirements.txt'
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
   - '%PYTHON_HOME%\Scripts\easy_install --version'
   - '%PYTHON_HOME%\Scripts\pip --version'
   - '%PYTHON_HOME%\Scripts\tox --version'
 test_script:
   - cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd %PYTHON_HOME%\Scripts\tox
+on_success:
+  - IF DEFINED WHEEL_PATH %PYTHON_HOME%\Scripts\twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing %WHEEL_PATH%/*.whl
 
 on_failure:
   - ps: dir "env:"
   - ps: get-content .tox\*\log\*
-on_success:
-  - IF DEFINED WHEEL_PATH %PYTHON_HOME%\Scripts\twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing %WHEEL_PATH%/*.whl
-
-artifacts:
-  - path: dist\*
 
 ### To enable remote debugging uncomment this (also, see: http://www.appveyor.com/docs/how-to/rdp-to-build-worker):
 # on_finish:

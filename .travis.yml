@@ -1,9 +1,11 @@
 language: python
 dist: xenial
+cache: false
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
+    - TWINE_USERNAME=ionel
 matrix:
   include:
     - python: '3.6'
@@ -12,9 +14,6 @@ matrix:
     - python: '3.6'
       env:
         - TOXENV=docs
-    - python: '2.7'
-      env:
-        - TOXENV=py27-cover,report,extension-coveralls,coveralls,codecov
     - os: osx
       language: generic
       cache:
@@ -23,11 +22,9 @@ matrix:
           - $HOME/Library/Caches/pip
       env:
         - TOXENV=py27-cover
-    - python: '2.7'
-      env:
-        - TOXENV=py27-nocov
-        - WHEEL_MANYLINUX1=cp27
-        - WHEEL_PATH=wheelhouse
+    - env:
+        - TOXENV=py27-cover,codecov,extension-coveralls,coveralls
+      python: '2.7'
     - os: osx
       language: generic
       cache:
@@ -37,34 +34,35 @@ matrix:
       env:
         - TOXENV=py27-nocov
         - WHEEL_PATH=.tox/dist
-    - python: '3.4'
-      env:
-        - TOXENV=py34-cover,report,extension-coveralls,coveralls,codecov
-    - python: '3.4'
-      env:
+    - env:
+        - TOXENV=py27-nocov
+        - WHEEL_MANYLINUX1=cp27
+        - WHEEL_PATH=wheelhouse
+      python: '2.7'
+    - env:
+        - TOXENV=py34-cover,codecov,extension-coveralls,coveralls
+      python: '3.4'
+    - env:
         - TOXENV=py34-nocov
         - WHEEL_MANYLINUX1=cp34
         - WHEEL_PATH=wheelhouse
-    - python: '3.5'
-      env:
-        - TOXENV=py35-cover,report,extension-coveralls,coveralls,codecov
-    - python: '3.5'
-      env:
+      python: '3.4'
+    - env:
+        - TOXENV=py35-cover,codecov,extension-coveralls,coveralls
+      python: '3.5'
+    - env:
         - TOXENV=py35-nocov
         - WHEEL_MANYLINUX1=cp35
         - WHEEL_PATH=wheelhouse
-    - python: '3.6'
-      env:
-        - TOXENV=py36-cover,report,extension-coveralls,coveralls,codecov
-    - python: '3.6'
-      env:
+      python: '3.5'
+    - env:
+        - TOXENV=py36-cover,codecov,extension-coveralls,coveralls
+      python: '3.6'
+    - env:
         - TOXENV=py36-nocov
         - WHEEL_MANYLINUX1=cp36
         - WHEEL_PATH=wheelhouse
-    - python: '3.7'
-      env:
-        - TOXENV=py37-cover,report,extension-coveralls,coveralls,codecov
-      dist: xenial
+      python: '3.6'
     - os: osx
       language: generic
       cache:
@@ -73,12 +71,9 @@ matrix:
           - $HOME/Library/Caches/pip
       env:
         - TOXENV=py37-cover
-    - python: '3.7'
-      env:
-        - TOXENV=py37-nocov
-        - WHEEL_MANYLINUX1=cp37
-        - WHEEL_PATH=wheelhouse
-      dist: xenial
+    - env:
+        - TOXENV=py37-cover,codecov,extension-coveralls,coveralls
+      python: '3.7'
     - os: osx
       language: generic
       cache:
@@ -88,18 +83,25 @@ matrix:
       env:
         - TOXENV=py37-nocov
         - WHEEL_PATH=.tox/dist
-    - python: 'pypy2.7-6.0'
-      env:
-        - TOXENV=pypy-cover,report,extension-coveralls,coveralls,codecov
-    - python: 'pypy2.7-6.0'
-      env:
+    - env:
+        - TOXENV=py37-nocov
+        - WHEEL_MANYLINUX1=cp37
+        - WHEEL_PATH=wheelhouse
+      python: '3.7'
+    - env:
+        - TOXENV=pypy-cover,codecov,extension-coveralls,coveralls
+      python: 'pypy2.7-6.0'
+    - env:
         - TOXENV=pypy-nocov
-    - python: 'pypy3.5-6.0'
-      env:
-        - TOXENV=pypy3-cover,report,extension-coveralls,coveralls,codecov
-    - python: 'pypy3.5-6.0'
-      env:
+      python: 'pypy2.7-6.0'
+    - env:
+        - TOXENV=pypy3-cover,codecov,extension-coveralls,coveralls
+        - TOXPYTHON=pypy3
+      python: 'pypy3.5-6.0'
+    - env:
         - TOXENV=pypy3-nocov
+        - TOXPYTHON=pypy3
+      python: 'pypy3.5-6.0'
 before_install:
   - python --version
   - uname -a
@@ -111,7 +113,7 @@ before_install:
       export PATH="/usr/local/opt/python/libexec/bin:${PATH}"
     fi
 install:
-  - pip install twine tox-wheel
+  - python -mpip install --progress-bar=off --verbose twine tox-wheel -rci/requirements.txt
   - virtualenv --version
   - easy_install --version
   - pip --version
