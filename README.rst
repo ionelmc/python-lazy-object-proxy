@@ -64,7 +64,7 @@ Overview
 
 A fast and thorough lazy object proxy.
 
-* Free software: BSD license
+* Free software: BSD 2-Clause License
 
 Note that this is based on `wrapt`_'s ObjectProxy with one big change: it calls a function the first time the proxy object is
 used, while `wrapt.ObjectProxy` just forwards the method calls to the target object.
