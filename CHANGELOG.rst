@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.4.2 (2019-08-22)
+------------------
+
+* Included a ``pyproject.toml`` to allow users install the sdist with old python/setuptools, as the
+  setuptools-scm dep will be fetched by pip instead of setuptools.
+  Fixes `#30 <https://github.com/ionelmc/python-lazy-object-proxy/issues/30>`.
+
 1.4.1 (2019-05-10)
 ------------------
 
