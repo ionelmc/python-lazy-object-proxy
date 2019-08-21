@@ -63,7 +63,7 @@ setup(
     use_scm_version={
         'local_scheme': 'dirty-tag',
         'write_to': 'src/lazy_object_proxy/_version.py',
-        'fallback_version': '1.4.1',
+        'fallback_version': '1.4.2',
     },
     license='BSD 2-Clause License',
     description='A fast and thorough lazy object proxy.',
