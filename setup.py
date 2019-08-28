@@ -65,7 +65,7 @@ setup(
         'write_to': 'src/lazy_object_proxy/_version.py',
         'fallback_version': '1.4.2',
     },
-    license='BSD 2-Clause License',
+    license='BSD-2-Clause',
     description='A fast and thorough lazy object proxy.',
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
