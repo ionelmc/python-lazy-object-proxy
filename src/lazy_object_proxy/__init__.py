@@ -18,6 +18,6 @@ else:
 try:
     from ._version import version as __version__
 except ImportError:
-    __version__ = '1.4.2'
+    __version__ = '1.4.3'
 
 __all__ = "Proxy",
