@@ -16,10 +16,6 @@ matrix:
         - TOXENV=docs
     - os: osx
       language: generic
-      cache:
-        directories:
-          - $HOME/Library/Caches/Homebrew
-          - $HOME/Library/Caches/pip
       env:
         - TOXENV=py27-cover
     - env:
@@ -27,10 +23,6 @@ matrix:
       python: '2.7'
     - os: osx
       language: generic
-      cache:
-        directories:
-          - $HOME/Library/Caches/Homebrew
-          - $HOME/Library/Caches/pip
       env:
         - TOXENV=py27-nocov
         - WHEEL_PATH=.tox/dist
@@ -65,10 +57,6 @@ matrix:
       python: '3.6'
     - os: osx
       language: generic
-      cache:
-        directories:
-          - $HOME/Library/Caches/Homebrew
-          - $HOME/Library/Caches/pip
       env:
         - TOXENV=py37-cover
     - env:
@@ -76,10 +64,6 @@ matrix:
       python: '3.7'
     - os: osx
       language: generic
-      cache:
-        directories:
-          - $HOME/Library/Caches/Homebrew
-          - $HOME/Library/Caches/pip
       env:
         - TOXENV=py37-nocov
         - WHEEL_PATH=.tox/dist
@@ -89,19 +73,27 @@ matrix:
         - WHEEL_PATH=wheelhouse
       python: '3.7'
     - env:
+        - TOXENV=py38-cover,codecov,extension-coveralls,coveralls
+      python: '3.8'
+    - env:
+        - TOXENV=py38-nocov
+        - WHEEL_MANYLINUX1=cp38
+        - WHEEL_PATH=wheelhouse
+      python: '3.8'
+    - env:
         - TOXENV=pypy-cover,codecov,extension-coveralls,coveralls
-      python: 'pypy2.7-6.0'
+      python: 'pypy'
     - env:
         - TOXENV=pypy-nocov
-      python: 'pypy2.7-6.0'
+      python: 'pypy'
     - env:
         - TOXENV=pypy3-cover,codecov,extension-coveralls,coveralls
         - TOXPYTHON=pypy3
-      python: 'pypy3.5-6.0'
+      python: 'pypy3'
     - env:
         - TOXENV=pypy3-nocov
         - TOXPYTHON=pypy3
-      python: 'pypy3.5-6.0'
+      python: 'pypy3'
 before_install:
   - python --version
   - uname -a
@@ -113,7 +105,7 @@ before_install:
       export PATH="/usr/local/opt/python/libexec/bin:${PATH}"
     fi
 install:
-  - python -mpip install --progress-bar=off --verbose twine tox-wheel -rci/requirements.txt
+  - python -mpip install --progress-bar=off twine tox-wheel -rci/requirements.txt
   - virtualenv --version
   - easy_install --version
   - pip --version

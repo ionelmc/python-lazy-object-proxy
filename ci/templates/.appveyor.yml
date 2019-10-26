@@ -39,7 +39,16 @@ init:
   - ps: echo $env:TOXENV
   - ps: ls C:\Python*
 install:
-  - '%PYTHON_HOME%\python -mpip install --progress-bar=off --verbose twine tox-wheel -rci/requirements.txt'
+  - ps: |
+      Set-PSDebug -Trace 1
+      if ($Env:TOXENV.StartsWith("py38")) {
+        if ($Env:PYTHON_ARCH -eq "64") {
+          iex "choco install python3 --version=3.8 --no-progress --params /InstallDir:$Env:PYTHON_HOME"
+        } else {
+          iex "choco install python3 --version=3.8 --no-progress --params /InstallDir:$Env:PYTHON_HOME --x86"
+        }
+      }
+  - '%PYTHON_HOME%\python -mpip install --progress-bar=off twine tox-wheel -rci/requirements.txt'
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
   - '%PYTHON_HOME%\Scripts\easy_install --version'
   - '%PYTHON_HOME%\Scripts\pip --version'
@@ -47,8 +56,21 @@ install:
 test_script:
   - cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd %PYTHON_HOME%\Scripts\tox
 on_success:
-  - IF DEFINED WHEEL_PATH %PYTHON_HOME%\Scripts\twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing %WHEEL_PATH%/*.whl
-
+  - ps: |
+      Set-PSDebug -Trace 1
+      if ($Env:WHEEL_PATH) {
+        cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd $Env:PYTHON_HOME\Scripts\tox --wheel
+        if ($LastExitCode -eq 0) {
+          $ErrorActionPreference = "Stop"
+          iex "$Env:PYTHON_HOME\Scripts\twine check $Env:WHEEL_PATH/*.whl"
+          iex "$Env:PYTHON_HOME\Scripts\twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing $Env:WHEEL_PATH/*.whl"
+        }
+      } else {
+        cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd $Env:PYTHON_HOME\Scripts\tox
+      }
+      if ($LastExitCode -ne 0) {
+        $host.SetShouldExit($LastExitCode)
+      }
 on_failure:
   - ps: dir "env:"
   - ps: get-content .tox\*\log\*

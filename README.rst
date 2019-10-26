@@ -19,7 +19,7 @@ Overview
     :target: https://readthedocs.org/projects/python-lazy-object-proxy
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/ionelmc/python-lazy-object-proxy.svg?branch=master
+.. |travis| image:: https://api.travis-ci.org/ionelmc/python-lazy-object-proxy.svg?branch=master
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/ionelmc/python-lazy-object-proxy
 
