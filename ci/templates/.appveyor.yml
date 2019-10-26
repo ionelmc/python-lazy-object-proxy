@@ -58,18 +58,13 @@ test_script:
 on_success:
   - ps: |
       Set-PSDebug -Trace 1
+      $ErrorActionPreference = "Stop"
       if ($Env:WHEEL_PATH) {
         cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd $Env:PYTHON_HOME\Scripts\tox --wheel
-        if ($LastExitCode -eq 0) {
-          $ErrorActionPreference = "Stop"
-          iex "$Env:PYTHON_HOME\Scripts\twine check $Env:WHEEL_PATH/*.whl"
-          iex "$Env:PYTHON_HOME\Scripts\twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing $Env:WHEEL_PATH/*.whl"
-        }
+        iex "$Env:PYTHON_HOME\Scripts\twine check $Env:WHEEL_PATH/*.whl"
+        iex "$Env:PYTHON_HOME\Scripts\twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing $Env:WHEEL_PATH/*.whl"
       } else {
         cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd $Env:PYTHON_HOME\Scripts\tox
-      }
-      if ($LastExitCode -ne 0) {
-        throw "Failed with exit code: $LastExitCode"
       }
 on_failure:
   - ps: dir "env:"
