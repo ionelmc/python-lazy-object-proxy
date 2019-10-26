@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.4.3 (2019-10-26)
+------------------
+
+* Added binary wheels for Python 3.8.
+* Fixed license metadata.
+
 1.4.2 (2019-08-22)
 ------------------
 

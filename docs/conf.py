@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 import os
-
+import traceback
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -26,7 +26,12 @@ project = 'lazy-object-proxy'
 year = '2014-2019'
 author = 'Ionel Cristian Mărieș'
 copyright = '{0}, {1}'.format(year, author)
-version = release = '1.4.2'
+try:
+    from pkg_resources import get_distribution
+    version = release = get_distribution('lazy_object_proxy').version
+except Exception:
+    traceback.print_exc()
+    version = release = '1.4.2'
 
 pygments_style = 'trac'
 templates_path = ['.']
