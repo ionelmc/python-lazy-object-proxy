@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import gc
 import imp
+import os
 import pickle
 import platform
 import sys
@@ -1943,3 +1944,8 @@ def test_subclassing_dynamic_with_local_attr(lazy_object_proxy):
     proxy = LazyProxy(lambda: called.append(1) or Foo(), name='bar')
     assert proxy.name == 'bar'
     assert not called
+
+
+@pytest.mark.skipif(not hasattr(os, "fspath"), reason="No os.fspath support.")
+def test_fspath(lazy_object_proxy):
+    assert os.fspath(lazy_object_proxy.Proxy(lambda: '/tmp')) == '/tmp'

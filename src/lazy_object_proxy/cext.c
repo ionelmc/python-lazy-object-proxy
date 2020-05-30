@@ -1282,6 +1282,7 @@ static PyMethodDef Proxy_methods[] = {
     { "__reversed__", (PyCFunction)Proxy_reversed, METH_NOARGS, 0 },
     { "__reduce__", (PyCFunction)Proxy_reduce, METH_NOARGS, 0 },
     { "__reduce_ex__", (PyCFunction)Proxy_reduce, METH_O, 0 },
+    { "__fspath__", (PyCFunction)Proxy_str, METH_NOARGS, 0 },
 #if PY_MAJOR_VERSION >= 3
     { "__round__",  (PyCFunction)Proxy_round, METH_NOARGS, 0 },
 #endif

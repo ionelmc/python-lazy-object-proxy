@@ -100,6 +100,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
                 self.__factory__
             )
 
+    __fspath__ = make_proxy_method(str)
     __reversed__ = make_proxy_method(reversed)
 
     if PY3:

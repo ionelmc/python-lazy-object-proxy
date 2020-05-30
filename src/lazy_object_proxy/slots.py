@@ -152,6 +152,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
                 self.__factory__
             )
 
+    def __fspath__(self):
+        return str(self.__wrapped__)
+
     def __reversed__(self):
         return reversed(self.__wrapped__)
 
