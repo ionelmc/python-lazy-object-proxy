@@ -32,14 +32,6 @@ matrix:
         - WHEEL_PATH=wheelhouse
       python: '2.7'
     - env:
-        - TOXENV=py34-cover,codecov,extension-coveralls,coveralls
-      python: '3.4'
-    - env:
-        - TOXENV=py34-nocov
-        - WHEEL_MANYLINUX1=cp34
-        - WHEEL_PATH=wheelhouse
-      python: '3.4'
-    - env:
         - TOXENV=py35-cover,codecov,extension-coveralls,coveralls
       python: '3.5'
     - env:

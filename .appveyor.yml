@@ -35,30 +35,6 @@ environment:
       PYTHON_ARCH: '64'
       WHEEL_PATH: .tox/dist
       WINDOWS_SDK_VERSION: v7.0
-    - TOXENV: py34-cover,codecov,coveralls
-      TOXPYTHON: C:\Python34\python.exe
-      PYTHON_HOME: C:\Python34
-      PYTHON_VERSION: '3.4'
-      PYTHON_ARCH: '32'
-    - TOXENV: py34-cover,codecov,coveralls
-      TOXPYTHON: C:\Python34-x64\python.exe
-      PYTHON_HOME: C:\Python34-x64
-      PYTHON_VERSION: '3.4'
-      PYTHON_ARCH: '64'
-      WINDOWS_SDK_VERSION: v7.1
-    - TOXENV: py34-nocov
-      TOXPYTHON: C:\Python34\python.exe
-      PYTHON_HOME: C:\Python34
-      PYTHON_VERSION: '3.4'
-      PYTHON_ARCH: '32'
-      WHEEL_PATH: .tox/dist
-    - TOXENV: py34-nocov
-      TOXPYTHON: C:\Python34-x64\python.exe
-      PYTHON_HOME: C:\Python34-x64
-      PYTHON_VERSION: '3.4'
-      PYTHON_ARCH: '64'
-      WHEEL_PATH: .tox/dist
-      WINDOWS_SDK_VERSION: v7.1
     - TOXENV: py35-cover,codecov,coveralls
       TOXPYTHON: C:\Python35\python.exe
       PYTHON_HOME: C:\Python35
