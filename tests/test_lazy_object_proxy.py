@@ -86,7 +86,7 @@ def lop_subclass(request, lop_implementation):
 
 
 @pytest.fixture(scope="function")
-def lazy_object_proxy(request, lop_subclass):
+def lop(request, lop_subclass):
     if request.node.get_closest_marker('xfail_subclass'):
         request.applymarker(pytest.mark.xfail(
             reason="This test can't work because subclassing disables certain "
@@ -100,38 +100,38 @@ def lazy_object_proxy(request, lop_subclass):
     return lop_subclass
 
 
-def test_round(lazy_object_proxy):
-    proxy = lazy_object_proxy.Proxy(lambda: 1.2)
+def test_round(lop):
+    proxy = lop.Proxy(lambda: 1.2)
     assert round(proxy) == 1
 
 
-def test_attributes(lazy_object_proxy):
+def test_attributes(lop):
     def function1(*args, **kwargs):
         return args, kwargs
 
-    function2 = lazy_object_proxy.Proxy(lambda: function1)
+    function2 = lop.Proxy(lambda: function1)
 
     assert function2.__wrapped__ == function1
 
 
-def test_get_wrapped(lazy_object_proxy):
+def test_get_wrapped(lop):
     def function1(*args, **kwargs):
         return args, kwargs
 
-    function2 = lazy_object_proxy.Proxy(lambda: function1)
+    function2 = lop.Proxy(lambda: function1)
 
     assert function2.__wrapped__ == function1
 
-    function3 = lazy_object_proxy.Proxy(lambda: function2)
+    function3 = lop.Proxy(lambda: function2)
 
     assert function3.__wrapped__ == function1
 
 
-def test_set_wrapped(lazy_object_proxy):
+def test_set_wrapped(lop):
     def function1(*args, **kwargs):
         return args, kwargs
 
-    function2 = lazy_object_proxy.Proxy(lambda: function1)
+    function2 = lop.Proxy(lambda: function1)
 
     assert function2 == function1
     assert function2.__wrapped__ is function1
@@ -164,11 +164,11 @@ def test_set_wrapped(lazy_object_proxy):
         assert function2.__qualname__ == function3.__qualname__
 
 
-def test_wrapped_attribute(lazy_object_proxy):
+def test_wrapped_attribute(lop):
     def function1(*args, **kwargs):
         return args, kwargs
 
-    function2 = lazy_object_proxy.Proxy(lambda: function1)
+    function2 = lop.Proxy(lambda: function1)
 
     function2.variable = True
 
@@ -185,20 +185,20 @@ def test_wrapped_attribute(lazy_object_proxy):
     assert getattr(function2, 'variable', None) is None
 
 
-def test_class_object_name(lazy_object_proxy):
+def test_class_object_name(lop):
     # Test preservation of class __name__ attribute.
 
     target = objects.Target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__name__ == target.__name__
 
 
-def test_class_object_qualname(lazy_object_proxy):
+def test_class_object_qualname(lop):
     # Test preservation of class __qualname__ attribute.
 
     target = objects.Target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     try:
         __qualname__ = target.__qualname__
@@ -209,59 +209,59 @@ def test_class_object_qualname(lazy_object_proxy):
 
 
 @pytest.mark.xfail_subclass
-def test_class_module_name(lazy_object_proxy):
+def test_class_module_name(lop):
     # Test preservation of class __module__ attribute.
 
     target = objects.Target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__module__ == target.__module__
 
 
 @pytest.mark.xfail_subclass
-def test_class_doc_string(lazy_object_proxy):
+def test_class_doc_string(lop):
     # Test preservation of class __doc__ attribute.
 
     target = objects.Target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__doc__ == target.__doc__
 
 
 @pytest.mark.xfail_subclass
-def test_instance_module_name(lazy_object_proxy):
+def test_instance_module_name(lop):
     # Test preservation of instance __module__ attribute.
 
     target = objects.Target()
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__module__ == target.__module__
 
 
 @pytest.mark.xfail_subclass
-def test_instance_doc_string(lazy_object_proxy):
+def test_instance_doc_string(lop):
     # Test preservation of instance __doc__ attribute.
 
     target = objects.Target()
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__doc__ == target.__doc__
 
 
-def test_function_object_name(lazy_object_proxy):
+def test_function_object_name(lop):
     # Test preservation of function __name__ attribute.
 
     target = objects.target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__name__ == target.__name__
 
 
-def test_function_object_qualname(lazy_object_proxy):
+def test_function_object_qualname(lop):
     # Test preservation of function __qualname__ attribute.
 
     target = objects.target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     try:
         __qualname__ = target.__qualname__
@@ -272,38 +272,38 @@ def test_function_object_qualname(lazy_object_proxy):
 
 
 @pytest.mark.xfail_subclass
-def test_function_module_name(lazy_object_proxy):
+def test_function_module_name(lop):
     # Test preservation of function __module__ attribute.
 
     target = objects.target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__module__ == target.__module__
 
 
 @pytest.mark.xfail_subclass
-def test_function_doc_string(lazy_object_proxy):
+def test_function_doc_string(lop):
     # Test preservation of function __doc__ attribute.
 
     target = objects.target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__doc__ == target.__doc__
 
 
-def test_class_of_class(lazy_object_proxy):
+def test_class_of_class(lop):
     # Test preservation of class __class__ attribute.
 
     target = objects.Target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__class__ is target.__class__
 
     assert isinstance(wrapper, type(target))
 
 
-def test_revert_class_proxying(lazy_object_proxy):
-    class ProxyWithOldStyleIsInstance(lazy_object_proxy.Proxy):
+def test_revert_class_proxying(lop):
+    class ProxyWithOldStyleIsInstance(lop.Proxy):
         __class__ = object.__dict__['__class__']
 
     target = objects.Target()
@@ -327,11 +327,11 @@ def test_revert_class_proxying(lazy_object_proxy):
     assert not isinstance(wrapper, objects.TargetBaseClass)
 
 
-def test_class_of_instance(lazy_object_proxy):
+def test_class_of_instance(lop):
     # Test preservation of instance __class__ attribute.
 
     target = objects.Target()
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__class__ is target.__class__
 
@@ -339,131 +339,131 @@ def test_class_of_instance(lazy_object_proxy):
     assert isinstance(wrapper, objects.TargetBaseClass)
 
 
-def test_class_of_function(lazy_object_proxy):
+def test_class_of_function(lop):
     # Test preservation of function __class__ attribute.
 
     target = objects.target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert wrapper.__class__ is target.__class__
 
     assert isinstance(wrapper, type(target))
 
 
-def test_dir_of_class(lazy_object_proxy):
+def test_dir_of_class(lop):
     # Test preservation of class __dir__ attribute.
 
     target = objects.Target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert dir(wrapper) == dir(target)
 
 
 @pytest.mark.xfail_simple
-def test_vars_of_class(lazy_object_proxy):
+def test_vars_of_class(lop):
     # Test preservation of class __dir__ attribute.
 
     target = objects.Target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert vars(wrapper) == vars(target)
 
 
-def test_dir_of_instance(lazy_object_proxy):
+def test_dir_of_instance(lop):
     # Test preservation of instance __dir__ attribute.
 
     target = objects.Target()
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert dir(wrapper) == dir(target)
 
 
 @pytest.mark.xfail_simple
-def test_vars_of_instance(lazy_object_proxy):
+def test_vars_of_instance(lop):
     # Test preservation of instance __dir__ attribute.
 
     target = objects.Target()
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert vars(wrapper) == vars(target)
 
 
-def test_dir_of_function(lazy_object_proxy):
+def test_dir_of_function(lop):
     # Test preservation of function __dir__ attribute.
 
     target = objects.target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert dir(wrapper) == dir(target)
 
 
 @pytest.mark.xfail_simple
-def test_vars_of_function(lazy_object_proxy):
+def test_vars_of_function(lop):
     # Test preservation of function __dir__ attribute.
 
     target = objects.target
-    wrapper = lazy_object_proxy.Proxy(lambda: target)
+    wrapper = lop.Proxy(lambda: target)
 
     assert vars(wrapper) == vars(target)
 
 
-def test_function_no_args(lazy_object_proxy):
+def test_function_no_args(lop):
     _args = ()
     _kwargs = {}
 
     def function(*args, **kwargs):
         return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: function)
+    wrapper = lop.Proxy(lambda: function)
 
     result = wrapper()
 
     assert result == (_args, _kwargs)
 
 
-def test_function_args(lazy_object_proxy):
+def test_function_args(lop):
     _args = (1, 2)
     _kwargs = {}
 
     def function(*args, **kwargs):
         return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: function)
+    wrapper = lop.Proxy(lambda: function)
 
     result = wrapper(*_args)
 
     assert result == (_args, _kwargs)
 
 
-def test_function_kwargs(lazy_object_proxy):
+def test_function_kwargs(lop):
     _args = ()
     _kwargs = {"one": 1, "two": 2}
 
     def function(*args, **kwargs):
         return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: function)
+    wrapper = lop.Proxy(lambda: function)
 
     result = wrapper(**_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_function_args_plus_kwargs(lazy_object_proxy):
+def test_function_args_plus_kwargs(lop):
     _args = (1, 2)
     _kwargs = {"one": 1, "two": 2}
 
     def function(*args, **kwargs):
         return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: function)
+    wrapper = lop.Proxy(lambda: function)
 
     result = wrapper(*_args, **_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_instancemethod_no_args(lazy_object_proxy):
+def test_instancemethod_no_args(lop):
     _args = ()
     _kwargs = {}
 
@@ -471,14 +471,14 @@ def test_instancemethod_no_args(lazy_object_proxy):
         def function(self, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper()
 
     assert result == (_args, _kwargs)
 
 
-def test_instancemethod_args(lazy_object_proxy):
+def test_instancemethod_args(lop):
     _args = (1, 2)
     _kwargs = {}
 
@@ -486,14 +486,14 @@ def test_instancemethod_args(lazy_object_proxy):
         def function(self, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper(*_args)
 
     assert result == (_args, _kwargs)
 
 
-def test_instancemethod_kwargs(lazy_object_proxy):
+def test_instancemethod_kwargs(lop):
     _args = ()
     _kwargs = {"one": 1, "two": 2}
 
@@ -501,14 +501,14 @@ def test_instancemethod_kwargs(lazy_object_proxy):
         def function(self, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper(**_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_instancemethod_args_plus_kwargs(lazy_object_proxy):
+def test_instancemethod_args_plus_kwargs(lop):
     _args = (1, 2)
     _kwargs = {"one": 1, "two": 2}
 
@@ -516,14 +516,14 @@ def test_instancemethod_args_plus_kwargs(lazy_object_proxy):
         def function(self, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper(*_args, **_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_instancemethod_via_class_no_args(lazy_object_proxy):
+def test_instancemethod_via_class_no_args(lop):
     _args = ()
     _kwargs = {}
 
@@ -531,14 +531,14 @@ def test_instancemethod_via_class_no_args(lazy_object_proxy):
         def function(self, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper(Class())
 
     assert result == (_args, _kwargs)
 
 
-def test_instancemethod_via_class_args(lazy_object_proxy):
+def test_instancemethod_via_class_args(lop):
     _args = (1, 2)
     _kwargs = {}
 
@@ -546,14 +546,14 @@ def test_instancemethod_via_class_args(lazy_object_proxy):
         def function(self, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper(Class(), *_args)
 
     assert result == (_args, _kwargs)
 
 
-def test_instancemethod_via_class_kwargs(lazy_object_proxy):
+def test_instancemethod_via_class_kwargs(lop):
     _args = ()
     _kwargs = {"one": 1, "two": 2}
 
@@ -561,14 +561,14 @@ def test_instancemethod_via_class_kwargs(lazy_object_proxy):
         def function(self, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper(Class(), **_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_instancemethod_via_class_args_plus_kwargs(lazy_object_proxy):
+def test_instancemethod_via_class_args_plus_kwargs(lop):
     _args = (1, 2)
     _kwargs = {"one": 1, "two": 2}
 
@@ -576,14 +576,14 @@ def test_instancemethod_via_class_args_plus_kwargs(lazy_object_proxy):
         def function(self, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper(Class(), *_args, **_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_classmethod_no_args(lazy_object_proxy):
+def test_classmethod_no_args(lop):
     _args = ()
     _kwargs = {}
 
@@ -592,14 +592,14 @@ def test_classmethod_no_args(lazy_object_proxy):
         def function(cls, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper()
 
     assert result == (_args, _kwargs)
 
 
-def test_classmethod_args(lazy_object_proxy):
+def test_classmethod_args(lop):
     _args = (1, 2)
     _kwargs = {}
 
@@ -608,14 +608,14 @@ def test_classmethod_args(lazy_object_proxy):
         def function(cls, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper(*_args)
 
     assert result == (_args, _kwargs)
 
 
-def test_classmethod_kwargs(lazy_object_proxy):
+def test_classmethod_kwargs(lop):
     _args = ()
     _kwargs = {"one": 1, "two": 2}
 
@@ -624,14 +624,14 @@ def test_classmethod_kwargs(lazy_object_proxy):
         def function(cls, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper(**_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_classmethod_args_plus_kwargs(lazy_object_proxy):
+def test_classmethod_args_plus_kwargs(lop):
     _args = (1, 2)
     _kwargs = {"one": 1, "two": 2}
 
@@ -640,14 +640,14 @@ def test_classmethod_args_plus_kwargs(lazy_object_proxy):
         def function(cls, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper(*_args, **_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_classmethod_via_class_no_args(lazy_object_proxy):
+def test_classmethod_via_class_no_args(lop):
     _args = ()
     _kwargs = {}
 
@@ -656,14 +656,14 @@ def test_classmethod_via_class_no_args(lazy_object_proxy):
         def function(cls, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper()
 
     assert result == (_args, _kwargs)
 
 
-def test_classmethod_via_class_args(lazy_object_proxy):
+def test_classmethod_via_class_args(lop):
     _args = (1, 2)
     _kwargs = {}
 
@@ -672,14 +672,14 @@ def test_classmethod_via_class_args(lazy_object_proxy):
         def function(cls, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper(*_args)
 
     assert result == (_args, _kwargs)
 
 
-def test_classmethod_via_class_kwargs(lazy_object_proxy):
+def test_classmethod_via_class_kwargs(lop):
     _args = ()
     _kwargs = {"one": 1, "two": 2}
 
@@ -688,14 +688,14 @@ def test_classmethod_via_class_kwargs(lazy_object_proxy):
         def function(cls, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper(**_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_classmethod_via_class_args_plus_kwargs(lazy_object_proxy):
+def test_classmethod_via_class_args_plus_kwargs(lop):
     _args = (1, 2)
     _kwargs = {"one": 1, "two": 2}
 
@@ -704,14 +704,14 @@ def test_classmethod_via_class_args_plus_kwargs(lazy_object_proxy):
         def function(cls, *args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper(*_args, **_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_staticmethod_no_args(lazy_object_proxy):
+def test_staticmethod_no_args(lop):
     _args = ()
     _kwargs = {}
 
@@ -720,14 +720,14 @@ def test_staticmethod_no_args(lazy_object_proxy):
         def function(*args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper()
 
     assert result == (_args, _kwargs)
 
 
-def test_staticmethod_args(lazy_object_proxy):
+def test_staticmethod_args(lop):
     _args = (1, 2)
     _kwargs = {}
 
@@ -736,14 +736,14 @@ def test_staticmethod_args(lazy_object_proxy):
         def function(*args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper(*_args)
 
     assert result == (_args, _kwargs)
 
 
-def test_staticmethod_kwargs(lazy_object_proxy):
+def test_staticmethod_kwargs(lop):
     _args = ()
     _kwargs = {"one": 1, "two": 2}
 
@@ -752,14 +752,14 @@ def test_staticmethod_kwargs(lazy_object_proxy):
         def function(*args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper(**_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_staticmethod_args_plus_kwargs(lazy_object_proxy):
+def test_staticmethod_args_plus_kwargs(lop):
     _args = (1, 2)
     _kwargs = {"one": 1, "two": 2}
 
@@ -768,14 +768,14 @@ def test_staticmethod_args_plus_kwargs(lazy_object_proxy):
         def function(*args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class().function)
+    wrapper = lop.Proxy(lambda: Class().function)
 
     result = wrapper(*_args, **_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_staticmethod_via_class_no_args(lazy_object_proxy):
+def test_staticmethod_via_class_no_args(lop):
     _args = ()
     _kwargs = {}
 
@@ -784,14 +784,14 @@ def test_staticmethod_via_class_no_args(lazy_object_proxy):
         def function(*args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper()
 
     assert result == (_args, _kwargs)
 
 
-def test_staticmethod_via_class_args(lazy_object_proxy):
+def test_staticmethod_via_class_args(lop):
     _args = (1, 2)
     _kwargs = {}
 
@@ -800,14 +800,14 @@ def test_staticmethod_via_class_args(lazy_object_proxy):
         def function(*args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper(*_args)
 
     assert result == (_args, _kwargs)
 
 
-def test_staticmethod_via_class_kwargs(lazy_object_proxy):
+def test_staticmethod_via_class_kwargs(lop):
     _args = ()
     _kwargs = {"one": 1, "two": 2}
 
@@ -816,14 +816,14 @@ def test_staticmethod_via_class_kwargs(lazy_object_proxy):
         def function(*args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper(**_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_staticmethod_via_class_args_plus_kwargs(lazy_object_proxy):
+def test_staticmethod_via_class_args_plus_kwargs(lop):
     _args = (1, 2)
     _kwargs = {"one": 1, "two": 2}
 
@@ -832,33 +832,33 @@ def test_staticmethod_via_class_args_plus_kwargs(lazy_object_proxy):
         def function(*args, **kwargs):
             return args, kwargs
 
-    wrapper = lazy_object_proxy.Proxy(lambda: Class.function)
+    wrapper = lop.Proxy(lambda: Class.function)
 
     result = wrapper(*_args, **_kwargs)
 
     assert result == (_args, _kwargs)
 
 
-def test_iteration(lazy_object_proxy):
+def test_iteration(lop):
     items = [1, 2]
 
-    wrapper = lazy_object_proxy.Proxy(lambda: items)
+    wrapper = lop.Proxy(lambda: items)
 
     result = [x for x in wrapper]
 
     assert result == items
 
     with pytest.raises(TypeError):
-        for _ in lazy_object_proxy.Proxy(lambda: 1):
+        for _ in lop.Proxy(lambda: 1):
             pass
 
 
-def test_iter_builtin(lazy_object_proxy):
-    iter(lazy_object_proxy.Proxy(lambda: [1, 2]))
-    pytest.raises(TypeError, iter, lazy_object_proxy.Proxy(lambda: 1))
+def test_iter_builtin(lop):
+    iter(lop.Proxy(lambda: [1, 2]))
+    pytest.raises(TypeError, iter, lop.Proxy(lambda: 1))
 
 
-def test_context_manager(lazy_object_proxy):
+def test_context_manager(lop):
     class Class(object):
         def __enter__(self):
             return self
@@ -868,26 +868,26 @@ def test_context_manager(lazy_object_proxy):
 
     instance = Class()
 
-    wrapper = lazy_object_proxy.Proxy(lambda: instance)
+    wrapper = lop.Proxy(lambda: instance)
 
     with wrapper:
         pass
 
 
-def test_object_hash(lazy_object_proxy):
+def test_object_hash(lop):
     def function1(*args, **kwargs):
         return args, kwargs
 
-    function2 = lazy_object_proxy.Proxy(lambda: function1)
+    function2 = lop.Proxy(lambda: function1)
 
     assert hash(function2) == hash(function1)
 
 
-def test_mapping_key(lazy_object_proxy):
+def test_mapping_key(lop):
     def function1(*args, **kwargs):
         return args, kwargs
 
-    function2 = lazy_object_proxy.Proxy(lambda: function1)
+    function2 = lop.Proxy(lambda: function1)
 
     table = dict()
     table[function1] = True
@@ -900,10 +900,10 @@ def test_mapping_key(lazy_object_proxy):
     assert table.get(function1)
 
 
-def test_comparison(lazy_object_proxy):
-    one = lazy_object_proxy.Proxy(lambda: 1)
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_comparison(lop):
+    one = lop.Proxy(lambda: 1)
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert two > 1
     assert two >= 1
@@ -930,9 +930,9 @@ def test_comparison(lazy_object_proxy):
     assert two != three
 
 
-def test_nonzero(lazy_object_proxy):
-    true = lazy_object_proxy.Proxy(lambda: True)
-    false = lazy_object_proxy.Proxy(lambda: False)
+def test_nonzero(lop):
+    true = lop.Proxy(lambda: True)
+    false = lop.Proxy(lambda: False)
 
     assert true
     assert not false
@@ -944,8 +944,8 @@ def test_nonzero(lazy_object_proxy):
     assert not not true
 
 
-def test_int(lazy_object_proxy):
-    one = lazy_object_proxy.Proxy(lambda: 1)
+def test_int(lop):
+    one = lop.Proxy(lambda: 1)
 
     assert int(one) == 1
 
@@ -953,81 +953,81 @@ def test_int(lazy_object_proxy):
         assert long(one) == 1  # noqa
 
 
-def test_float(lazy_object_proxy):
-    one = lazy_object_proxy.Proxy(lambda: 1)
+def test_float(lop):
+    one = lop.Proxy(lambda: 1)
 
     assert float(one) == 1.0
 
 
-def test_add(lazy_object_proxy):
-    one = lazy_object_proxy.Proxy(lambda: 1)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_add(lop):
+    one = lop.Proxy(lambda: 1)
+    two = lop.Proxy(lambda: 2)
 
     assert one + two == 1 + 2
     assert 1 + two == 1 + 2
     assert one + 2 == 1 + 2
 
 
-def test_sub(lazy_object_proxy):
-    one = lazy_object_proxy.Proxy(lambda: 1)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_sub(lop):
+    one = lop.Proxy(lambda: 1)
+    two = lop.Proxy(lambda: 2)
 
     assert one - two == 1 - 2
     assert 1 - two == 1 - 2
     assert one - 2 == 1 - 2
 
 
-def test_mul(lazy_object_proxy):
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_mul(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert two * three == 2 * 3
     assert 2 * three == 2 * 3
     assert two * 3 == 2 * 3
 
 
-def test_div(lazy_object_proxy):
+def test_div(lop):
     # On Python 2 this will pick up div and on Python
     # 3 it will pick up truediv.
 
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert two / three == 2 / 3
     assert 2 / three == 2 / 3
     assert two / 3 == 2 / 3
 
 
-def test_divdiv(lazy_object_proxy):
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_divdiv(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert three // two == 3 // 2
     assert 3 // two == 3 // 2
     assert three // 2 == 3 // 2
 
 
-def test_mod(lazy_object_proxy):
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_mod(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert three % two == 3 % 2
     assert 3 % two == 3 % 2
     assert three % 2 == 3 % 2
 
 
-def test_divmod(lazy_object_proxy):
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_divmod(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert divmod(three, two), divmod(3 == 2)
     assert divmod(3, two), divmod(3 == 2)
     assert divmod(three, 2), divmod(3 == 2)
 
 
-def test_pow(lazy_object_proxy):
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_pow(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert three ** two == pow(3, 2)
     assert 3 ** two == pow(3, 2)
@@ -1046,332 +1046,332 @@ def test_pow(lazy_object_proxy):
     assert pow(three, 2, 2) == pow(3, 2, 2)
 
 
-def test_lshift(lazy_object_proxy):
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_lshift(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert three << two == 3 << 2
     assert 3 << two == 3 << 2
     assert three << 2 == 3 << 2
 
 
-def test_rshift(lazy_object_proxy):
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_rshift(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert three >> two == 3 >> 2
     assert 3 >> two == 3 >> 2
     assert three >> 2 == 3 >> 2
 
 
-def test_and(lazy_object_proxy):
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_and(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert three & two == 3 & 2
     assert 3 & two == 3 & 2
     assert three & 2 == 3 & 2
 
 
-def test_xor(lazy_object_proxy):
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_xor(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert three ^ two == 3 ^ 2
     assert 3 ^ two == 3 ^ 2
     assert three ^ 2 == 3 ^ 2
 
 
-def test_or(lazy_object_proxy):
-    two = lazy_object_proxy.Proxy(lambda: 2)
-    three = lazy_object_proxy.Proxy(lambda: 3)
+def test_or(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
 
     assert three | two == 3 | 2
     assert 3 | two == 3 | 2
     assert three | 2 == 3 | 2
 
 
-def test_iadd(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 1)
-    one = lazy_object_proxy.Proxy(lambda: 1)
+def test_iadd(lop):
+    value = lop.Proxy(lambda: 1)
+    one = lop.Proxy(lambda: 1)
 
     value += 1
     assert value == 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value += one
     assert value == 3
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_isub(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 1)
-    one = lazy_object_proxy.Proxy(lambda: 1)
+def test_isub(lop):
+    value = lop.Proxy(lambda: 1)
+    one = lop.Proxy(lambda: 1)
 
     value -= 1
     assert value == 0
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value -= one
     assert value == -1
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_imul(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 2)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_imul(lop):
+    value = lop.Proxy(lambda: 2)
+    two = lop.Proxy(lambda: 2)
 
     value *= 2
     assert value == 4
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value *= two
     assert value == 8
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_idiv(lazy_object_proxy):
+def test_idiv(lop):
     # On Python 2 this will pick up div and on Python
     # 3 it will pick up truediv.
 
-    value = lazy_object_proxy.Proxy(lambda: 2)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+    value = lop.Proxy(lambda: 2)
+    two = lop.Proxy(lambda: 2)
 
     value /= 2
     assert value == 2 / 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value /= two
     assert value == 2 / 2 / 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_ifloordiv(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 2)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_ifloordiv(lop):
+    value = lop.Proxy(lambda: 2)
+    two = lop.Proxy(lambda: 2)
 
     value //= 2
     assert value == 2 // 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value //= two
     assert value == 2 // 2 // 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_imod(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 10)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_imod(lop):
+    value = lop.Proxy(lambda: 10)
+    two = lop.Proxy(lambda: 2)
 
     value %= 2
     assert value == 10 % 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value %= two
     assert value == 10 % 2 % 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_ipow(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 10)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_ipow(lop):
+    value = lop.Proxy(lambda: 10)
+    two = lop.Proxy(lambda: 2)
 
     value **= 2
     assert value == 10 ** 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value **= two
     assert value == 10 ** 2 ** 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_ilshift(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 256)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_ilshift(lop):
+    value = lop.Proxy(lambda: 256)
+    two = lop.Proxy(lambda: 2)
 
     value <<= 2
     assert value == 256 << 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value <<= two
     assert value == 256 << 2 << 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_irshift(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 2)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_irshift(lop):
+    value = lop.Proxy(lambda: 2)
+    two = lop.Proxy(lambda: 2)
 
     value >>= 2
     assert value == 2 >> 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value >>= two
     assert value == 2 >> 2 >> 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_iand(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 1)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_iand(lop):
+    value = lop.Proxy(lambda: 1)
+    two = lop.Proxy(lambda: 2)
 
     value &= 2
     assert value == 1 & 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value &= two
     assert value == 1 & 2 & 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_ixor(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 1)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_ixor(lop):
+    value = lop.Proxy(lambda: 1)
+    two = lop.Proxy(lambda: 2)
 
     value ^= 2
     assert value == 1 ^ 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value ^= two
     assert value == 1 ^ 2 ^ 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_ior(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 1)
-    two = lazy_object_proxy.Proxy(lambda: 2)
+def test_ior(lop):
+    value = lop.Proxy(lambda: 1)
+    two = lop.Proxy(lambda: 2)
 
     value |= 2
     assert value == 1 | 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
     value |= two
     assert value == 1 | 2 | 2
 
     if lazy_object_proxy.kind != 'simple':
-        assert type(value) == lazy_object_proxy.Proxy
+        assert type(value) == lop.Proxy
 
 
-def test_neg(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 1)
+def test_neg(lop):
+    value = lop.Proxy(lambda: 1)
 
     assert -value == -1
 
 
-def test_pos(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 1)
+def test_pos(lop):
+    value = lop.Proxy(lambda: 1)
 
     assert +value == 1
 
 
-def test_abs(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: -1)
+def test_abs(lop):
+    value = lop.Proxy(lambda: -1)
 
     assert abs(value) == 1
 
 
-def test_invert(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 1)
+def test_invert(lop):
+    value = lop.Proxy(lambda: 1)
 
     assert ~value == ~1
 
 
-def test_oct(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 20)
+def test_oct(lop):
+    value = lop.Proxy(lambda: 20)
 
     assert oct(value) == oct(20)
 
 
-def test_hex(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 20)
+def test_hex(lop):
+    value = lop.Proxy(lambda: 20)
 
     assert hex(value) == hex(20)
 
 
-def test_index(lazy_object_proxy):
+def test_index(lop):
     class Class(object):
         def __index__(self):
             return 1
 
-    value = lazy_object_proxy.Proxy(lambda: Class())
+    value = lop.Proxy(lambda: Class())
     items = [0, 1, 2]
 
     assert items[value] == items[1]
 
 
-def test_length(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: list(range(3)))
+def test_length(lop):
+    value = lop.Proxy(lambda: list(range(3)))
 
     assert len(value) == 3
 
 
-def test_contains(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: list(range(3)))
+def test_contains(lop):
+    value = lop.Proxy(lambda: list(range(3)))
 
     assert 2 in value
     assert -2 not in value
 
 
-def test_getitem(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: list(range(3)))
+def test_getitem(lop):
+    value = lop.Proxy(lambda: list(range(3)))
 
     assert value[1] == 1
 
 
-def test_setitem(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: list(range(3)))
+def test_setitem(lop):
+    value = lop.Proxy(lambda: list(range(3)))
     value[1] = -1
 
     assert value[1] == -1
 
 
-def test_delitem(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: list(range(3)))
+def test_delitem(lop):
+    value = lop.Proxy(lambda: list(range(3)))
 
     assert len(value) == 3
 
@@ -1381,22 +1381,22 @@ def test_delitem(lazy_object_proxy):
     assert value[1] == 2
 
 
-def test_getslice(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: list(range(5)))
+def test_getslice(lop):
+    value = lop.Proxy(lambda: list(range(5)))
 
     assert value[1:4] == [1, 2, 3]
 
 
-def test_setslice(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: list(range(5)))
+def test_setslice(lop):
+    value = lop.Proxy(lambda: list(range(5)))
 
     value[1:4] = reversed(value[1:4])
 
     assert value[1:4] == [3, 2, 1]
 
 
-def test_delslice(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: list(range(5)))
+def test_delslice(lop):
+    value = lop.Proxy(lambda: list(range(5)))
 
     del value[1:4]
 
@@ -1404,34 +1404,34 @@ def test_delslice(lazy_object_proxy):
     assert value == [0, 4]
 
 
-def test_dict_length(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
+def test_dict_length(lop):
+    value = lop.Proxy(lambda: dict.fromkeys(range(3), False))
 
     assert len(value) == 3
 
 
-def test_dict_contains(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
+def test_dict_contains(lop):
+    value = lop.Proxy(lambda: dict.fromkeys(range(3), False))
 
     assert 2 in value
     assert -2 not in value
 
 
-def test_dict_getitem(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
+def test_dict_getitem(lop):
+    value = lop.Proxy(lambda: dict.fromkeys(range(3), False))
 
     assert value[1] is False
 
 
-def test_dict_setitem(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
+def test_dict_setitem(lop):
+    value = lop.Proxy(lambda: dict.fromkeys(range(3), False))
     value[1] = True
 
     assert value[1] is True
 
 
-def test_dict_delitem(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: dict.fromkeys(range(3), False))
+def test_dict_delitem(lop):
+    value = lop.Proxy(lambda: dict.fromkeys(range(3), False))
 
     assert len(value) == 3
 
@@ -1440,29 +1440,29 @@ def test_dict_delitem(lazy_object_proxy):
     assert len(value) == 2
 
 
-def test_str(lazy_object_proxy):
-    value = lazy_object_proxy.Proxy(lambda: 10)
+def test_str(lop):
+    value = lop.Proxy(lambda: 10)
 
     assert str(value) == str(10)
 
-    value = lazy_object_proxy.Proxy(lambda: (10,))
+    value = lop.Proxy(lambda: (10,))
 
     assert str(value) == str((10,))
 
-    value = lazy_object_proxy.Proxy(lambda: [10])
+    value = lop.Proxy(lambda: [10])
 
     assert str(value) == str([10])
 
-    value = lazy_object_proxy.Proxy(lambda: {10: 10})
+    value = lop.Proxy(lambda: {10: 10})
 
     assert str(value) == str({10: 10})
 
 
-def test_repr(lazy_object_proxy):
+def test_repr(lop):
     class Foobar:
         pass
 
-    value = lazy_object_proxy.Proxy(lambda: Foobar())
+    value = lop.Proxy(lambda: Foobar())
     str(value)
     representation = repr(value)
     print(representation)
@@ -1471,15 +1471,15 @@ def test_repr(lazy_object_proxy):
     assert 'Foobar' in representation
 
 
-def test_repr_doesnt_consume(lazy_object_proxy):
+def test_repr_doesnt_consume(lop):
     consumed = []
-    value = lazy_object_proxy.Proxy(lambda: consumed.append(1))
+    value = lop.Proxy(lambda: consumed.append(1))
     print(repr(value))
     assert not consumed
 
 
-def test_derived_new(lazy_object_proxy):
-    class DerivedObjectProxy(lazy_object_proxy.Proxy):
+def test_derived_new(lop):
+    class DerivedObjectProxy(lop.Proxy):
         def __new__(cls, wrapped):
             instance = super(DerivedObjectProxy, cls).__new__(cls)
             instance.__init__(wrapped)
@@ -1495,11 +1495,11 @@ def test_derived_new(lazy_object_proxy):
     assert obj() == 123
 
 
-def test_setup_class_attributes(lazy_object_proxy):
+def test_setup_class_attributes(lop):
     def function():
         pass
 
-    class DerivedObjectProxy(lazy_object_proxy.Proxy):
+    class DerivedObjectProxy(lop.Proxy):
         pass
 
     obj = DerivedObjectProxy(lambda: function)
@@ -1516,11 +1516,11 @@ def test_setup_class_attributes(lazy_object_proxy):
     assert not hasattr(function, 'ATTRIBUTE')
 
 
-def test_override_class_attributes(lazy_object_proxy):
+def test_override_class_attributes(lop):
     def function():
         pass
 
-    class DerivedObjectProxy(lazy_object_proxy.Proxy):
+    class DerivedObjectProxy(lop.Proxy):
         ATTRIBUTE = 1
 
     obj = DerivedObjectProxy(lambda: function)
@@ -1542,24 +1542,24 @@ def test_override_class_attributes(lazy_object_proxy):
     assert not hasattr(function, 'ATTRIBUTE')
 
 
-def test_attr_functions(lazy_object_proxy):
+def test_attr_functions(lop):
     def function():
         pass
 
-    proxy = lazy_object_proxy.Proxy(lambda: function)
+    proxy = lop.Proxy(lambda: function)
 
     assert hasattr(proxy, '__getattr__')
     assert hasattr(proxy, '__setattr__')
     assert hasattr(proxy, '__delattr__')
 
 
-def test_override_getattr(lazy_object_proxy):
+def test_override_getattr(lop):
     def function():
         pass
 
     accessed = []
 
-    class DerivedObjectProxy(lazy_object_proxy.Proxy):
+    class DerivedObjectProxy(lop.Proxy):
         def __getattr__(self, name):
             accessed.append(name)
             try:
@@ -1582,46 +1582,46 @@ skipcallable = pytest.mark.xfail(
 
 
 @skipcallable
-def test_proxy_hasattr_call(lazy_object_proxy):
-    proxy = lazy_object_proxy.Proxy(lambda: None)
+def test_proxy_hasattr_call(lop):
+    proxy = lop.Proxy(lambda: None)
 
     assert not hasattr(proxy, '__call__')
 
 
 @skipcallable
-def test_proxy_getattr_call(lazy_object_proxy):
-    proxy = lazy_object_proxy.Proxy(lambda: None)
+def test_proxy_getattr_call(lop):
+    proxy = lop.Proxy(lambda: None)
 
     assert getattr(proxy, '__call__', None) is None
 
 
 @skipcallable
-def test_proxy_is_callable(lazy_object_proxy):
-    proxy = lazy_object_proxy.Proxy(lambda: None)
+def test_proxy_is_callable(lop):
+    proxy = lop.Proxy(lambda: None)
 
     assert not callable(proxy)
 
 
-def test_callable_proxy_hasattr_call(lazy_object_proxy):
-    proxy = lazy_object_proxy.Proxy(lambda: None)
+def test_callable_proxy_hasattr_call(lop):
+    proxy = lop.Proxy(lambda: None)
 
     assert hasattr(proxy, '__call__')
 
 
 @skipcallable
-def test_callable_proxy_getattr_call(lazy_object_proxy):
-    proxy = lazy_object_proxy.Proxy(lambda: None)
+def test_callable_proxy_getattr_call(lop):
+    proxy = lop.Proxy(lambda: None)
 
     assert getattr(proxy, '__call__', None) is None
 
 
-def test_callable_proxy_is_callable(lazy_object_proxy):
-    proxy = lazy_object_proxy.Proxy(lambda: None)
+def test_callable_proxy_is_callable(lop):
+    proxy = lop.Proxy(lambda: None)
 
     assert callable(proxy)
 
 
-def test_class_bytes(lazy_object_proxy):
+def test_class_bytes(lop):
     if PY3:
         class Class(object):
             def __bytes__(self):
@@ -1629,59 +1629,59 @@ def test_class_bytes(lazy_object_proxy):
 
         instance = Class()
 
-        proxy = lazy_object_proxy.Proxy(lambda: instance)
+        proxy = lop.Proxy(lambda: instance)
 
         assert bytes(instance) == bytes(proxy)
 
 
-def test_str_format(lazy_object_proxy):
+def test_str_format(lop):
     instance = 'abcd'
 
-    proxy = lazy_object_proxy.Proxy(lambda: instance)
+    proxy = lop.Proxy(lambda: instance)
 
     assert format(instance, ''), format(proxy == '')
 
 
-def test_list_reversed(lazy_object_proxy):
+def test_list_reversed(lop):
     instance = [1, 2]
 
-    proxy = lazy_object_proxy.Proxy(lambda: instance)
+    proxy = lop.Proxy(lambda: instance)
 
     assert list(reversed(instance)) == list(reversed(proxy))
 
 
-def test_decimal_complex(lazy_object_proxy):
+def test_decimal_complex(lop):
     import decimal
 
     instance = decimal.Decimal(123)
 
-    proxy = lazy_object_proxy.Proxy(lambda: instance)
+    proxy = lop.Proxy(lambda: instance)
 
     assert complex(instance) == complex(proxy)
 
 
-def test_fractions_round(lazy_object_proxy):
+def test_fractions_round(lop):
     import fractions
 
     instance = fractions.Fraction('1/2')
 
-    proxy = lazy_object_proxy.Proxy(lambda: instance)
+    proxy = lop.Proxy(lambda: instance)
 
     assert round(instance) == round(proxy)
 
 
-def test_readonly(lazy_object_proxy):
+def test_readonly(lop):
     class Foo(object):
         if PY2:
             @property
             def __qualname__(self):
                 return 'object'
 
-    proxy = lazy_object_proxy.Proxy(lambda: Foo() if PY2 else object)
+    proxy = lop.Proxy(lambda: Foo() if PY2 else object)
     assert proxy.__qualname__ == 'object'
 
 
-def test_del_wrapped(lazy_object_proxy):
+def test_del_wrapped(lop):
     foo = object()
     called = []
 
@@ -1689,7 +1689,7 @@ def test_del_wrapped(lazy_object_proxy):
         called.append(1)
         return foo
 
-    proxy = lazy_object_proxy.Proxy(make_foo)
+    proxy = lop.Proxy(make_foo)
     str(proxy)
     assert called == [1]
     assert proxy.__wrapped__ is foo
@@ -1699,21 +1699,21 @@ def test_del_wrapped(lazy_object_proxy):
     assert called == [1, 1]
 
 
-def test_raise_attribute_error(lazy_object_proxy):
+def test_raise_attribute_error(lop):
     def foo():
         raise AttributeError("boom!")
 
-    proxy = lazy_object_proxy.Proxy(foo)
+    proxy = lop.Proxy(foo)
     pytest.raises(AttributeError, str, proxy)
     pytest.raises(AttributeError, lambda: proxy.__wrapped__)
     assert proxy.__factory__ is foo
 
 
-def test_patching_the_factory(lazy_object_proxy):
+def test_patching_the_factory(lop):
     def foo():
         raise AttributeError("boom!")
 
-    proxy = lazy_object_proxy.Proxy(foo)
+    proxy = lop.Proxy(foo)
     pytest.raises(AttributeError, lambda: proxy.__wrapped__)
     assert proxy.__factory__ is foo
 
@@ -1722,8 +1722,8 @@ def test_patching_the_factory(lazy_object_proxy):
     assert proxy.__wrapped__ is foo
 
 
-def test_deleting_the_factory(lazy_object_proxy):
-    proxy = lazy_object_proxy.Proxy(None)
+def test_deleting_the_factory(lop):
+    proxy = lop.Proxy(None)
     assert proxy.__factory__ is None
     proxy.__factory__ = None
     assert proxy.__factory__ is None
@@ -1733,8 +1733,8 @@ def test_deleting_the_factory(lazy_object_proxy):
     pytest.raises(ValueError, str, proxy)
 
 
-def test_patching_the_factory_with_none(lazy_object_proxy):
-    proxy = lazy_object_proxy.Proxy(None)
+def test_patching_the_factory_with_none(lop):
+    proxy = lop.Proxy(None)
     assert proxy.__factory__ is None
     proxy.__factory__ = None
     assert proxy.__factory__ is None
@@ -1750,24 +1750,24 @@ def test_patching_the_factory_with_none(lazy_object_proxy):
     assert str(proxy) == '1'
 
 
-def test_new(lazy_object_proxy):
-    a = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
-    b = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
+def test_new(lop):
+    a = lop.Proxy.__new__(lop.Proxy)
+    b = lop.Proxy.__new__(lop.Proxy)
     # NOW KISS
     pytest.raises(ValueError, lambda: a + b)
     # no segfault, yay
     pytest.raises(ValueError, lambda: a.__wrapped__)
 
 
-def test_set_wrapped_via_new(lazy_object_proxy):
-    obj = lazy_object_proxy.Proxy.__new__(lazy_object_proxy.Proxy)
+def test_set_wrapped_via_new(lop):
+    obj = lop.Proxy.__new__(lop.Proxy)
     obj.__wrapped__ = 1
     assert str(obj) == '1'
     assert obj + 1 == 2
 
 
-def test_set_wrapped_regular(lazy_object_proxy):
-    obj = lazy_object_proxy.Proxy(None)
+def test_set_wrapped_regular(lop):
+    obj = lop.Proxy(None)
     obj.__wrapped__ = 1
     assert str(obj) == '1'
     assert obj + 1 == 2
@@ -1790,7 +1790,7 @@ def pickler(request):
 ])
 @pytest.mark.parametrize("level", range(pickle.HIGHEST_PROTOCOL + 1))
 def test_pickling(lazy_object_proxy, obj, pickler, level):
-    proxy = lazy_object_proxy.Proxy(lambda: obj)
+    proxy = lop.Proxy(lambda: obj)
     dump = pickler.dumps(proxy, protocol=level)
     result = pickler.loads(dump)
     assert obj == result
@@ -1804,15 +1804,15 @@ def test_pickling_exception(lazy_object_proxy, pickler, level):
     def trouble_maker():
         raise BadStuff("foo")
 
-    proxy = lazy_object_proxy.Proxy(trouble_maker)
+    proxy = lop.Proxy(trouble_maker)
     pytest.raises(BadStuff, pickler.dumps, proxy, protocol=level)
 
 
 @pytest.mark.skipif(platform.python_implementation() != 'CPython',
                     reason="Interpreter doesn't have reference counting")
-def test_garbage_collection(lazy_object_proxy):
+def test_garbage_collection(lop):
     leaky = lambda: "foobar"  # noqa
-    proxy = lazy_object_proxy.Proxy(leaky)
+    proxy = lop.Proxy(leaky)
     leaky.leak = proxy
     ref = weakref.ref(leaky)
     assert proxy == "foobar"
@@ -1824,11 +1824,11 @@ def test_garbage_collection(lazy_object_proxy):
 
 @pytest.mark.skipif(platform.python_implementation() != 'CPython',
                     reason="Interpreter doesn't have reference counting")
-def test_garbage_collection_count(lazy_object_proxy):
+def test_garbage_collection_count(lop):
     obj = object()
     count = sys.getrefcount(obj)
     for _ in range(100):
-        str(lazy_object_proxy.Proxy(lambda: obj))
+        str(lop.Proxy(lambda: obj))
     assert count == sys.getrefcount(obj)
 
 
@@ -1908,12 +1908,12 @@ def test_proto(benchmark, prototype):
     assert benchmark(partial(str, proxied)) == obj
 
 
-def test_subclassing_with_local_attr(lazy_object_proxy):
+def test_subclassing_with_local_attr(lop):
     class Foo:
         pass
     called = []
 
-    class LazyProxy(lazy_object_proxy.Proxy):
+    class LazyProxy(lop.Proxy):
         name = None
 
         def __init__(self, func, **lazy_attr):
@@ -1926,7 +1926,7 @@ def test_subclassing_with_local_attr(lazy_object_proxy):
     assert not called
 
 
-def test_subclassing_dynamic_with_local_attr(lazy_object_proxy):
+def test_subclassing_dynamic_with_local_attr(lop):
     if lazy_object_proxy.kind == 'cext':
         pytest.skip("Not possible.")
 
@@ -1935,7 +1935,7 @@ def test_subclassing_dynamic_with_local_attr(lazy_object_proxy):
 
     called = []
 
-    class LazyProxy(lazy_object_proxy.Proxy):
+    class LazyProxy(lop.Proxy):
         def __init__(self, func, **lazy_attr):
             super(LazyProxy, self).__init__(func)
             for attr, val in lazy_attr.items():
@@ -1952,13 +1952,13 @@ class FSPathMock(object):
 
 
 @pytest.mark.skipif(not hasattr(os, "fspath"), reason="No os.fspath support.")
-def test_fspath(lazy_object_proxy):
-    assert os.fspath(lazy_object_proxy.Proxy(lambda: '/tmp')) == '/tmp'
-    assert os.fspath(lazy_object_proxy.Proxy(FSPathMock)) == '/tmp'
+def test_fspath(lop):
+    assert os.fspath(lop.Proxy(lambda: '/tmp')) == '/tmp'
+    assert os.fspath(lop.Proxy(FSPathMock)) == '/tmp'
     with pytest.raises(TypeError) as excinfo:
-        os.fspath(lazy_object_proxy.Proxy(lambda: None))
+        os.fspath(lop.Proxy(lambda: None))
     assert '__fspath__() to return str or bytes, not NoneType' in excinfo.value.args[0]
 
 
-def test_fspath_method(lazy_object_proxy):
-    assert lazy_object_proxy.Proxy(FSPathMock).__fspath__() == '/tmp'
+def test_fspath_method(lop):
+    assert lop.Proxy(FSPathMock).__fspath__() == '/tmp'
