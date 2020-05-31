@@ -2,10 +2,10 @@ import operator
 
 from .compat import PY2
 from .compat import PY3
+from .compat import string_types
 from .compat import with_metaclass
 from .utils import cached_property
 from .utils import identity
-from .utils import string_types
 
 
 def make_proxy_method(code):
