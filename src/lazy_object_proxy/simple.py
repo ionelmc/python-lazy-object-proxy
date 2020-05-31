@@ -5,6 +5,7 @@ from .compat import PY3
 from .compat import with_metaclass
 from .utils import cached_property
 from .utils import identity
+from .utils import string_types
 
 
 def make_proxy_method(code):
@@ -100,7 +101,17 @@ class Proxy(with_metaclass(_ProxyMetaType)):
                 self.__factory__
             )
 
-    __fspath__ = make_proxy_method(str)
+    def __fspath__(self):
+        wrapped = self.__wrapped__
+        if isinstance(wrapped, string_types):
+            return wrapped
+        else:
+            fspath = getattr(wrapped, '__fspath__', None)
+            if fspath is None:
+                return wrapped
+            else:
+                return fspath()
+
     __reversed__ = make_proxy_method(reversed)
 
     if PY3:

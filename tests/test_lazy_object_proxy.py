@@ -1946,6 +1946,19 @@ def test_subclassing_dynamic_with_local_attr(lazy_object_proxy):
     assert not called
 
 
+class FSPathMock(object):
+    def __fspath__(self):
+        return '/tmp'
+
+
 @pytest.mark.skipif(not hasattr(os, "fspath"), reason="No os.fspath support.")
 def test_fspath(lazy_object_proxy):
     assert os.fspath(lazy_object_proxy.Proxy(lambda: '/tmp')) == '/tmp'
+    assert os.fspath(lazy_object_proxy.Proxy(FSPathMock)) == '/tmp'
+    with pytest.raises(TypeError) as excinfo:
+        os.fspath(lazy_object_proxy.Proxy(lambda: None))
+    assert '__fspath__() to return str or bytes, not NoneType' in excinfo.value.args[0]
+
+
+def test_fspath_method(lazy_object_proxy):
+    assert lazy_object_proxy.Proxy(FSPathMock).__fspath__() == '/tmp'

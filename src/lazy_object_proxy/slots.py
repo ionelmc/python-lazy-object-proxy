@@ -4,6 +4,7 @@ from .compat import PY2
 from .compat import PY3
 from .compat import with_metaclass
 from .utils import identity
+from .utils import string_types
 
 
 class _ProxyMethods(object):
@@ -153,7 +154,15 @@ class Proxy(with_metaclass(_ProxyMetaType)):
             )
 
     def __fspath__(self):
-        return str(self.__wrapped__)
+        wrapped = self.__wrapped__
+        if isinstance(wrapped, string_types):
+            return wrapped
+        else:
+            fspath = getattr(wrapped, '__fspath__', None)
+            if fspath is None:
+                return wrapped
+            else:
+                return fspath()
 
     def __reversed__(self):
         return reversed(self.__wrapped__)

@@ -222,6 +222,31 @@ static PyObject *Proxy_str(ProxyObject *self)
 
 /* ------------------------------------------------------------------------- */
 
+static PyObject *Proxy_fspath(ProxyObject *self)
+{
+    _Py_IDENTIFIER(__fspath__);
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    PyObject *func = NULL;
+    PyObject *fspath = NULL;
+
+    if (PyUnicode_Check(self->wrapped) || PyBytes_Check(self->wrapped)) {
+        Py_INCREF(self->wrapped);
+        return self->wrapped;
+    }
+
+    func = _PyObject_LookupSpecial(self->wrapped, &PyId___fspath__);
+    if (NULL == func) {
+        Py_INCREF(self->wrapped);
+        return self->wrapped;
+    }
+
+    fspath = PyObject_CallFunctionObjArgs(func, NULL);
+    Py_DECREF(func);
+    return fspath;
+}
+
+/* ------------------------------------------------------------------------- */
+
 static PyObject *Proxy_add(PyObject *o1, PyObject *o2)
 {
     Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
@@ -1282,7 +1307,7 @@ static PyMethodDef Proxy_methods[] = {
     { "__reversed__", (PyCFunction)Proxy_reversed, METH_NOARGS, 0 },
     { "__reduce__", (PyCFunction)Proxy_reduce, METH_NOARGS, 0 },
     { "__reduce_ex__", (PyCFunction)Proxy_reduce, METH_O, 0 },
-    { "__fspath__", (PyCFunction)Proxy_str, METH_NOARGS, 0 },
+    { "__fspath__", (PyCFunction)Proxy_fspath, METH_NOARGS, 0 },
 #if PY_MAJOR_VERSION >= 3
     { "__round__",  (PyCFunction)Proxy_round, METH_NOARGS, 0 },
 #endif
