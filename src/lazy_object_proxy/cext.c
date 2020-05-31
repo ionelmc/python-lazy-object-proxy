@@ -224,7 +224,6 @@ static PyObject *Proxy_str(ProxyObject *self)
 
 static PyObject *Proxy_fspath(ProxyObject *self)
 {
-    _Py_IDENTIFIER(__fspath__);
     Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
     PyObject *func = NULL;
     PyObject *fspath = NULL;
@@ -234,7 +233,7 @@ static PyObject *Proxy_fspath(ProxyObject *self)
         return self->wrapped;
     }
 
-    func = _PyObject_LookupSpecial(self->wrapped, &PyId___fspath__);
+    func = PyObject_GetAttrString(self->wrapped, "__fspath__");
     if (NULL == func) {
         Py_INCREF(self->wrapped);
         return self->wrapped;
