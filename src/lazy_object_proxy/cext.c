@@ -234,7 +234,8 @@ static PyObject *Proxy_fspath(ProxyObject *self)
     }
 
     func = PyObject_GetAttrString(self->wrapped, "__fspath__");
-    if (NULL == func) {
+    if (func == NULL) {
+        PyErr_Clear();
         Py_INCREF(self->wrapped);
         return self->wrapped;
     }
