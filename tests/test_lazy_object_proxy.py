@@ -1098,13 +1098,13 @@ def test_iadd(lop):
     value += 1
     assert value == 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value += one
     assert value == 3
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1114,13 +1114,13 @@ def test_isub(lop):
 
     value -= 1
     assert value == 0
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value -= one
     assert value == -1
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1131,13 +1131,13 @@ def test_imul(lop):
     value *= 2
     assert value == 4
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value *= two
     assert value == 8
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1151,13 +1151,13 @@ def test_idiv(lop):
     value /= 2
     assert value == 2 / 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value /= two
     assert value == 2 / 2 / 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1168,13 +1168,13 @@ def test_ifloordiv(lop):
     value //= 2
     assert value == 2 // 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value //= two
     assert value == 2 // 2 // 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1185,13 +1185,13 @@ def test_imod(lop):
     value %= 2
     assert value == 10 % 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value %= two
     assert value == 10 % 2 % 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1202,13 +1202,13 @@ def test_ipow(lop):
     value **= 2
     assert value == 10 ** 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value **= two
     assert value == 10 ** 2 ** 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1219,13 +1219,13 @@ def test_ilshift(lop):
     value <<= 2
     assert value == 256 << 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value <<= two
     assert value == 256 << 2 << 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1236,13 +1236,13 @@ def test_irshift(lop):
     value >>= 2
     assert value == 2 >> 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value >>= two
     assert value == 2 >> 2 >> 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1253,13 +1253,13 @@ def test_iand(lop):
     value &= 2
     assert value == 1 & 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value &= two
     assert value == 1 & 2 & 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1270,13 +1270,13 @@ def test_ixor(lop):
     value ^= 2
     assert value == 1 ^ 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value ^= two
     assert value == 1 ^ 2 ^ 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1287,13 +1287,13 @@ def test_ior(lop):
     value |= 2
     assert value == 1 | 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value |= two
     assert value == 1 | 2 | 2
 
-    if lazy_object_proxy.kind != 'simple':
+    if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
 
@@ -1789,7 +1789,7 @@ def pickler(request):
     Decimal("1.2")
 ])
 @pytest.mark.parametrize("level", range(pickle.HIGHEST_PROTOCOL + 1))
-def test_pickling(lazy_object_proxy, obj, pickler, level):
+def test_pickling(lop, obj, pickler, level):
     proxy = lop.Proxy(lambda: obj)
     dump = pickler.dumps(proxy, protocol=level)
     result = pickler.loads(dump)
@@ -1797,7 +1797,7 @@ def test_pickling(lazy_object_proxy, obj, pickler, level):
 
 
 @pytest.mark.parametrize("level", range(pickle.HIGHEST_PROTOCOL + 1))
-def test_pickling_exception(lazy_object_proxy, pickler, level):
+def test_pickling_exception(lop, pickler, level):
     class BadStuff(Exception):
         pass
 
@@ -1927,7 +1927,7 @@ def test_subclassing_with_local_attr(lop):
 
 
 def test_subclassing_dynamic_with_local_attr(lop):
-    if lazy_object_proxy.kind == 'cext':
+    if lop.kind == 'cext':
         pytest.skip("Not possible.")
 
     class Foo:
