@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import io
 import os
+import platform
 import re
 from glob import glob
 from os.path import basename
@@ -25,6 +26,17 @@ def read(*names, **kwargs):
         encoding=kwargs.get('encoding', 'utf8')
     ) as fh:
         return fh.read()
+
+
+# Enable code coverage for C code: we can't use CFLAGS=-coverage in tox.ini, since that may mess with compiling
+# dependencies (e.g. numpy). Therefore we set SETUPPY_CFLAGS=-coverage in tox.ini and copy it to CFLAGS here (after
+# deps have been safely installed).
+if 'TOXENV' in os.environ and os.environ.get('SETUPPY_GCOV') == 'enabled' and platform.system() == 'Linux':
+    CFLAGS = ['-fprofile-arcs', '-ftest-coverage']
+    LFLAGS = ['-lgcov']
+else:
+    CFLAGS = []
+    LFLAGS = []
 
 
 class optional_build_ext(build_ext):
@@ -117,9 +129,9 @@ setup(
         Extension(
             splitext(relpath(path, 'src').replace(os.sep, '.'))[0],
             sources=[path],
-            extra_compile_args=os.environ.get('SETUPPY_CFLAGS', '').split(),
-            extra_link_args=os.environ.get('SETUPPY_LFLAGS', '').split(),
-            include_dirs=[dirname(path)],
+            extra_compile_args=CFLAGS,
+            extra_link_args=LFLAGS,
+            include_dirs=[dirname(path)]
         )
         for root, _, _ in os.walk('src')
         for path in glob(join(root, '*.c'))
