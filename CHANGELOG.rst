@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.5.0 (2020-06-05)
+------------------
+
+* Added support for ``__fspath__``.
+* Dropped support for Python 3.4.
+
 1.4.3 (2019-10-26)
 ------------------
 
