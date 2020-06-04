@@ -225,8 +225,8 @@ static PyObject *Proxy_str(ProxyObject *self)
 static PyObject *Proxy_fspath(ProxyObject *self)
 {
     Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
-    PyObject *func = NULL;
-    PyObject *fspath = NULL;
+    PyObject *func;
+    PyObject *fspath;
 
     if (PyUnicode_Check(self->wrapped) || PyBytes_Check(self->wrapped)) {
         Py_INCREF(self->wrapped);
