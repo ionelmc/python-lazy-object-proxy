@@ -116,8 +116,8 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __class__(self):
         return self.__wrapped__.__class__
 
-    @__class__.setter  # noqa
-    def __class__(self, value):
+    @__class__.setter
+    def __class__(self, value):  # noqa: F811
         self.__wrapped__.__class__ = value
 
     @property
