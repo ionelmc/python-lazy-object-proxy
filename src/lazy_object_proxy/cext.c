@@ -225,23 +225,27 @@ static PyObject *Proxy_str(ProxyObject *self)
 static PyObject *Proxy_fspath(ProxyObject *self)
 {
     Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
-    PyObject *func;
-    PyObject *fspath;
+
+    PyObject *method = NULL;
+    PyObject *fspath = NULL;
 
     if (PyUnicode_Check(self->wrapped) || PyBytes_Check(self->wrapped)) {
         Py_INCREF(self->wrapped);
         return self->wrapped;
     }
 
-    func = PyObject_GetAttrString(self->wrapped, "__fspath__");
-    if (func == NULL) {
+    method = PyObject_GetAttrString(self->wrapped, "__fspath__");
+
+    if (!method) {
         PyErr_Clear();
         Py_INCREF(self->wrapped);
         return self->wrapped;
     }
 
-    fspath = PyObject_CallFunctionObjArgs(func, NULL);
-    Py_DECREF(func);
+    fspath = PyObject_CallFunctionObjArgs(method, NULL);
+
+    Py_DECREF(method);
+
     return fspath;
 }
 
