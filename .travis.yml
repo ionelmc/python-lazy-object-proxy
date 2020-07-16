@@ -3,7 +3,6 @@ dist: xenial
 cache: false
 env:
   global:
-    - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
     - TWINE_USERNAME=ionel
 matrix:
@@ -18,7 +17,12 @@ matrix:
       language: generic
       env:
         - TOXENV=py27-cover
-    - env:
+    - arch: amd64
+      env:
+        - TOXENV=py27-cover,codecov,extension-coveralls,coveralls
+      python: '2.7'
+    - arch: arm64
+      env:
         - TOXENV=py27-cover,codecov,extension-coveralls,coveralls
       python: '2.7'
     - os: osx
@@ -26,32 +30,65 @@ matrix:
       env:
         - TOXENV=py27-nocov
         - WHEEL_PATH=.tox/dist
-    - env:
+    - arch: amd64
+      env:
         - TOXENV=py27-nocov
         - WHEEL_MANYLINUX1=cp27
         - WHEEL_PATH=wheelhouse
       python: '2.7'
-    - env:
+    - arch: arm64
+      env:
+        - TOXENV=py27-nocov
+        - WHEEL_PATH=.tox/dist
+      python: '2.7'
+    - arch: amd64
+      env:
         - TOXENV=py35-cover,codecov,extension-coveralls,coveralls
       python: '3.5'
-    - env:
+    - arch: arm64
+      env:
+        - TOXENV=py35-cover,codecov,extension-coveralls,coveralls
+      python: '3.5'
+    - arch: amd64
+      env:
         - TOXENV=py35-nocov
         - WHEEL_MANYLINUX1=cp35
         - WHEEL_PATH=wheelhouse
       python: '3.5'
-    - env:
+    - arch: arm64
+      env:
+        - TOXENV=py35-nocov
+        - WHEEL_PATH=.tox/dist
+      python: '3.5'
+    - arch: amd64
+      env:
         - TOXENV=py36-cover,codecov,extension-coveralls,coveralls
       python: '3.6'
-    - env:
+    - arch: arm64
+      env:
+        - TOXENV=py36-cover,codecov,extension-coveralls,coveralls
+      python: '3.6'
+    - arch: amd64
+      env:
         - TOXENV=py36-nocov
         - WHEEL_MANYLINUX1=cp36
         - WHEEL_PATH=wheelhouse
+      python: '3.6'
+    - arch: arm64
+      env:
+        - TOXENV=py36-nocov
+        - WHEEL_PATH=.tox/dist
       python: '3.6'
     - os: osx
       language: generic
       env:
         - TOXENV=py37-cover
-    - env:
+    - arch: amd64
+      env:
+        - TOXENV=py37-cover,codecov,extension-coveralls,coveralls
+      python: '3.7'
+    - arch: arm64
+      env:
         - TOXENV=py37-cover,codecov,extension-coveralls,coveralls
       python: '3.7'
     - os: osx
@@ -59,34 +96,61 @@ matrix:
       env:
         - TOXENV=py37-nocov
         - WHEEL_PATH=.tox/dist
-    - env:
+    - arch: amd64
+      env:
         - TOXENV=py37-nocov
         - WHEEL_MANYLINUX1=cp37
         - WHEEL_PATH=wheelhouse
       python: '3.7'
-    - env:
+    - arch: arm64
+      env:
+        - TOXENV=py37-nocov
+        - WHEEL_PATH=.tox/dist
+      python: '3.7'
+    - arch: amd64
+      env:
         - TOXENV=py38-cover,codecov,extension-coveralls,coveralls
       python: '3.8'
-    - env:
+    - arch: arm64
+      env:
+        - TOXENV=py38-cover,codecov,extension-coveralls,coveralls
+      python: '3.8'
+    - arch: amd64
+      env:
         - TOXENV=py38-nocov
         - WHEEL_MANYLINUX1=cp38
         - WHEEL_PATH=wheelhouse
       python: '3.8'
-    - env:
+    - arch: arm64
+      env:
+        - TOXENV=py38-nocov
+        - WHEEL_PATH=.tox/dist
+      python: '3.8'
+    - arch: amd64
+      env:
         - TOXENV=pypy-cover,codecov,extension-coveralls,coveralls
       python: 'pypy'
-    - env:
+    - arch: amd64
+      env:
         - TOXENV=pypy-nocov
       python: 'pypy'
-    - env:
+    - arch: amd64
+      env:
         - TOXENV=pypy3-cover,codecov,extension-coveralls,coveralls
         - TOXPYTHON=pypy3
       python: 'pypy3'
-    - env:
+    - arch: amd64
+      env:
         - TOXENV=pypy3-nocov
         - TOXPYTHON=pypy3
       python: 'pypy3'
 before_install:
+  - |
+    if [[ ${TRAVIS_CPU_ARCH} == "arm64" ]]; then
+        export LD_PRELOAD=/lib/aarch64-linux-gnu/libSegFault.so
+    else
+        export LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+    fi
   - python --version
   - uname -a
   - lsb_release -a || true
@@ -114,12 +178,18 @@ script:
       tox -v
     fi
     if [[ -n ${WHEEL_PATH:-} ]]; then
+      if [[ ${TRAVIS_CPU_ARCH} == "arm64" ]]; then
+         sudo apt-get install patchelf
+         python3 -mpip install --progress-bar=off auditwheel
+         python3 -m auditwheel repair $WHEEL_PATH/*.whl -w $WHEEL_PATH/
+         rm -rf $WHEEL_PATH/*linux_aarch64.whl
+      fi
       twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing $WHEEL_PATH/*.whl
     fi
     )
 after_failure:
-  - more .tox/log/* | cat
-  - more .tox/*/log/* | cat
+  - cat .tox/log/*
+  - cat .tox/*/log/*
 notifications:
   email:
     on_success: never

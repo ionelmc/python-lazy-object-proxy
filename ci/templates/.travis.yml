@@ -3,7 +3,6 @@ dist: xenial
 cache: false
 env:
   global:
-    - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
     - TWINE_USERNAME=ionel
 matrix:
@@ -24,11 +23,16 @@ matrix:
         - WHEEL_PATH=.tox/dist
 {%- endif %}
 {%- endif %}{{ '' }}
-    - env:
+{%- for arch in architecture %}{{ '' }}
+{%- if 'arm64' not in arch or 'pypy' not in env %}{{ '' }}
+    - arch: {{ arch }}
+      env:
         - TOXENV={{ env }}{% if 'cover' in env %},codecov,extension-coveralls,coveralls{% endif %}
-{%- if 'pypy' not in env and 'nocov' in env %}{{ '' }}
+{%- if 'pypy' not in env and 'nocov' in env and 'arm64' not in arch %}{{ '' }}
         - WHEEL_MANYLINUX1=cp{{ env.split('-')[0][2:] }}
         - WHEEL_PATH=wheelhouse
+{%- elif 'pypy' not in env and 'nocov' in env and 'arm64' in arch %}{{ '' }}
+        - WHEEL_PATH=.tox/dist
 {%- endif %}
 {%- if env.startswith('pypy3') %}{{ '' }}
         - TOXPYTHON=pypy3
@@ -38,8 +42,16 @@ matrix:
 {%- else %}{{ '' }}
       python: '{{ '{0[2]}.{0[3]}'.format(env) }}'
 {%- endif %}
+{%- endif %}{{ '' }}
+{%- endfor %}{{ '' }}
 {%- endfor %}{{ '' }}
 before_install:
+  - |
+    if [[ ${TRAVIS_CPU_ARCH} == "arm64" ]]; then
+        export LD_PRELOAD=/lib/aarch64-linux-gnu/libSegFault.so
+    else
+        export LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+    fi
   - python --version
   - uname -a
   - lsb_release -a || true
@@ -67,12 +79,18 @@ script:
       tox -v
     fi
     if [[ -n ${WHEEL_PATH:-} ]]; then
+      if [[ ${TRAVIS_CPU_ARCH} == "arm64" ]]; then
+         sudo apt-get install patchelf
+         python3 -mpip install --progress-bar=off auditwheel
+         python3 -m auditwheel repair $WHEEL_PATH/*.whl -w $WHEEL_PATH/
+         rm -rf $WHEEL_PATH/*linux_aarch64.whl
+      fi
       twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing $WHEEL_PATH/*.whl
     fi
     )
 after_failure:
-  - more .tox/log/* | cat
-  - more .tox/*/log/* | cat
+  - cat .tox/log/*
+  - cat .tox/*/log/*
 notifications:
   email:
     on_success: never
