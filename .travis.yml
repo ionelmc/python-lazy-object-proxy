@@ -17,133 +17,133 @@ matrix:
       language: generic
       env:
         - TOXENV=py27-cover
-    - arch: amd64
-      env:
+    - env:
         - TOXENV=py27-cover,codecov,extension-coveralls,coveralls
       python: '2.7'
-    - arch: arm64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=py27-cover,codecov,extension-coveralls,coveralls
       python: '2.7'
+      arch: arm64
     - os: osx
       language: generic
       env:
         - TOXENV=py27-nocov
         - WHEEL_PATH=.tox/dist
-    - arch: amd64
-      env:
+    - env:
         - TOXENV=py27-nocov
         - WHEEL_MANYLINUX1=cp27
         - WHEEL_PATH=wheelhouse
       python: '2.7'
-    - arch: arm64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=py27-nocov
         - WHEEL_PATH=.tox/dist
       python: '2.7'
-    - arch: amd64
-      env:
+      arch: arm64
+    - env:
         - TOXENV=py35-cover,codecov,extension-coveralls,coveralls
       python: '3.5'
-    - arch: arm64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=py35-cover,codecov,extension-coveralls,coveralls
       python: '3.5'
-    - arch: amd64
-      env:
+      arch: arm64
+    - env:
         - TOXENV=py35-nocov
         - WHEEL_MANYLINUX1=cp35
         - WHEEL_PATH=wheelhouse
       python: '3.5'
-    - arch: arm64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=py35-nocov
         - WHEEL_PATH=.tox/dist
       python: '3.5'
-    - arch: amd64
-      env:
+      arch: arm64
+    - env:
         - TOXENV=py36-cover,codecov,extension-coveralls,coveralls
       python: '3.6'
-    - arch: arm64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=py36-cover,codecov,extension-coveralls,coveralls
       python: '3.6'
-    - arch: amd64
-      env:
+      arch: arm64
+    - env:
         - TOXENV=py36-nocov
         - WHEEL_MANYLINUX1=cp36
         - WHEEL_PATH=wheelhouse
       python: '3.6'
-    - arch: arm64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=py36-nocov
         - WHEEL_PATH=.tox/dist
       python: '3.6'
+      arch: arm64
     - os: osx
       language: generic
       env:
         - TOXENV=py37-cover
-    - arch: amd64
-      env:
+    - env:
         - TOXENV=py37-cover,codecov,extension-coveralls,coveralls
       python: '3.7'
-    - arch: arm64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=py37-cover,codecov,extension-coveralls,coveralls
       python: '3.7'
+      arch: arm64
     - os: osx
       language: generic
       env:
         - TOXENV=py37-nocov
         - WHEEL_PATH=.tox/dist
-    - arch: amd64
-      env:
+    - env:
         - TOXENV=py37-nocov
         - WHEEL_MANYLINUX1=cp37
         - WHEEL_PATH=wheelhouse
       python: '3.7'
-    - arch: arm64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=py37-nocov
         - WHEEL_PATH=.tox/dist
       python: '3.7'
-    - arch: amd64
-      env:
+      arch: arm64
+    - env:
         - TOXENV=py38-cover,codecov,extension-coveralls,coveralls
       python: '3.8'
-    - arch: arm64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=py38-cover,codecov,extension-coveralls,coveralls
       python: '3.8'
-    - arch: amd64
-      env:
+      arch: arm64
+    - env:
         - TOXENV=py38-nocov
         - WHEEL_MANYLINUX1=cp38
         - WHEEL_PATH=wheelhouse
       python: '3.8'
-    - arch: arm64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=py38-nocov
         - WHEEL_PATH=.tox/dist
       python: '3.8'
-    - arch: amd64
-      env:
+      arch: arm64
+    - env:
         - TOXENV=pypy-cover,codecov,extension-coveralls,coveralls
       python: 'pypy'
-    - arch: amd64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=pypy-nocov
       python: 'pypy'
-    - arch: amd64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=pypy3-cover,codecov,extension-coveralls,coveralls
         - TOXPYTHON=pypy3
       python: 'pypy3'
-    - arch: amd64
-      env:
+      arch: amd64
+    - env:
         - TOXENV=pypy3-nocov
         - TOXPYTHON=pypy3
       python: 'pypy3'
+      arch: amd64
 before_install:
   - |
     if [[ ${TRAVIS_CPU_ARCH} == "arm64" ]]; then

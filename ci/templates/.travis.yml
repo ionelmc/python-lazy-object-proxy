@@ -25,8 +25,7 @@ matrix:
 {%- endif %}{{ '' }}
 {%- for arch in architecture %}{{ '' }}
 {%- if 'arm64' not in arch or 'pypy' not in env %}{{ '' }}
-    - arch: {{ arch }}
-      env:
+    - env:
         - TOXENV={{ env }}{% if 'cover' in env %},codecov,extension-coveralls,coveralls{% endif %}
 {%- if 'pypy' not in env and 'nocov' in env and 'arm64' not in arch %}{{ '' }}
         - WHEEL_MANYLINUX1=cp{{ env.split('-')[0][2:] }}
@@ -41,7 +40,8 @@ matrix:
       python: 'pypy'
 {%- else %}{{ '' }}
       python: '{{ '{0[2]}.{0[3]}'.format(env) }}'
-{%- endif %}
+{%- endif %}{{ '' }}
+      arch: {{ arch }}
 {%- endif %}{{ '' }}
 {%- endfor %}{{ '' }}
 {%- endfor %}{{ '' }}
