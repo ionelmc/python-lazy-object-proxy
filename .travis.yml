@@ -3,7 +3,9 @@ dist: xenial
 cache: false
 env:
   global:
+    - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
+    - LANG=en_US.UTF-8
     - TWINE_USERNAME=ionel
 matrix:
   include:
@@ -14,6 +16,7 @@ matrix:
       env:
         - TOXENV=docs
     - os: osx
+      osx_image: xcode11
       language: generic
       env:
         - TOXENV=py27-cover
@@ -26,6 +29,7 @@ matrix:
       python: '2.7'
       arch: arm64
     - os: osx
+      osx_image: xcode11
       language: generic
       env:
         - TOXENV=py27-nocov
@@ -79,10 +83,6 @@ matrix:
         - WHEEL_PATH=.tox/dist
       python: '3.6'
       arch: arm64
-    - os: osx
-      language: generic
-      env:
-        - TOXENV=py37-cover
     - env:
         - TOXENV=py37-cover,codecov,extension-coveralls,coveralls
       python: '3.7'
@@ -91,11 +91,6 @@ matrix:
         - TOXENV=py37-cover,codecov,extension-coveralls,coveralls
       python: '3.7'
       arch: arm64
-    - os: osx
-      language: generic
-      env:
-        - TOXENV=py37-nocov
-        - WHEEL_PATH=.tox/dist
     - env:
         - TOXENV=py37-nocov
         - WHEEL_MANYLINUX1=cp37
@@ -107,6 +102,11 @@ matrix:
         - WHEEL_PATH=.tox/dist
       python: '3.7'
       arch: arm64
+    - os: osx
+      osx_image: xcode11
+      language: generic
+      env:
+        - TOXENV=py38-cover
     - env:
         - TOXENV=py38-cover,codecov,extension-coveralls,coveralls
       python: '3.8'
@@ -115,6 +115,12 @@ matrix:
         - TOXENV=py38-cover,codecov,extension-coveralls,coveralls
       python: '3.8'
       arch: arm64
+    - os: osx
+      osx_image: xcode11
+      language: generic
+      env:
+        - TOXENV=py38-nocov
+        - WHEEL_PATH=.tox/dist
     - env:
         - TOXENV=py38-nocov
         - WHEEL_MANYLINUX1=cp38
@@ -188,8 +194,8 @@ script:
     fi
     )
 after_failure:
-  - travis_wait 15 more .tox/log/* | cat
-  - travis_wait 15 more .tox/*/log/* | cat
+  - more .tox/log/* | cat
+  - more .tox/*/log/* | cat
 notifications:
   email:
     on_success: never
