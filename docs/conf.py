@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
 import traceback
+
+import sphinx_py3doc_enhanced_theme
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -15,15 +16,10 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
 ]
-if os.getenv('SPELLCHECK'):
-    extensions += 'sphinxcontrib.spelling',
-    spelling_show_suggestions = True
-    spelling_lang = 'en_US'
-
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'lazy-object-proxy'
-year = '2014-2019'
+year = '2014-2020'
 author = 'Ionel Cristian Mărieș'
 copyright = '{0}, {1}'.format(year, author)
 try:
@@ -39,7 +35,6 @@ extlinks = {
     'issue': ('https://github.com/ionelmc/python-lazy-object-proxy/issues/%s', '#'),
     'pr': ('https://github.com/ionelmc/python-lazy-object-proxy/pull/%s', 'PR #'),
 }
-import sphinx_py3doc_enhanced_theme
 html_theme = "sphinx_py3doc_enhanced_theme"
 html_theme_path = [sphinx_py3doc_enhanced_theme.get_html_theme_path()]
 html_theme_options = {

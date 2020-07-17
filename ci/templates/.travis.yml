@@ -3,7 +3,9 @@ dist: xenial
 cache: false
 env:
   global:
+    - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
+    - LANG=en_US.UTF-8
     - TWINE_USERNAME=ionel
 matrix:
   include:
@@ -14,8 +16,9 @@ matrix:
       env:
         - TOXENV=docs
 {%- for env in tox_environments %}{{ '' }}
-{%- if 'py37' in env or 'py27' in env %}{{ '' }}
+{%- if 'py38' in env or 'py27' in env %}{{ '' }}
     - os: osx
+      osx_image: xcode11
       language: generic
       env:
         - TOXENV={{ env }}
@@ -89,8 +92,8 @@ script:
     fi
     )
 after_failure:
-  - travis_wait 15 more .tox/log/* | cat
-  - travis_wait 15 more .tox/*/log/* | cat
+  - more .tox/log/* | cat
+  - more .tox/*/log/* | cat
 notifications:
   email:
     on_success: never

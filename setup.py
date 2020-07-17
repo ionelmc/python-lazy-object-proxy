@@ -31,12 +31,13 @@ def read(*names, **kwargs):
 # Enable code coverage for C code: we can't use CFLAGS=-coverage in tox.ini, since that may mess with compiling
 # dependencies (e.g. numpy). Therefore we set SETUPPY_CFLAGS=-coverage in tox.ini and copy it to CFLAGS here (after
 # deps have been safely installed).
-if 'TOXENV' in os.environ and os.environ.get('SETUPPY_GCOV') == 'enabled' and platform.system() == 'Linux':
-    CFLAGS = ['-fprofile-arcs', '-ftest-coverage']
-    LFLAGS = ['-lgcov']
+if 'TOX_ENV_NAME' in os.environ and os.environ.get('SETUP_PY_EXT_COVERAGE') == 'yes' and platform.system() == 'Linux':
+    CFLAGS = os.environ['CFLAGS'] = '-fprofile-arcs -ftest-coverage'
+    LFLAGS = os.environ['LFLAGS'] = '-lgcov'
 else:
-    CFLAGS = []
-    LFLAGS = []
+    CFLAGS = ''
+    LFLAGS = ''
+
 
 
 class optional_build_ext(build_ext):
@@ -115,7 +116,7 @@ setup(
     keywords=[
         # eg: 'keyword1', 'keyword2', 'keyword3',
     ],
-    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
     install_requires=[
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
     ],
@@ -129,8 +130,8 @@ setup(
         Extension(
             splitext(relpath(path, 'src').replace(os.sep, '.'))[0],
             sources=[path],
-            extra_compile_args=CFLAGS,
-            extra_link_args=LFLAGS,
+            extra_compile_args=CFLAGS.split(),
+            extra_link_args=LFLAGS.split(),
             include_dirs=[dirname(path)]
         )
         for root, _, _ in os.walk('src')

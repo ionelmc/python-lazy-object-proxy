@@ -41,7 +41,7 @@ To set up `python-lazy-object-proxy` for local development:
    (look for the "Fork" button).
 2. Clone your fork locally::
 
-    git clone git@github.com:ionelmc/python-lazy-object-proxy.git
+    git clone git@github.com:YOURGITHUBNAME/python-lazy-object-proxy.git
 
 3. Create a branch for local development::
 

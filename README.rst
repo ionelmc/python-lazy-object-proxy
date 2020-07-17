@@ -35,17 +35,13 @@ Overview
     :alt: Coverage Status
     :target: https://coveralls.io/r/ionelmc/python-lazy-object-proxy
 
-.. |codecov| image:: https://codecov.io/github/ionelmc/python-lazy-object-proxy/coverage.svg?branch=master
+.. |codecov| image:: https://codecov.io/gh/ionelmc/python-lazy-object-proxy/branch/master/graphs/badge.svg?branch=master
     :alt: Coverage Status
     :target: https://codecov.io/github/ionelmc/python-lazy-object-proxy
 
 .. |version| image:: https://img.shields.io/pypi/v/lazy-object-proxy.svg
     :alt: PyPI Package latest release
     :target: https://pypi.org/project/lazy-object-proxy
-
-.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-lazy-object-proxy/v1.5.0.svg
-    :alt: Commits since latest release
-    :target: https://github.com/ionelmc/python-lazy-object-proxy/compare/v1.5.0...master
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/lazy-object-proxy.svg
     :alt: PyPI Wheel
@@ -58,6 +54,11 @@ Overview
 .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/lazy-object-proxy.svg
     :alt: Supported implementations
     :target: https://pypi.org/project/lazy-object-proxy
+
+.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-lazy-object-proxy/v1.5.0.svg
+    :alt: Commits since latest release
+    :target: https://github.com/ionelmc/python-lazy-object-proxy/compare/v1.5.0...master
+
 
 
 .. end-badges
