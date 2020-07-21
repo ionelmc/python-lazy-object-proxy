@@ -70,11 +70,10 @@ def main():
         for line in subprocess.check_output([sys.executable, '-m', 'tox', '--listenvs'], universal_newlines=True).splitlines()
     ]
     tox_environments = [line for line in tox_environments if line.startswith('py')]
-    architecture = ['amd64', 'arm64']
 
     for name in os.listdir(join("ci", "templates")):
         with open(join(base_path, name), "w") as fh:
-            fh.write(jinja.get_template(name).render(tox_environments=tox_environments, architecture=architecture))
+            fh.write(jinja.get_template(name).render(tox_environments=tox_environments))
         print("Wrote {}".format(name))
     print("DONE.")
 
