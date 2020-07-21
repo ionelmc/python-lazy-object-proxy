@@ -34,16 +34,12 @@ matrix:
         - WHEEL_PATH=.tox/dist
     - env:
         - TOXENV=py27-nocov
-        - WHEEL_MANYLINUX_TAG=manylinux2014-arm
-        - WHEEL_MANYLINUX_PYTHON=cp27
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="2014-arm cp27"
       python: '2.7'
       arch: arm64
     - env:
         - TOXENV=py27-nocov
-        - WHEEL_MANYLINUX_TAG=manylinux1
-        - WHEEL_MANYLINUX_PYTHON=cp27
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="1 cp27"
       python: '2.7'
       arch: amd64
     - env:
@@ -56,16 +52,12 @@ matrix:
       arch: amd64
     - env:
         - TOXENV=py35-nocov
-        - WHEEL_MANYLINUX_TAG=manylinux2014-arm
-        - WHEEL_MANYLINUX_PYTHON=cp35
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="2014-arm cp35"
       python: '3.5'
       arch: arm64
     - env:
         - TOXENV=py35-nocov
-        - WHEEL_MANYLINUX_TAG=manylinux1
-        - WHEEL_MANYLINUX_PYTHON=cp35
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="1 cp35"
       python: '3.5'
       arch: amd64
     - env:
@@ -78,16 +70,12 @@ matrix:
       arch: amd64
     - env:
         - TOXENV=py36-nocov
-        - WHEEL_MANYLINUX_TAG=manylinux2014-arm
-        - WHEEL_MANYLINUX_PYTHON=cp36
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="2014-arm cp36"
       python: '3.6'
       arch: arm64
     - env:
         - TOXENV=py36-nocov
-        - WHEEL_MANYLINUX_TAG=manylinux1
-        - WHEEL_MANYLINUX_PYTHON=cp36
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="1 cp36"
       python: '3.6'
       arch: amd64
     - env:
@@ -100,16 +88,12 @@ matrix:
       arch: amd64
     - env:
         - TOXENV=py37-nocov
-        - WHEEL_MANYLINUX_TAG=manylinux2014-arm
-        - WHEEL_MANYLINUX_PYTHON=cp37
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="2014-arm cp37"
       python: '3.7'
       arch: arm64
     - env:
         - TOXENV=py37-nocov
-        - WHEEL_MANYLINUX_TAG=manylinux1
-        - WHEEL_MANYLINUX_PYTHON=cp37
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="1 cp37"
       python: '3.7'
       arch: amd64
     - os: osx
@@ -133,16 +117,12 @@ matrix:
         - WHEEL_PATH=.tox/dist
     - env:
         - TOXENV=py38-nocov
-        - WHEEL_MANYLINUX_TAG=manylinux2014-arm
-        - WHEEL_MANYLINUX_PYTHON=cp38
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="2014-arm cp38"
       python: '3.8'
       arch: arm64
     - env:
         - TOXENV=py38-nocov
-        - WHEEL_MANYLINUX_TAG=manylinux1
-        - WHEEL_MANYLINUX_PYTHON=cp38
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="1 cp38"
       python: '3.8'
       arch: amd64
 before_install:
@@ -166,9 +146,10 @@ script:
   - |
     (
     set -eux
-    if [[ -n ${WHEEL_MANYLINUX_TAG:-} ]]; then
-      docker run --rm --user $UID -itv $(pwd):/code ionelmc/manylinux:$WHEEL_MANYLINUX_TAG $WHEEL_MANYLINUX_PYTHON
-      tox --installpkg $WHEEL_PATH/*.whl -v
+    if [[ -n ${WHEEL_MANYLINUX:-} ]]; then
+      docker run --rm --user $UID -itv $(pwd):/code ionelmc/manylinux:manylinux$WHEEL_MANYLINUX
+      tox --installpkg wheelhouse/*.whl -v
+      export WHEEL_PATH=wheelhouse
     else
       tox -v
     fi
@@ -177,8 +158,8 @@ script:
     fi
     )
 after_failure:
-  - more .tox/log/* | cat
-  - more .tox/*/log/* | cat
+  - cat .tox/log/*
+  - cat .tox/*/log/* 
 notifications:
   email:
     on_success: never

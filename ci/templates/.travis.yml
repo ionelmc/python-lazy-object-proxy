@@ -29,9 +29,7 @@ matrix:
     - env:
         - TOXENV={{ env }}{% if 'cover' in env %},codecov,extension-coveralls,coveralls{% endif %}
 {%- if 'pypy' not in env and 'nocov' in env %}{{ '' }}
-        - WHEEL_MANYLINUX_TAG=manylinux{% if arch == 'arm64' %}2014-arm{% else %}1{% endif %}{{ '' }}
-        - WHEEL_MANYLINUX_PYTHON=cp{{ env.split('-')[0][2:] }}
-        - WHEEL_PATH=wheelhouse
+        - WHEEL_MANYLINUX="{% if arch == 'arm64' %}2014-arm{% else %}1{% endif %}{{ '' }} cp{{ env.split('-')[0][2:] }}"
 {%- elif 'pypy' not in env and 'nocov' in env %}{{ '' }}
         - WHEEL_PATH=.tox/dist
 {%- endif %}
@@ -68,9 +66,10 @@ script:
   - |
     (
     set -eux
-    if [[ -n ${WHEEL_MANYLINUX_TAG:-} ]]; then
-      docker run --rm --user $UID -itv $(pwd):/code ionelmc/manylinux:$WHEEL_MANYLINUX_TAG $WHEEL_MANYLINUX_PYTHON
-      tox --installpkg $WHEEL_PATH/*.whl -v
+    if [[ -n ${WHEEL_MANYLINUX:-} ]]; then
+      docker run --rm --user $UID -itv $(pwd):/code ionelmc/manylinux:manylinux$WHEEL_MANYLINUX
+      tox --installpkg wheelhouse/*.whl -v
+      export WHEEL_PATH=wheelhouse
     else
       tox -v
     fi
@@ -79,8 +78,8 @@ script:
     fi
     )
 after_failure:
-  - more .tox/log/* | cat
-  - more .tox/*/log/* | cat
+  - cat .tox/log/*
+  - cat .tox/*/log/* 
 notifications:
   email:
     on_success: never
