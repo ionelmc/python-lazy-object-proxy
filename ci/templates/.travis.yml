@@ -67,7 +67,7 @@ script:
     (
     set -eux
     if [[ -n ${WHEEL_MANYLINUX:-} ]]; then
-      docker run --rm --user $UID -itv $(pwd):/code ionelmc/manylinux:manylinux$WHEEL_MANYLINUX
+      docker run --rm --user $UID -v $(pwd):/code ionelmc/manylinux:manylinux$WHEEL_MANYLINUX
       tox --installpkg wheelhouse/*.whl -v
       export WHEEL_PATH=wheelhouse
     else
@@ -79,7 +79,7 @@ script:
     )
 after_failure:
   - cat .tox/log/*
-  - cat .tox/*/log/* 
+  - cat .tox/*/log/*
 notifications:
   email:
     on_success: never
