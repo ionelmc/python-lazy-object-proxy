@@ -34,11 +34,6 @@ matrix:
         - WHEEL_PATH=.tox/dist
     - env:
         - TOXENV=py27-nocov
-        - WHEEL_MANYLINUX="2014-arm cp27"
-      python: '2.7'
-      arch: arm64
-    - env:
-        - TOXENV=py27-nocov
         - WHEEL_MANYLINUX="1 cp27"
       python: '2.7'
       arch: amd64
