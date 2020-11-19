@@ -120,6 +120,35 @@ matrix:
         - WHEEL_MANYLINUX="1 cp38"
       python: '3.8'
       arch: amd64
+    - os: osx
+      osx_image: xcode11
+      language: generic
+      env:
+        - TOXENV=py39-cover
+    - env:
+        - TOXENV=py39-cover,codecov,extension-coveralls,coveralls
+      python: '3.9'
+      arch: arm64
+    - env:
+        - TOXENV=py39-cover,codecov,extension-coveralls,coveralls
+      python: '3.9'
+      arch: amd64
+    - os: osx
+      osx_image: xcode11
+      language: generic
+      env:
+        - TOXENV=py39-nocov
+        - WHEEL_PATH=.tox/dist
+    - env:
+        - TOXENV=py39-nocov
+        - WHEEL_MANYLINUX="2014-arm cp39"
+      python: '3.9'
+      arch: arm64
+    - env:
+        - TOXENV=py39-nocov
+        - WHEEL_MANYLINUX="1 cp39"
+      python: '3.9'
+      arch: amd64
 before_install:
   - python --version
   - uname -a
