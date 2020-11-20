@@ -1,4 +1,7 @@
 language: python
+dist: xenial
+virt: lxd
+cache: false
 env:
   global:
     - LD_PRELOAD=libSegFault.so
@@ -14,7 +17,7 @@ matrix:
       env:
         - TOXENV=docs
 {%- for env in tox_environments %}{{ '' }}
-{%- if 'py38' in env or 'py27' in env %}{{ '' }}
+{%- if 'py39' in env or 'py27' in env %}{{ '' }}
     - os: osx
       osx_image: xcode11
       language: generic

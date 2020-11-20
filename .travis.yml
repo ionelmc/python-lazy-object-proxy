@@ -1,4 +1,7 @@
 language: python
+dist: xenial
+virt: lxd
+cache: false
 env:
   global:
     - LD_PRELOAD=libSegFault.so
@@ -91,11 +94,6 @@ matrix:
         - WHEEL_MANYLINUX="1 cp37"
       python: '3.7'
       arch: amd64
-    - os: osx
-      osx_image: xcode11
-      language: generic
-      env:
-        - TOXENV=py38-cover
     - env:
         - TOXENV=py38-cover,codecov,extension-coveralls,coveralls
       python: '3.8'
@@ -104,12 +102,6 @@ matrix:
         - TOXENV=py38-cover,codecov,extension-coveralls,coveralls
       python: '3.8'
       arch: amd64
-    - os: osx
-      osx_image: xcode11
-      language: generic
-      env:
-        - TOXENV=py38-nocov
-        - WHEEL_PATH=.tox/dist
     - env:
         - TOXENV=py38-nocov
         - WHEEL_MANYLINUX="2014-arm cp38"
