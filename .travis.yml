@@ -153,7 +153,7 @@ before_install:
       export PATH="/usr/local/opt/python/libexec/bin:${PATH}"
     fi
 install:
-  - python -mpip install --progress-bar=off --upgrade twine tox-wheel -rci/requirements.txt
+  - python -mpip install --progress-bar=off --upgrade -rci/requirements.txt
   - virtualenv --version
   - easy_install --version
   - pip --version
