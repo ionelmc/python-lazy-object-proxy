@@ -2,6 +2,14 @@
 Changelog
 =========
 
+
+1.5.2 (2020-11-26)
+------------------
+
+* Added Python 3.9 wheels.
+* Removed Python 2.7 Windows wheels
+  (not supported on newest image with Python 3.9).
+
 1.5.1 (2020-07-22)
 ------------------
 
