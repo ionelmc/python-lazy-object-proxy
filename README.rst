@@ -55,9 +55,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.org/project/lazy-object-proxy
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-lazy-object-proxy/v1.5.1.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-lazy-object-proxy/v1.5.2.svg
     :alt: Commits since latest release
-    :target: https://github.com/ionelmc/python-lazy-object-proxy/compare/v1.5.1...master
+    :target: https://github.com/ionelmc/python-lazy-object-proxy/compare/v1.5.2...master
 
 
 
