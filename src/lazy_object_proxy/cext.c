@@ -457,8 +457,7 @@ static PyObject *Proxy_oct(ProxyObject *self)
 
     if ((nb = self->wrapped->ob_type->tp_as_number) == NULL ||
         nb->nb_oct == NULL) {
-        PyErr_SetString(PyExc_TypeError,
-                   "oct() argument can't be converted to oct");
+        PyErr_SetString(PyExc_TypeError, "oct() argument can't be converted to oct");
         return NULL;
     }
 
@@ -477,8 +476,7 @@ static PyObject *Proxy_hex(ProxyObject *self)
 
     if ((nb = self->wrapped->ob_type->tp_as_number) == NULL ||
         nb->nb_hex == NULL) {
-        PyErr_SetString(PyExc_TypeError,
-                   "hex() argument can't be converted to hex");
+        PyErr_SetString(PyExc_TypeError, "hex() argument can't be converted to hex");
         return NULL;
     }
 
@@ -854,8 +852,7 @@ static PyObject *Proxy_dir(
 
 /* ------------------------------------------------------------------------- */
 
-static PyObject *Proxy_enter(
-        ProxyObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Proxy_enter(ProxyObject *self)
 {
     PyObject *method = NULL;
     PyObject *result = NULL;
@@ -867,7 +864,7 @@ static PyObject *Proxy_enter(
     if (!method)
         return NULL;
 
-    result = PyObject_Call(method, args, kwds);
+    result = PyObject_CallObject(method, NULL);
 
     Py_DECREF(method);
 
@@ -1227,6 +1224,121 @@ static PyObject *Proxy_call(
 
 /* ------------------------------------------------------------------------- */;
 
+#if PY_MAJOR_VERSION >= 3
+
+static PyObject *Proxy_aenter(ProxyObject *self)
+{
+    PyObject *method = NULL;
+    PyObject *result = NULL;
+
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+
+    method = PyObject_GetAttrString(self->wrapped, "__aenter__");
+
+    if (!method)
+        return NULL;
+
+    result = PyObject_CallObject(method, NULL);
+
+    Py_DECREF(method);
+
+    return result;
+}
+
+/* ------------------------------------------------------------------------- */
+
+static PyObject *Proxy_aexit(
+        ProxyObject *self, PyObject *args, PyObject *kwds)
+{
+    PyObject *method = NULL;
+    PyObject *result = NULL;
+
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+
+    method = PyObject_GetAttrString(self->wrapped, "__aexit__");
+
+    if (!method)
+        return NULL;
+
+    result = PyObject_Call(method, args, kwds);
+
+    Py_DECREF(method);
+
+    return result;
+}
+
+/* ------------------------------------------------------------------------- */
+
+static PyObject *Proxy_await(ProxyObject *self)
+{
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+
+    unaryfunc meth = NULL;
+    PyObject *wrapped = self->wrapped;
+    PyTypeObject *type = Py_TYPE(wrapped);
+
+
+    if (type->tp_as_async != NULL) {
+        meth = type->tp_as_async->am_await;
+    }
+
+    if (meth != NULL) {
+        return (*meth)(wrapped);
+    }
+
+    PyErr_Format(PyExc_TypeError, " %.100s is missing the __await__ method", type->tp_name);
+    return NULL;
+}
+
+/* ------------------------------------------------------------------------- */;
+
+static PyObject *Proxy_aiter(ProxyObject *self)
+{
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+
+    unaryfunc meth = NULL;
+    PyObject *wrapped = self->wrapped;
+    PyTypeObject *type = Py_TYPE(wrapped);
+
+    if (type->tp_as_async != NULL) {
+        meth = type->tp_as_async->am_aiter;
+    }
+
+    if (meth != NULL) {
+        return (*meth)(wrapped);
+    }
+
+    PyErr_Format(PyExc_TypeError, " %.100s is missing the __aiter__ method", type->tp_name);
+    return NULL;
+}
+
+/* ------------------------------------------------------------------------- */;
+
+static PyObject *Proxy_anext(ProxyObject *self)
+{
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+
+
+    unaryfunc meth = NULL;
+    PyObject *wrapped = self->wrapped;
+    PyTypeObject *type = Py_TYPE(wrapped);
+
+    if (type->tp_as_async != NULL) {
+        meth = type->tp_as_async->am_anext;
+    }
+
+    if (meth != NULL) {
+        return (*meth)(wrapped);
+    }
+
+    PyErr_Format(PyExc_TypeError, " %.100s is missing the __anext__ method", type->tp_name);
+    return NULL;
+}
+
+#endif
+
+/* ------------------------------------------------------------------------- */;
+
 static PyNumberMethods Proxy_as_number = {
     (binaryfunc)Proxy_add,                  /*nb_add*/
     (binaryfunc)Proxy_subtract,             /*nb_subtract*/
@@ -1299,10 +1411,17 @@ static PyMappingMethods Proxy_as_mapping = {
     (objobjargproc)Proxy_setitem, /*mp_ass_subscript*/
 };
 
+#if PY_MAJOR_VERSION >= 3
+static PyAsyncMethods Proxy_as_async = {
+    (unaryfunc)Proxy_await, /* am_await */
+    (unaryfunc)Proxy_aiter, /* am_aiter */
+    (unaryfunc)Proxy_anext, /* am_anext */
+};
+#endif
+
 static PyMethodDef Proxy_methods[] = {
     { "__dir__",    (PyCFunction)Proxy_dir, METH_NOARGS, 0 },
-    { "__enter__",  (PyCFunction)Proxy_enter,
-                    METH_VARARGS | METH_KEYWORDS, 0 },
+    { "__enter__",  (PyCFunction)Proxy_enter, METH_NOARGS, 0 },
     { "__exit__",   (PyCFunction)Proxy_exit,
                     METH_VARARGS | METH_KEYWORDS, 0 },
     { "__getattr__", (PyCFunction)Proxy_getattr,
@@ -1314,6 +1433,9 @@ static PyMethodDef Proxy_methods[] = {
     { "__fspath__", (PyCFunction)Proxy_fspath, METH_NOARGS, 0 },
 #if PY_MAJOR_VERSION >= 3
     { "__round__",  (PyCFunction)Proxy_round, METH_NOARGS, 0 },
+    { "__aenter__", (PyCFunction)Proxy_aenter, METH_NOARGS, 0 },
+    { "__aexit__",  (PyCFunction)Proxy_aexit,
+                    METH_VARARGS | METH_KEYWORDS, 0 },
 #endif
     { NULL, NULL },
 };
@@ -1348,7 +1470,11 @@ PyTypeObject Proxy_Type = {
     0,                              /*tp_print*/
     0,                              /*tp_getattr*/
     0,                              /*tp_setattr*/
+#if PY_MAJOR_VERSION >= 3
+    &Proxy_as_async,            /* tp_as_async */
+#else
     0,                              /*tp_compare*/
+#endif
     (unaryfunc)Proxy_repr,          /*tp_repr*/
     &Proxy_as_number,               /*tp_as_number*/
     &Proxy_as_sequence,             /*tp_as_sequence*/
