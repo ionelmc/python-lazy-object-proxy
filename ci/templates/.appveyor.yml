@@ -13,7 +13,7 @@ environment:
       PYTHON_VERSION: '3.6'
       PYTHON_ARCH: '32'
 {% for env in tox_environments %}
-{% if env.startswith('py3') %}
+{% if env.startswith(('py2', 'py3')) %}
     - TOXENV: {{ env }}{% if env.endswith('-cover') %},codecov,coveralls{% endif %}{{ "" }}
       TOXPYTHON: C:\Python{{ env[2:4] }}\python.exe
       PYTHON_HOME: C:\Python{{ env[2:4] }}

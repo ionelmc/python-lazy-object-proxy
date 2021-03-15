@@ -41,24 +41,6 @@ matrix:
       python: '2.7'
       arch: amd64
     - env:
-        - TOXENV=py35-cover,codecov,extension-coveralls,coveralls
-      python: '3.5'
-      arch: arm64
-    - env:
-        - TOXENV=py35-cover,codecov,extension-coveralls,coveralls
-      python: '3.5'
-      arch: amd64
-    - env:
-        - TOXENV=py35-nocov
-        - WHEEL_MANYLINUX="2014-arm cp35"
-      python: '3.5'
-      arch: arm64
-    - env:
-        - TOXENV=py35-nocov
-        - WHEEL_MANYLINUX="1 cp35"
-      python: '3.5'
-      arch: amd64
-    - env:
         - TOXENV=py36-cover,codecov,extension-coveralls,coveralls
       python: '3.6'
       arch: arm64

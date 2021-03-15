@@ -74,7 +74,8 @@ For merging, you should:
 4. Add yourself to ``AUTHORS.rst``.
 
 .. [1] If you don't have all the necessary python versions available locally you can rely on Travis - it will
-       `run the tests <https://travis-ci.org/ionelmc/python-lazy-object-proxy/pull_requests>`_ for each change you add in the pull request.
+       `run the tests <https://travis-ci.com/github/ionelmc/python-lazy-object-proxy/pull_requests>`_
+       for each change you add in the pull request.
 
        It will be slower though ...
 

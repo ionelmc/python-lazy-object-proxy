@@ -19,9 +19,9 @@ Overview
     :target: https://readthedocs.org/projects/python-lazy-object-proxy
     :alt: Documentation Status
 
-.. |travis| image:: https://api.travis-ci.org/ionelmc/python-lazy-object-proxy.svg?branch=master
+.. |travis| image:: https://api.travis-ci.com/ionelmc/python-lazy-object-proxy.svg?branch=master
     :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/ionelmc/python-lazy-object-proxy
+    :target: https://travis-ci.com/github/ionelmc/python-lazy-object-proxy
 
 .. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/ionelmc/python-lazy-object-proxy?branch=master&svg=true
     :alt: AppVeyor Build Status
@@ -107,7 +107,7 @@ https://python-lazy-object-proxy.readthedocs.io/
 Development
 ===========
 
-To run the all tests run::
+To run all the tests run::
 
     tox
 
