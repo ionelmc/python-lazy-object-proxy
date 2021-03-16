@@ -1286,7 +1286,7 @@ static PyObject *Proxy_await(ProxyObject *self)
         return (*meth)(wrapped);
     }
 
-    PyErr_Format(PyExc_TypeError, " %.100s is missing the __await__ method", type->tp_name);
+    PyErr_Format(PyExc_TypeError, "%.100s is missing the __await__ method", type->tp_name);
     return NULL;
 }
 
@@ -1308,7 +1308,7 @@ static PyObject *Proxy_aiter(ProxyObject *self)
         return (*meth)(wrapped);
     }
 
-    PyErr_Format(PyExc_TypeError, " %.100s is missing the __aiter__ method", type->tp_name);
+    PyErr_Format(PyExc_TypeError, "%.100s is missing the __aiter__ method", type->tp_name);
     return NULL;
 }
 
@@ -1331,7 +1331,7 @@ static PyObject *Proxy_anext(ProxyObject *self)
         return (*meth)(wrapped);
     }
 
-    PyErr_Format(PyExc_TypeError, " %.100s is missing the __anext__ method", type->tp_name);
+    PyErr_Format(PyExc_TypeError, "%.100s is missing the __anext__ method", type->tp_name);
     return NULL;
 }
 

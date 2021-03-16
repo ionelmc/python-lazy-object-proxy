@@ -1,4 +1,5 @@
 import operator
+from types import GeneratorType, CoroutineType
 
 from .compat import PY2
 from .compat import PY3
@@ -414,7 +415,14 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return self.__wrapped__.__exit__(*args, **kwargs)
 
     def __iter__(self):
-        return iter(self.__wrapped__)
+        if hasattr(self.__wrapped__, '__await__'):
+            return self.__wrapped__.__await__()
+        else:
+            # raise TypeError("'coroutine' object is not iterable")
+            return iter(self.__wrapped__)
+
+    def __next__(self):
+        return next(self.__wrapped__)
 
     def __call__(self, *args, **kwargs):
         return self.__wrapped__(*args, **kwargs)
@@ -426,16 +434,20 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return identity, (self.__wrapped__,)
 
     def __aiter__(self):
-        return self.__wrapped__.__aiter__()
-
-    def __await__(self):
-        return self.__wrapped__.__await__()
+        return self
 
     async def __anext__(self):
         return await self.__wrapped__.__anext__()
 
-    async def __aenter__(self):
-        return await self.__wrapped__.__aenter__()
+    def __await__(self):
+        if hasattr(self.__wrapped__, '__await__'):
+            return self.__wrapped__.__await__()
+        else:
+            return (yield from self.__wrapped__)
 
-    async def __aexit__(self, *args, **kwargs):
-        return await self.__wrapped__.__aexit__(*args, **kwargs)
+
+    def __aenter__(self):
+        return self.__wrapped__.__aenter__()
+
+    def __aexit__(self, *args, **kwargs):
+        return self.__wrapped__.__aexit__(*args, **kwargs)

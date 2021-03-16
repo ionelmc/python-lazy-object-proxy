@@ -260,14 +260,17 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __aiter__(self):
         return self.__wrapped__.__aiter__()
 
-    async def __anext__(self):
-        return await self.__wrapped__.__anext__()
+    def __anext__(self):
+        return self.__wrapped__.__anext__()
 
     def __await__(self):
-        return await self.__wrapped__
+        if hasattr(self.__wrapped__, '__await__'):
+            return self.__wrapped__.__await__()
+        else:
+            return iter(self.__wrapped__)
 
-    async def __aenter__(self):
-        return await self.__wrapped__.__aenter__()
+    def __aenter__(self):
+        return self.__wrapped__.__aenter__()
 
-    async def __aexit__(self, *args, **kwargs):
-        return await self.__wrapped__.__aexit__(*args, **kwargs)
+    def __aexit__(self, *args, **kwargs):
+        return self.__wrapped__.__aexit__(*args, **kwargs)
