@@ -37,6 +37,7 @@ PyTypeObject Proxy_Type;
 /* ------------------------------------------------------------------------- */
 
 static PyObject *identity_ref = NULL;
+static PyObject *await_ref = NULL;
 static PyObject *
 identity(PyObject *self, PyObject *value)
 {
@@ -1273,21 +1274,7 @@ static PyObject *Proxy_await(ProxyObject *self)
 {
     Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
-    unaryfunc meth = NULL;
-    PyObject *wrapped = self->wrapped;
-    PyTypeObject *type = Py_TYPE(wrapped);
-
-
-    if (type->tp_as_async != NULL) {
-        meth = type->tp_as_async->am_await;
-    }
-
-    if (meth != NULL) {
-        return (*meth)(wrapped);
-    }
-
-    PyErr_Format(PyExc_TypeError, "%.100s is missing the __await__ method", type->tp_name);
-    return NULL;
+    return PyObject_CallFunctionObjArgs(await_ref, self->wrapped, NULL);
 }
 
 /* ------------------------------------------------------------------------- */;
@@ -1308,7 +1295,7 @@ static PyObject *Proxy_aiter(ProxyObject *self)
         return (*meth)(wrapped);
     }
 
-    PyErr_Format(PyExc_TypeError, "%.100s is missing the __aiter__ method", type->tp_name);
+    PyErr_Format(PyExc_AttributeError, "'%.100s' object has no attribute '__aiter__'", type->tp_name);
     return NULL;
 }
 
@@ -1331,7 +1318,7 @@ static PyObject *Proxy_anext(ProxyObject *self)
         return (*meth)(wrapped);
     }
 
-    PyErr_Format(PyExc_TypeError, "%.100s is missing the __anext__ method", type->tp_name);
+    PyErr_Format(PyExc_TypeError, "'%.100s' is missing the __anext__ method", type->tp_name);
     return NULL;
 }
 
@@ -1555,6 +1542,17 @@ moduleinit(void)
     if (identity_ref == NULL)
         return NULL;
     Py_INCREF(identity_ref);
+
+#if PY_MAJOR_VERSION >= 3
+    PyObject *utils_module = PyImport_ImportModule("lazy_object_proxy.utils");
+    if (utils_module == NULL)
+        return NULL;
+
+    await_ref = PyObject_GetAttrString(utils_module, "await_");
+    Py_DECREF(utils_module);
+    if (await_ref == NULL)
+        return NULL;
+#endif
 
     Py_INCREF(&Proxy_Type);
     PyModule_AddObject(module, "Proxy",
