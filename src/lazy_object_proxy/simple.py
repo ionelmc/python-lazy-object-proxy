@@ -4,7 +4,7 @@ from .compat import PY2
 from .compat import PY3
 from .compat import string_types
 from .compat import with_metaclass
-from .utils import cached_property
+from .utils import cached_property, await_
 from .utils import identity
 
 
@@ -260,14 +260,11 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __aiter__(self):
         return self.__wrapped__.__aiter__()
 
-    def __anext__(self):
-        return self.__wrapped__.__anext__()
+    async def __anext__(self):
+        return await self.__wrapped__.__anext__()
 
     def __await__(self):
-        if hasattr(self.__wrapped__, '__await__'):
-            return self.__wrapped__.__await__()
-        else:
-            return iter(self.__wrapped__)
+        return await_(self.__wrapped__)
 
     def __aenter__(self):
         return self.__wrapped__.__aenter__()

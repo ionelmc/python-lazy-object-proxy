@@ -1,11 +1,10 @@
 import operator
-from types import GeneratorType, CoroutineType
 
 from .compat import PY2
 from .compat import PY3
 from .compat import string_types
 from .compat import with_metaclass
-from .utils import identity
+from .utils import identity, await_
 
 
 class _ProxyMethods(object):
@@ -415,11 +414,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return self.__wrapped__.__exit__(*args, **kwargs)
 
     def __iter__(self):
-        if hasattr(self.__wrapped__, '__await__'):
-            return self.__wrapped__.__await__()
-        else:
-            # raise TypeError("'coroutine' object is not iterable")
-            return iter(self.__wrapped__)
+        return iter(self.__wrapped__)
 
     def __next__(self):
         return next(self.__wrapped__)
@@ -434,17 +429,13 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return identity, (self.__wrapped__,)
 
     def __aiter__(self):
-        return self
+        return self.__wrapped__.__aiter__()
 
     async def __anext__(self):
         return await self.__wrapped__.__anext__()
 
     def __await__(self):
-        if hasattr(self.__wrapped__, '__await__'):
-            return self.__wrapped__.__await__()
-        else:
-            return (yield from self.__wrapped__)
-
+        return await_(self.__wrapped__)
 
     def __aenter__(self):
         return self.__wrapped__.__aenter__()
