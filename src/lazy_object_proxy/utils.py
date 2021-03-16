@@ -1,3 +1,6 @@
+from inspect import isawaitable
+
+
 def identity(obj):
     return obj
 
@@ -11,3 +14,18 @@ class cached_property(object):
             return self
         value = obj.__dict__[self.func.__name__] = self.func(obj)
         return value
+
+
+async def do_await(obj):
+    return await obj
+
+
+def do_yield_from(gen):
+    return (yield from gen)
+
+
+def await_(obj):
+    if isawaitable(obj):
+        return do_await(obj).__await__()
+    else:
+        return do_yield_from(obj)
