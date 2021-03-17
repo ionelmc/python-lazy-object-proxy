@@ -22,7 +22,6 @@ environment:
       PYTHON_HOME: C:\Python27-x64
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '64'
-      WINDOWS_SDK_VERSION: v7.0
     - TOXENV: py27-nocov
       TOXPYTHON: C:\Python27\python.exe
       PYTHON_HOME: C:\Python27
@@ -35,7 +34,6 @@ environment:
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '64'
       WHEEL_PATH: .tox/dist
-      WINDOWS_SDK_VERSION: v7.0
     - TOXENV: py36-cover,codecov,coveralls
       TOXPYTHON: C:\Python36\python.exe
       PYTHON_HOME: C:\Python36
