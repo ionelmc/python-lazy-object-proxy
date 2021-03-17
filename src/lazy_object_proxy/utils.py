@@ -1,6 +1,3 @@
-from inspect import isawaitable
-
-
 def identity(obj):
     return obj
 
@@ -14,6 +11,10 @@ class cached_property(object):
             return self
         value = obj.__dict__[self.func.__name__] = self.func(obj)
         return value
+
+try:
+    exec("""
+from inspect import isawaitable
 
 
 async def do_await(obj):
@@ -29,3 +30,6 @@ def await_(obj):
         return do_await(obj).__await__()
     else:
         return do_yield_from(obj)
+""")
+except (ImportError, SyntaxError):
+    await_ = None
