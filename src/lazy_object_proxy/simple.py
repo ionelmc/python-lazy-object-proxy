@@ -4,7 +4,8 @@ from .compat import PY2
 from .compat import PY3
 from .compat import string_types
 from .compat import with_metaclass
-from .utils import cached_property, await_
+from .utils import await_
+from .utils import cached_property
 from .utils import identity
 
 

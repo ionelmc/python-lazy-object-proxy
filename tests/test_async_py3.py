@@ -1,3 +1,5 @@
+# flake8: noqa
+# test code was mostly copied from stdlib, can't be fixing this mad stuff...
 import copy
 import inspect
 import pickle
