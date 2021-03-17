@@ -58,7 +58,8 @@ before_install:
       export PATH="/usr/local/opt/python/libexec/bin:${PATH}"
     fi
 install:
-  - while python -mpip uninstall virtualenv; do echo; done
+  - python -mpip uninstall virtualenv --yes
+  - python -mpip uninstall virtualenv --yes
   - python -mpip install --progress-bar=off --upgrade --ignore-installed -rci/requirements.txt
   - virtualenv --version
   - pip --version
