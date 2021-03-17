@@ -5,7 +5,6 @@ import re
 import sys
 import types
 import warnings
-from test import support
 
 import pytest
 
@@ -1140,7 +1139,7 @@ def test_for_3(lop):
         async for i in aiter:
             print('never going to happen')
 
-    with pytest.raises(TypeError, match=r"that does not implement __anext__"):
+    with pytest.raises(TypeError):
         run_async(lop.Proxy(foo))
 
     assert sys.getrefcount(aiter) == refs_before
@@ -1634,23 +1633,7 @@ def test_pickle(lop):
         aw.close()
 
 
-def test_fatal_coro_warning(lop):
-    # Issue 27811
-    async def func(): pass
-
-    with warnings.catch_warnings(), \
-        support.catch_unraisable_exception() as cm:
-        warnings.filterwarnings("error")
-        coro = func()
-        # only store repr() to avoid keeping the coroutine alive
-        coro_repr = str(coro)
-        coro = None
-        support.gc_collect()
-
-        assert "was never awaited" in str(cm.unraisable.exc_value)
-        assert str(cm.unraisable.object) == coro_repr
-
-
+@pytest.mark.skipif("sys.version_info[1] < 8")
 def test_for_assign_raising_stop_async_iteration(lop):
     class BadTarget:
         def __setitem__(self, key, value):
@@ -1690,6 +1673,7 @@ def test_for_assign_raising_stop_async_iteration(lop):
     assert run_async(run_gen()) == ([], 'end')
 
 
+@pytest.mark.skipif("sys.version_info[1] < 8")
 def test_for_assign_raising_stop_async_iteration_2(lop):
     class BadIterable:
         def __iter__(self):
@@ -1728,9 +1712,7 @@ def test_for_assign_raising_stop_async_iteration_2(lop):
 
 
 def test_asyncio_1(lop):
-    # asyncio cannot be imported when Python is compiled without thread
-    # support
-    asyncio = support.import_module('asyncio')
+    import asyncio
 
     class MyException(Exception):
         pass

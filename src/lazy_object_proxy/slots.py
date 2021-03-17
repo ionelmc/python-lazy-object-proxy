@@ -428,17 +428,20 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __reduce_ex__(self, protocol):
         return identity, (self.__wrapped__,)
 
-    def __aiter__(self):
-        return self.__wrapped__.__aiter__()
+    if await_ is not None:
+        exec("""
+def __aiter__(self):
+    return self.__wrapped__.__aiter__()
 
-    async def __anext__(self):
-        return await self.__wrapped__.__anext__()
+async def __anext__(self):
+    return await self.__wrapped__.__anext__()
 
-    def __await__(self):
-        return await_(self.__wrapped__)
+def __await__(self):
+    return await_(self.__wrapped__)
 
-    def __aenter__(self):
-        return self.__wrapped__.__aenter__()
+def __aenter__(self):
+    return self.__wrapped__.__aenter__()
 
-    def __aexit__(self, *args, **kwargs):
-        return self.__wrapped__.__aexit__(*args, **kwargs)
+def __aexit__(self, *args, **kwargs):
+    return self.__wrapped__.__aexit__(*args, **kwargs)
+""")

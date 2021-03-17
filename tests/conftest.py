@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture(scope="session")
 def lop_loader():
     def load_implementation(name):
@@ -28,7 +29,9 @@ def lop_loader():
             Proxy
 
         return FakeModule
+
     return load_implementation
+
 
 @pytest.fixture(scope="session", params=[
     "slots", "cext",
