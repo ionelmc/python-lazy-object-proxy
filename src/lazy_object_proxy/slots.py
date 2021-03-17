@@ -4,7 +4,8 @@ from .compat import PY2
 from .compat import PY3
 from .compat import string_types
 from .compat import with_metaclass
-from .utils import identity, await_
+from .utils import await_
+from .utils import identity
 
 
 class _ProxyMethods(object):

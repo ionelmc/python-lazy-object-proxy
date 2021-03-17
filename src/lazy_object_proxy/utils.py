@@ -12,6 +12,7 @@ class cached_property(object):
         value = obj.__dict__[self.func.__name__] = self.func(obj)
         return value
 
+
 try:
     exec("""
 from inspect import isawaitable
