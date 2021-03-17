@@ -1,4 +1,8 @@
+import sys
+
 import pytest
+
+PYPY = '__pypy__' in sys.builtin_module_names
 
 
 @pytest.fixture(scope="session")
