@@ -169,10 +169,7 @@ def test_func_6(lop):
         yield 2
 
     async def foo():
-        await proxy(lop.Proxy(bar))
-
-    import dis
-    dis.dis(foo)
+        await lop.Proxy(bar)
 
     f = lop.Proxy(foo)
     assert f.send(None) == 1

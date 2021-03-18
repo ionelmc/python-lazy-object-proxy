@@ -2,6 +2,15 @@
 Changelog
 =========
 
+1.6.0 (2021-03-19)
+------------------
+
+* Added support for async special methods (``__aiter__``, ``__anext__``,
+  ``__await__``, ``__aenter__``, ``__aexit__``).
+  These are used in the ``async for``, ``await` and ``async with`` statements.
+
+  Note that ``__await__`` returns a wrapper that deals with the iterable/coroutine distinction
+
 
 1.5.2 (2020-11-26)
 ------------------
