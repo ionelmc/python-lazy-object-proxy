@@ -9,8 +9,8 @@ Changelog
   ``__await__``, ``__aenter__``, ``__aexit__``).
   These are used in the ``async for``, ``await` and ``async with`` statements.
 
-  Note that ``__await__`` returns a wrapper that deals with the iterable/coroutine distinction
-
+  Note that ``__await__`` returns a wrapper that tries to emulate the crazy
+  stuff going on in the ceval loop, so there will be a small performance overhead.
 
 1.5.2 (2020-11-26)
 ------------------
