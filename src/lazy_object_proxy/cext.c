@@ -1080,6 +1080,18 @@ static int Proxy_set_annotations(ProxyObject *self,
 
 /* ------------------------------------------------------------------------- */
 
+static PyObject *Proxy_get_resolved(
+        ProxyObject *self)
+{
+    PyObject *result;
+
+    result = self->wrapped ? Py_True : Py_False;
+    Py_INCREF(result);
+    return result;
+}
+
+/* ------------------------------------------------------------------------- */
+
 static PyObject *Proxy_get_wrapped(
         ProxyObject *self)
 {
@@ -1444,6 +1456,8 @@ static PyGetSetDef Proxy_getset[] = {
                             (setter)Proxy_set_wrapped, 0 },
     { "__factory__",        (getter)Proxy_get_factory,
                             (setter)Proxy_set_factory, 0 },
+    { "__resolved__",       (getter)Proxy_get_resolved,
+                            NULL, 0 },
     { NULL },
 };
 

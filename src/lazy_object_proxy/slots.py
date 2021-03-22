@@ -72,6 +72,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     * ``__factory__`` is the callback that "materializes" the object we proxy to.
     * ``__target__`` will contain the object we proxy to, once it's "materialized".
+    * ``__resolved__`` is a boolean, `True` if factory was called.
     * ``__wrapped__`` is a property that does either:
 
       * return ``__target__`` if it's set.
@@ -82,6 +83,15 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __init__(self, factory):
         object.__setattr__(self, '__factory__', factory)
+
+    @property
+    def __resolved__(self, __getattr__=object.__getattribute__):
+        try:
+            __getattr__(self, '__target__')
+        except AttributeError:
+            return False
+        else:
+            return True
 
     @property
     def __wrapped__(self, __getattr__=object.__getattribute__, __setattr__=object.__setattr__,

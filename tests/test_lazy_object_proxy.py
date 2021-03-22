@@ -1846,6 +1846,7 @@ def test_proto(benchmark, prototype):
 def test_subclassing_with_local_attr(lop):
     class Foo:
         pass
+
     called = []
 
     class LazyProxy(lop.Proxy):
@@ -1897,3 +1898,22 @@ def test_fspath(lop):
 
 def test_fspath_method(lop):
     assert lop.Proxy(FSPathMock).__fspath__() == '/tmp'
+
+
+def test_resolved_new(lop):
+    obj = lop.Proxy.__new__(lop.Proxy)
+    assert obj.__resolved__ is False
+
+
+def test_resolved(lop):
+    obj = lop.Proxy(lambda: None)
+    assert obj.__resolved__ is False
+    assert obj.__wrapped__ is None
+    assert obj.__resolved__ is True
+
+
+def test_resolved_str(lop):
+    obj = lop.Proxy(lambda: None)
+    assert obj.__resolved__ is False
+    str(obj)
+    assert obj.__resolved__ is True
