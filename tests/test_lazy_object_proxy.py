@@ -1520,7 +1520,7 @@ skipcallable = pytest.mark.xfail(
 def test_proxy_hasattr_call(lop):
     proxy = lop.Proxy(lambda: None)
 
-    assert not hasattr(proxy, '__call__')
+    assert not callable(proxy)
 
 
 @skipcallable
@@ -1540,7 +1540,7 @@ def test_proxy_is_callable(lop):
 def test_callable_proxy_hasattr_call(lop):
     proxy = lop.Proxy(lambda: None)
 
-    assert hasattr(proxy, '__call__')
+    assert callable(proxy)
 
 
 @skipcallable
