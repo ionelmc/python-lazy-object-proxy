@@ -71,6 +71,10 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __init__(self, factory):
         self.__dict__['__factory__'] = factory
 
+    @property
+    def __resolved__(self):
+        return '__wrapped__' in self.__dict__
+
     @cached_property
     def __wrapped__(self):
         self = self.__dict__
