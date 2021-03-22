@@ -2,7 +2,7 @@
 Changelog
 =========
 
-1.6.0 (2021-03-19)
+1.6.0 (2021-03-22)
 ------------------
 
 * Added support for async special methods (``__aiter__``, ``__anext__``,
@@ -11,6 +11,8 @@ Changelog
 
   Note that ``__await__`` returns a wrapper that tries to emulate the crazy
   stuff going on in the ceval loop, so there will be a small performance overhead.
+* Added the ``__resolved__`` property. You can use it to check if the factory has
+  been called.
 
 1.5.2 (2020-11-26)
 ------------------
