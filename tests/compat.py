@@ -5,7 +5,7 @@ PY3 = sys.version_info[0] >= 3
 
 if PY3:
     import builtins
-    exec_ = getattr(builtins, "exec")
+    exec_ = builtins.exec
     del builtins
 
 else:
