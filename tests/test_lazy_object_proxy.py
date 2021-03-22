@@ -798,7 +798,7 @@ def test_context_manager(lop):
         def __enter__(self):
             return self
 
-        def __exit__(*args, **kwargs):
+        def __exit__(self, *args, **kwargs):
             return
 
     instance = Class()
