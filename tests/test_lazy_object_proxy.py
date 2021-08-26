@@ -1,11 +1,11 @@
 from __future__ import print_function
 
 import gc
-import imp
 import os
 import pickle
 import platform
 import sys
+import types
 import weakref
 from datetime import date
 from datetime import datetime
@@ -31,7 +31,7 @@ def target():
     pass
 """
 
-objects = imp.new_module('objects')
+objects = types.ModuleType('objects')
 exec_(OBJECTS_CODE, objects.__dict__, objects.__dict__)
 
 

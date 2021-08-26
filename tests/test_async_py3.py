@@ -256,9 +256,12 @@ def test_func_11(lop):
     # Test that PyCoro_Type and _PyCoroWrapper_Type types were properly
     # initialized
     assert '__await__' in dir(coro)
-    assert '__iter__' in dir(coro.__await__())
-    assert 'coroutine_wrapper' in str(coro.__await__())
-    coro.close()  # avoid RuntimeWarning
+    awaitable = coro.__await__()
+    assert '__iter__' in dir(awaitable)
+    assert 'coroutine_wrapper' in str(awaitable)
+    # avoid RuntimeWarnings
+    awaitable.close()
+    coro.close()
 
 
 def test_func_12(lop):
