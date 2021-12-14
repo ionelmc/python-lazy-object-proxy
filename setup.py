@@ -65,9 +65,9 @@ def read(*names, **kwargs):
 
 
 class BinaryDistribution(Distribution):
-    """Distribution which always forces a binary package with platform name"""
-    def has_ext_modules(_):
-        return True
+    """Distribution which almost always forces a binary package with platform name"""
+    def has_ext_modules(self):
+        return super().has_ext_modules() or 'SETUP_PY_ALLOW_PURE' not in os.environ
 
 
 setup(
