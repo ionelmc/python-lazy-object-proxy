@@ -2,6 +2,15 @@
 Changelog
 =========
 
+1.7.0 (2021-12-15)
+------------------
+
+* Switched CI to GitHub Actions, this has a couple consequences:
+
+  * Support for Python 2.7 is dropped. You can still install it there but it's not tested anymore and
+    Python 2 specific handling will be removed at some point.
+  * Linux wheels are now provided in `musllinux` and `manylinux2014` variants.
+
 1.6.0 (2021-03-22)
 ------------------
 
