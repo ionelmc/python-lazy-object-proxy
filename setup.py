@@ -7,6 +7,7 @@ import io
 import os
 import platform
 import re
+import sys
 from glob import glob
 from os.path import basename
 from os.path import dirname
@@ -18,6 +19,7 @@ from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
+from setuptools.dist import Distribution
 
 # Enable code coverage for C code: we can't use CFLAGS=-coverage in tox.ini, since that may mess with compiling
 # dependencies (e.g. numpy). Therefore we set SETUPPY_CFLAGS=-coverage in tox.ini and copy it to CFLAGS here (after
@@ -30,7 +32,7 @@ else:
     LFLAGS = ''
 
 
-class optional_build_ext(build_ext):
+class OptionalBuildExt(build_ext):
     """Allow the building of C extensions to fail."""
     def run(self):
         try:
@@ -60,6 +62,12 @@ def read(*names, **kwargs):
         encoding=kwargs.get('encoding', 'utf8')
     ) as fh:
         return fh.read()
+
+
+class BinaryDistribution(Distribution):
+    """Distribution which always forces a binary package with platform name"""
+    def has_ext_modules(_):
+        return True
 
 
 setup(
@@ -92,12 +100,12 @@ setup(
         'Operating System :: POSIX',
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         # uncomment if you test on these interpreters:
@@ -123,8 +131,8 @@ setup(
         #   'rst': ['docutils>=0.11'],
         #   ':python_version=="2.6"': ['argparse'],
     },
-    cmdclass={'build_ext': optional_build_ext},
-    ext_modules=[
+    cmdclass={'build_ext': OptionalBuildExt},
+    ext_modules=[] if hasattr(sys, 'pypy_version_info') else [
         Extension(
             splitext(relpath(path, 'src').replace(os.sep, '.'))[0],
             sources=[path],
@@ -135,4 +143,5 @@ setup(
         for root, _, _ in os.walk('src')
         for path in glob(join(root, '*.c'))
     ],
+    distclass=BinaryDistribution,
 )
