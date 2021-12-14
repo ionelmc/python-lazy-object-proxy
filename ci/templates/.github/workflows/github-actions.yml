@@ -39,8 +39,8 @@ jobs:
     ['windows', 'x86', 'native', '*', False],
     ['macos', 'x64', 'native', '*', True],
 ] %}
-{% if include_cover or (env.endswith('cython-nocov') and not prefix.startswith('pypy')) %}
-{% set wheel_suffix = env.endswith('cython-nocov') and wheel_arch.strip('*') %}
+{% if include_cover or ('nocov' in env and not prefix.startswith('pypy')) %}
+{% set wheel_suffix = 'nocov' in env and wheel_arch.strip('*') %}
 {% set name_suffix = '/' + wheel_suffix if wheel_suffix else '' %}
 {% if cibw_arch == 'native' %}
 {% if python_arch == 'x64' %}
@@ -56,7 +56,7 @@ jobs:
             python_arch: '{{ python_arch }}'
             tox_env: '{{ env }}{% if 'cover' in env %},codecov{% endif %}'
             cibw_arch: '{{ cibw_arch }}'
-{% if env.endswith('cython-nocov') and not prefix.startswith('pypy') %}
+{% if 'nocov' in env and not prefix.startswith('pypy') %}
             cibw_build: '{{ cpython }}-{{ wheel_arch }}'
 {% else %}
             cibw_build: false

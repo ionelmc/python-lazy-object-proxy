@@ -16,10 +16,10 @@ Overview
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/python-lazy-object-proxy/badge/?style=flat
-    :target: https://readthedocs.org/projects/python-lazy-object-proxy
+    :target: https://python-lazy-object-proxy.readthedocs.io/
     :alt: Documentation Status
 
-.. |github-actions| image:: https://github.com/ionelmc/python-lazy-object-proxy/actions/workflows/github-actions.yml/badge.svg?branch=master
+.. |github-actions| image:: https://github.com/ionelmc/python-lazy-object-proxy/actions/workflows/github-actions.yml/badge.svg
     :alt: GitHub Actions Build Status
     :target: https://github.com/ionelmc/python-lazy-object-proxy/actions
 
@@ -53,7 +53,7 @@ Overview
 
 .. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-lazy-object-proxy/v1.6.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/ionelmc/python-lazy-object-proxy/compare/v1.5.2...master
+    :target: https://github.com/ionelmc/python-lazy-object-proxy/compare/v1.6.0...master
 
 
 

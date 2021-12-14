@@ -2,7 +2,7 @@
 
 default_context:
     allow_tests_inside_package: no
-    appveyor: yes
+    appveyor: no
     c_extension_function: '-'
     c_extension_module: '-'
     c_extension_optional: yes
@@ -19,7 +19,8 @@ default_context:
     distribution_name: lazy-object-proxy
     email: contact@ionelmc.ro
     full_name: Ionel Cristian Mărieș
-    legacy_python: yes
+    github_actions: yes
+    legacy_python: no
     license: BSD 2-Clause License
     linter: flake8
     package_name: lazy_object_proxy
@@ -28,9 +29,10 @@ default_context:
     project_short_description: A fast and thorough lazy object proxy.
     pypi_badge: yes
     pypi_disable_upload: no
-    release_date: '2020-11-26'
+    release_date: '2021-03-22'
     repo_hosting: github.com
     repo_hosting_domain: github.com
+    repo_main_branch: master
     repo_name: python-lazy-object-proxy
     repo_username: ionelmc
     requiresio: yes
@@ -44,9 +46,10 @@ default_context:
     test_matrix_configurator: no
     test_matrix_separate_coverage: yes
     test_runner: pytest
-    travis: yes
-    travis_osx: yes
-    version: 1.5.2
+    travis: no
+    travis_osx: no
+    version: 1.6.0
+    version_manager: bump2version
     website: https://blog.ionelmc.ro
     year_from: '2014'
     year_to: '2021'
