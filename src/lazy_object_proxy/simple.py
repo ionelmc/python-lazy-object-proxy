@@ -233,7 +233,13 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __float__ = make_proxy_method(float)
     __oct__ = make_proxy_method(oct)
     __hex__ = make_proxy_method(hex)
-    __index__ = make_proxy_method(operator.index)
+
+    def __index__(self):
+        if hasattr(self.__wrapped__, '__index__'):
+            return operator.index(self.__wrapped__)
+        else:
+            return int(self.__wrapped__)
+
     __len__ = make_proxy_method(len)
     __contains__ = make_proxy_method(operator.contains)
     __getitem__ = make_proxy_method(operator.getitem)

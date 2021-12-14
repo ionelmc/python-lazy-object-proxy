@@ -11,6 +11,10 @@ Changelog
     Python 2 specific handling will be removed at some point.
   * Linux wheels are now provided in `musllinux` and `manylinux2014` variants.
 
+* Fixed ``__index__`` to fallback to ``int`` if the wrapped object doesn't have an ``__index__`` method.
+  This prevents situations where code using a proxy would otherwise likely just call ``int`` had the object
+  not have an ``__index__`` method.
+
 1.6.0 (2021-03-22)
 ------------------
 

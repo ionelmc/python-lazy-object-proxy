@@ -392,7 +392,10 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return hex(self.__wrapped__)
 
     def __index__(self):
-        return operator.index(self.__wrapped__)
+        if hasattr(self.__wrapped__, '__index__'):
+            return operator.index(self.__wrapped__)
+        else:
+            return int(self.__wrapped__)
 
     def __len__(self):
         return len(self.__wrapped__)
