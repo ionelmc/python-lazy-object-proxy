@@ -12,6 +12,8 @@ import pytest
 
 from lazy_object_proxy.utils import await_
 
+pypyxfail = pytest.mark.xfail('hasattr(sys, "pypy_version_info")')
+
 
 class AsyncYieldFrom:
     def __init__(self, obj):
@@ -828,6 +830,7 @@ def test_with_5(lop):
         run_async(lop.Proxy(func))
 
 
+@pypyxfail
 def test_with_6(lop):
     class CM:
         def __aenter__(self):
@@ -846,6 +849,7 @@ def test_with_6(lop):
         run_async(lop.Proxy(foo))
 
 
+@pypyxfail
 def test_with_7(lop):
     class CM:
         async def __aenter__(self):
@@ -870,6 +874,7 @@ def test_with_7(lop):
         pytest.fail('invalid asynchronous context manager did not fail')
 
 
+@pypyxfail
 def test_with_8(lop):
     CNT = 0
 
@@ -1115,6 +1120,7 @@ def test_for_1(lop):
            ['what?', 'end']
 
 
+@pypyxfail
 def test_for_2(lop):
     tup = (1, 2, 3)
     refs_before = sys.getrefcount(tup)
@@ -1129,6 +1135,7 @@ def test_for_2(lop):
     assert sys.getrefcount(tup) == refs_before
 
 
+@pypyxfail
 def test_for_3(lop):
     class I:
         def __aiter__(self):
@@ -1147,6 +1154,7 @@ def test_for_3(lop):
     assert sys.getrefcount(aiter) == refs_before
 
 
+@pypyxfail
 def test_for_4(lop):
     class I:
         def __aiter__(self):
@@ -1168,6 +1176,7 @@ def test_for_4(lop):
     assert sys.getrefcount(aiter) == refs_before
 
 
+@pypyxfail
 def test_for_6(lop):
     I = 0
 
