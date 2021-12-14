@@ -16,7 +16,6 @@ default_context:
     command_line_interface: no
     command_line_interface_bin_name: '-'
     coveralls: yes
-    coveralls_token: 6picUzuGNWKI5w3rsEyZGNvyMZ47Cz9hZ
     distribution_name: lazy-object-proxy
     email: contact@ionelmc.ro
     full_name: Ionel Cristian Mărieș

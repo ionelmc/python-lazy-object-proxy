@@ -10,7 +10,7 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |travis| |appveyor| |requires|
+      - | |github-actions| |requires|
         | |coveralls| |codecov|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
@@ -19,13 +19,9 @@ Overview
     :target: https://readthedocs.org/projects/python-lazy-object-proxy
     :alt: Documentation Status
 
-.. |travis| image:: https://api.travis-ci.com/ionelmc/python-lazy-object-proxy.svg?branch=master
-    :alt: Travis-CI Build Status
-    :target: https://travis-ci.com/github/ionelmc/python-lazy-object-proxy
-
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/ionelmc/python-lazy-object-proxy?branch=master&svg=true
-    :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/ionelmc/python-lazy-object-proxy
+.. |github-actions| image:: https://github.com/ionelmc/python-lazy-object-proxy/actions/workflows/github-actions.yml/badge.svg?branch=master
+    :alt: GitHub Actions Build Status
+    :target: https://github.com/ionelmc/python-lazy-object-proxy/actions
 
 .. |requires| image:: https://requires.io/github/ionelmc/python-lazy-object-proxy/requirements.svg?branch=master
     :alt: Requirements Status
