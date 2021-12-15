@@ -24,7 +24,7 @@ from setuptools.dist import Distribution
 # Enable code coverage for C code: we can't use CFLAGS=-coverage in tox.ini, since that may mess with compiling
 # dependencies (e.g. numpy). Therefore we set SETUPPY_CFLAGS=-coverage in tox.ini and copy it to CFLAGS here (after
 # deps have been safely installed).
-if 'TOX_ENV_NAME' in os.environ and os.environ.get('SETUP_PY_EXT_COVERAGE') == 'yes' and platform.system() == 'Linux':
+if 'TOX_ENV_NAME' in os.environ and os.environ.get('SETUPPY_EXT_COVERAGE') == 'yes' and platform.system() == 'Linux':
     CFLAGS = os.environ['CFLAGS'] = '-fprofile-arcs -ftest-coverage'
     LFLAGS = os.environ['LFLAGS'] = '-lgcov'
 else:
@@ -36,7 +36,7 @@ class OptionalBuildExt(build_ext):
     """Allow the building of C extensions to fail."""
     def run(self):
         try:
-            build_ext.run(self)
+            super().run()
         except Exception as e:
             self._unavailable(e)
             self.extensions = []  # avoid copying missing files (it would fail).
@@ -67,7 +67,7 @@ def read(*names, **kwargs):
 class BinaryDistribution(Distribution):
     """Distribution which almost always forces a binary package with platform name"""
     def has_ext_modules(self):
-        return super().has_ext_modules() or 'SETUP_PY_ALLOW_PURE' not in os.environ
+        return super.has_ext_modules() or os.environ.get('SETUPPY_ALLOW_PURE')
 
 
 setup(
@@ -122,7 +122,7 @@ setup(
     keywords=[
         # eg: 'keyword1', 'keyword2', 'keyword3',
     ],
-    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*',
+    python_requires='>=3.6',
     install_requires=[
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
     ],

@@ -4,10 +4,6 @@
 
 #include "structmember.h"
 
-#ifndef PyVarObject_HEAD_INIT
-#define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
-#endif
-
 #define Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(object) \
     if (PyObject_TypeCheck(object, &Proxy_Type)) { \
         object = Proxy__ensure_wrapped((ProxyObject *)object); \
@@ -17,9 +13,6 @@
 #define Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self) if (!Proxy__ensure_wrapped(self)) return NULL;
 #define Proxy__ENSURE_WRAPPED_OR_RETURN_MINUS1(self) if (!Proxy__ensure_wrapped(self)) return -1;
 
-#if PY_MAJOR_VERSION < 3
-#define Py_hash_t long
-#endif
 
 /* ------------------------------------------------------------------------- */
 
@@ -164,42 +157,15 @@ static void Proxy_dealloc(ProxyObject *self)
 static PyObject *Proxy_repr(ProxyObject *self)
 {
 
-#if PY_MAJOR_VERSION < 3
-    PyObject *factory_repr;
-
-    factory_repr = PyObject_Repr(self->factory);
-    if (factory_repr == NULL)
-        return NULL;
-#endif
-
     if (self->wrapped) {
-#if PY_MAJOR_VERSION >= 3
         return PyUnicode_FromFormat("<%s at %p wrapping %R at %p with factory %R>",
                 Py_TYPE(self)->tp_name, self,
                 self->wrapped, self->wrapped,
                 self->factory);
-#else
-        PyObject *wrapped_repr;
-
-        wrapped_repr = PyObject_Repr(self->wrapped);
-        if (wrapped_repr == NULL)
-            return NULL;
-
-        return PyString_FromFormat("<%s at %p wrapping %s at %p with factory %s>",
-                Py_TYPE(self)->tp_name, self,
-                PyString_AS_STRING(wrapped_repr), self->wrapped,
-                PyString_AS_STRING(factory_repr));
-#endif
     } else {
-#if PY_MAJOR_VERSION >= 3
         return PyUnicode_FromFormat("<%s at %p with factory %R>",
                 Py_TYPE(self)->tp_name, self,
                 self->factory);
-#else
-        return PyString_FromFormat("<%s at %p with factory %s>",
-                Py_TYPE(self)->tp_name, self,
-                PyString_AS_STRING(factory_repr));
-#endif
     }
 }
 
@@ -279,18 +245,6 @@ static PyObject *Proxy_multiply(PyObject *o1, PyObject *o2)
 
     return PyNumber_Multiply(o1, o2);
 }
-
-/* ------------------------------------------------------------------------- */
-
-#if PY_MAJOR_VERSION < 3
-static PyObject *Proxy_divide(PyObject *o1, PyObject *o2)
-{
-    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
-    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
-
-    return PyNumber_Divide(o1, o2);
-}
-#endif
 
 /* ------------------------------------------------------------------------- */
 
@@ -420,17 +374,6 @@ static PyObject *Proxy_or(PyObject *o1, PyObject *o2)
 
 /* ------------------------------------------------------------------------- */
 
-#if PY_MAJOR_VERSION < 3
-static PyObject *Proxy_int(ProxyObject *self)
-{
-    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
-
-    return PyNumber_Int(self->wrapped);
-}
-#endif
-
-/* ------------------------------------------------------------------------- */
-
 static PyObject *Proxy_long(ProxyObject *self)
 {
     Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
@@ -446,44 +389,6 @@ static PyObject *Proxy_float(ProxyObject *self)
 
     return PyNumber_Float(self->wrapped);
 }
-
-/* ------------------------------------------------------------------------- */
-
-#if PY_MAJOR_VERSION < 3
-static PyObject *Proxy_oct(ProxyObject *self)
-{
-    PyNumberMethods *nb;
-
-    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
-
-    if ((nb = self->wrapped->ob_type->tp_as_number) == NULL ||
-        nb->nb_oct == NULL) {
-        PyErr_SetString(PyExc_TypeError, "oct() argument can't be converted to oct");
-        return NULL;
-    }
-
-    return (*nb->nb_oct)(self->wrapped);
-}
-#endif
-
-/* ------------------------------------------------------------------------- */
-
-#if PY_MAJOR_VERSION < 3
-static PyObject *Proxy_hex(ProxyObject *self)
-{
-    PyNumberMethods *nb;
-
-    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
-
-    if ((nb = self->wrapped->ob_type->tp_as_number) == NULL ||
-        nb->nb_hex == NULL) {
-        PyErr_SetString(PyExc_TypeError, "hex() argument can't be converted to hex");
-        return NULL;
-    }
-
-    return (*nb->nb_hex)(self->wrapped);
-}
-#endif
 
 /* ------------------------------------------------------------------------- */
 
@@ -550,30 +455,6 @@ static PyObject *Proxy_inplace_multiply(
     Py_INCREF(self);
     return (PyObject *)self;
 }
-
-/* ------------------------------------------------------------------------- */
-
-#if PY_MAJOR_VERSION < 3
-static PyObject *Proxy_inplace_divide(
-        ProxyObject *self, PyObject *other)
-{
-    PyObject *object = NULL;
-
-    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
-    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
-
-    object = PyNumber_InPlaceDivide(self->wrapped, other);
-
-    if (!object)
-        return NULL;
-
-    Py_DECREF(self->wrapped);
-    self->wrapped = object;
-
-    Py_INCREF(self);
-    return (PyObject *)self;
-}
-#endif
 
 /* ------------------------------------------------------------------------- */
 
@@ -926,7 +807,6 @@ static PyObject *Proxy_reduce(
 
 /* ------------------------------------------------------------------------- */
 
-#if PY_MAJOR_VERSION >= 3
 static PyObject *Proxy_round(
         ProxyObject *self, PyObject *args)
 {
@@ -960,7 +840,6 @@ static PyObject *Proxy_round(
 
     return result;
 }
-#endif
 
 /* ------------------------------------------------------------------------- */
 
@@ -1154,11 +1033,7 @@ static PyObject *Proxy_getattro(
     PyErr_Clear();
 
     if (!getattr_str) {
-#if PY_MAJOR_VERSION >= 3
         getattr_str = PyUnicode_InternFromString("__getattr__");
-#else
-        getattr_str = PyString_InternFromString("__getattr__");
-#endif
     }
 
     object = PyObject_GenericGetAttr((PyObject *)self, getattr_str);
@@ -1180,13 +1055,8 @@ static PyObject *Proxy_getattr(
 {
     PyObject *name = NULL;
 
-#if PY_MAJOR_VERSION >= 3
     if (!PyArg_ParseTuple(args, "U:__getattr__", &name))
         return NULL;
-#else
-    if (!PyArg_ParseTuple(args, "S:__getattr__", &name))
-        return NULL;
-#endif
 
     Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
 
@@ -1236,8 +1106,6 @@ static PyObject *Proxy_call(
 }
 
 /* ------------------------------------------------------------------------- */;
-
-#if PY_MAJOR_VERSION >= 3
 
 static PyObject *Proxy_aenter(ProxyObject *self)
 {
@@ -1334,17 +1202,12 @@ static PyObject *Proxy_anext(ProxyObject *self)
     return NULL;
 }
 
-#endif
-
 /* ------------------------------------------------------------------------- */;
 
 static PyNumberMethods Proxy_as_number = {
     (binaryfunc)Proxy_add,                  /*nb_add*/
     (binaryfunc)Proxy_subtract,             /*nb_subtract*/
     (binaryfunc)Proxy_multiply,             /*nb_multiply*/
-#if PY_MAJOR_VERSION < 3
-    (binaryfunc)Proxy_divide,               /*nb_divide*/
-#endif
     (binaryfunc)Proxy_remainder,            /*nb_remainder*/
     (binaryfunc)Proxy_divmod,               /*nb_divmod*/
     (ternaryfunc)Proxy_power,               /*nb_power*/
@@ -1358,27 +1221,12 @@ static PyNumberMethods Proxy_as_number = {
     (binaryfunc)Proxy_and,                  /*nb_and*/
     (binaryfunc)Proxy_xor,                  /*nb_xor*/
     (binaryfunc)Proxy_or,                   /*nb_or*/
-#if PY_MAJOR_VERSION < 3
-    0,                                      /*nb_coerce*/
-#endif
-#if PY_MAJOR_VERSION < 3
-    (unaryfunc)Proxy_int,                   /*nb_int*/
-    (unaryfunc)Proxy_long,                  /*nb_long*/
-#else
     (unaryfunc)Proxy_long,                  /*nb_int*/
     0,                                      /*nb_long/nb_reserved*/
-#endif
     (unaryfunc)Proxy_float,                 /*nb_float*/
-#if PY_MAJOR_VERSION < 3
-    (unaryfunc)Proxy_oct,                   /*nb_oct*/
-    (unaryfunc)Proxy_hex,                   /*nb_hex*/
-#endif
     (binaryfunc)Proxy_inplace_add,          /*nb_inplace_add*/
     (binaryfunc)Proxy_inplace_subtract,     /*nb_inplace_subtract*/
     (binaryfunc)Proxy_inplace_multiply,     /*nb_inplace_multiply*/
-#if PY_MAJOR_VERSION < 3
-    (binaryfunc)Proxy_inplace_divide,       /*nb_inplace_divide*/
-#endif
     (binaryfunc)Proxy_inplace_remainder,    /*nb_inplace_remainder*/
     (ternaryfunc)Proxy_inplace_power,       /*nb_inplace_power*/
     (binaryfunc)Proxy_inplace_lshift,       /*nb_inplace_lshift*/
@@ -1410,60 +1258,44 @@ static PyMappingMethods Proxy_as_mapping = {
     (objobjargproc)Proxy_setitem, /*mp_ass_subscript*/
 };
 
-#if PY_MAJOR_VERSION >= 3
 static PyAsyncMethods Proxy_as_async = {
     (unaryfunc)Proxy_await, /* am_await */
     (unaryfunc)Proxy_aiter, /* am_aiter */
     (unaryfunc)Proxy_anext, /* am_anext */
 };
-#endif
 
 static PyMethodDef Proxy_methods[] = {
-    { "__dir__",    (PyCFunction)Proxy_dir, METH_NOARGS, 0 },
-    { "__enter__",  (PyCFunction)Proxy_enter, METH_NOARGS, 0 },
-    { "__exit__",   (PyCFunction)Proxy_exit,
-                    METH_VARARGS | METH_KEYWORDS, 0 },
-    { "__getattr__", (PyCFunction)Proxy_getattr,
-                    METH_VARARGS , 0 },
-    { "__bytes__",  (PyCFunction)Proxy_bytes, METH_NOARGS, 0 },
-    { "__reversed__", (PyCFunction)Proxy_reversed, METH_NOARGS, 0 },
-    { "__reduce__", (PyCFunction)Proxy_reduce, METH_NOARGS, 0 },
-    { "__reduce_ex__", (PyCFunction)Proxy_reduce, METH_O, 0 },
-    { "__fspath__", (PyCFunction)Proxy_fspath, METH_NOARGS, 0 },
-#if PY_MAJOR_VERSION >= 3
-    { "__round__",  (PyCFunction)Proxy_round, METH_NOARGS, 0 },
-    { "__aenter__", (PyCFunction)Proxy_aenter, METH_NOARGS, 0 },
-    { "__aexit__",  (PyCFunction)Proxy_aexit,
-                    METH_VARARGS | METH_KEYWORDS, 0 },
-#endif
+    { "__dir__",       (PyCFunction)Proxy_dir,      METH_NOARGS, 0 },
+    { "__enter__",     (PyCFunction)Proxy_enter,    METH_NOARGS, 0 },
+    { "__exit__",      (PyCFunction)Proxy_exit,     METH_VARARGS | METH_KEYWORDS, 0 },
+    { "__getattr__",   (PyCFunction)Proxy_getattr,  METH_VARARGS , 0 },
+    { "__bytes__",     (PyCFunction)Proxy_bytes,    METH_NOARGS, 0 },
+    { "__reversed__",  (PyCFunction)Proxy_reversed, METH_NOARGS, 0 },
+    { "__reduce__",    (PyCFunction)Proxy_reduce,   METH_NOARGS, 0 },
+    { "__reduce_ex__", (PyCFunction)Proxy_reduce,   METH_O, 0 },
+    { "__fspath__",    (PyCFunction)Proxy_fspath,   METH_NOARGS, 0 },
+    { "__round__",     (PyCFunction)Proxy_round,    METH_NOARGS, 0 },
+    { "__aenter__",    (PyCFunction)Proxy_aenter,   METH_NOARGS, 0 },
+    { "__aexit__",     (PyCFunction)Proxy_aexit,    METH_VARARGS | METH_KEYWORDS, 0 },
     { NULL, NULL },
 };
 
 static PyGetSetDef Proxy_getset[] = {
-    { "__name__",           (getter)Proxy_get_name,
-                            (setter)Proxy_set_name, 0 },
-    { "__qualname__",       (getter)Proxy_get_qualname,
-                            (setter)Proxy_set_qualname, 0 },
-    { "__module__",         (getter)Proxy_get_module,
-                            (setter)Proxy_set_module, 0 },
-    { "__doc__",            (getter)Proxy_get_doc,
-                            (setter)Proxy_set_doc, 0 },
-    { "__class__",          (getter)Proxy_get_class,
-                            NULL, 0 },
-    { "__annotations__",    (getter)Proxy_get_annotations,
-                            (setter)Proxy_set_annotations, 0 },
-    { "__wrapped__",        (getter)Proxy_get_wrapped,
-                            (setter)Proxy_set_wrapped, 0 },
-    { "__factory__",        (getter)Proxy_get_factory,
-                            (setter)Proxy_set_factory, 0 },
-    { "__resolved__",       (getter)Proxy_get_resolved,
-                            NULL, 0 },
+    { "__name__",        (getter)Proxy_get_name,        (setter)Proxy_set_name, 0 },
+    { "__qualname__",    (getter)Proxy_get_qualname,    (setter)Proxy_set_qualname, 0 },
+    { "__module__",      (getter)Proxy_get_module,      (setter)Proxy_set_module, 0 },
+    { "__doc__",         (getter)Proxy_get_doc,         (setter)Proxy_set_doc, 0 },
+    { "__class__",       (getter)Proxy_get_class,       NULL, 0 },
+    { "__annotations__", (getter)Proxy_get_annotations, (setter)Proxy_set_annotations, 0 },
+    { "__wrapped__",     (getter)Proxy_get_wrapped,     (setter)Proxy_set_wrapped, 0 },
+    { "__factory__",     (getter)Proxy_get_factory,     (setter)Proxy_set_factory, 0 },
+    { "__resolved__",    (getter)Proxy_get_resolved,    NULL, 0 },
     { NULL },
 };
 
 PyTypeObject Proxy_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    "Proxy",                  /*tp_name*/
+    "Proxy",                        /*tp_name*/
     sizeof(ProxyObject),            /*tp_basicsize*/
     0,                              /*tp_itemsize*/
     /* methods */
@@ -1471,11 +1303,7 @@ PyTypeObject Proxy_Type = {
     0,                              /*tp_print*/
     0,                              /*tp_getattr*/
     0,                              /*tp_setattr*/
-#if PY_MAJOR_VERSION >= 3
-    &Proxy_as_async,            /* tp_as_async */
-#else
-    0,                              /*tp_compare*/
-#endif
+    &Proxy_as_async,                /* tp_as_async */
     (unaryfunc)Proxy_repr,          /*tp_repr*/
     &Proxy_as_number,               /*tp_as_number*/
     &Proxy_as_sequence,             /*tp_as_sequence*/
@@ -1486,13 +1314,8 @@ PyTypeObject Proxy_Type = {
     (getattrofunc)Proxy_getattro,   /*tp_getattro*/
     (setattrofunc)Proxy_setattro,   /*tp_setattro*/
     0,                              /*tp_as_buffer*/
-#if PY_MAJOR_VERSION < 3
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_CHECKTYPES,
-                                    /*tp_flags*/
-#else
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC,
                                     /*tp_flags*/
-#endif
     0,                              /*tp_doc*/
     (traverseproc)Proxy_traverse,   /*tp_traverse*/
     (inquiry)Proxy_clear,           /*tp_clear*/
@@ -1517,7 +1340,6 @@ PyTypeObject Proxy_Type = {
 
 /* ------------------------------------------------------------------------- */
 
-#if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
     "lazy_object_proxy.cext", /* m_name */
@@ -1529,7 +1351,6 @@ static struct PyModuleDef moduledef = {
     NULL,                     /* m_clear */
     NULL,                     /* m_free */
 };
-#endif
 
 static PyObject *
 moduleinit(void)
@@ -1537,11 +1358,7 @@ moduleinit(void)
     PyObject *module;
     PyObject *dict;
 
-#if PY_MAJOR_VERSION >= 3
     module = PyModule_Create(&moduledef);
-#else
-    module = Py_InitModule3("lazy_object_proxy.cext", module_functions, NULL);
-#endif
 
     if (module == NULL)
         return NULL;
@@ -1557,7 +1374,6 @@ moduleinit(void)
         return NULL;
     Py_INCREF(identity_ref);
 
-#if PY_MAJOR_VERSION >= 3
     PyObject *utils_module = PyImport_ImportModule("lazy_object_proxy.utils");
     if (utils_module == NULL)
         return NULL;
@@ -1566,7 +1382,6 @@ moduleinit(void)
     Py_DECREF(utils_module);
     if (await_ref == NULL)
         return NULL;
-#endif
 
     Py_INCREF(&Proxy_Type);
     PyModule_AddObject(module, "Proxy",
@@ -1574,16 +1389,9 @@ moduleinit(void)
     return module;
 }
 
-#if PY_MAJOR_VERSION < 3
-PyMODINIT_FUNC initcext(void)
-{
-    moduleinit();
-}
-#else
 PyMODINIT_FUNC PyInit_cext(void)
 {
     return moduleinit();
 }
-#endif
 
 /* ------------------------------------------------------------------------- */
