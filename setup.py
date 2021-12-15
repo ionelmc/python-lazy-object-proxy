@@ -67,7 +67,7 @@ def read(*names, **kwargs):
 class BinaryDistribution(Distribution):
     """Distribution which almost always forces a binary package with platform name"""
     def has_ext_modules(self):
-        return super.has_ext_modules() or os.environ.get('SETUPPY_ALLOW_PURE')
+        return super().has_ext_modules() or os.environ.get('SETUPPY_ALLOW_PURE')
 
 
 setup(
@@ -100,7 +100,7 @@ setup(
         'Operating System :: POSIX',
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
