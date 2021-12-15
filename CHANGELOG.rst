@@ -2,6 +2,15 @@
 Changelog
 =========
 
+1.7.1 (2021-12-15)
+------------------
+
+
+* Removed most of the Python 2 support code and fixed ``python_requires`` to require at least Python 3.6.
+
+  Note that 1.7.0 has been yanked because it could not install on Python 2.7.
+  Installing lazy-object-proxy on Python 2.7 should automatically fall back to the 1.6.0 release now.
+
 1.7.0 (2021-12-15)
 ------------------
 
