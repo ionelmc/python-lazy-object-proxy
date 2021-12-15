@@ -35,10 +35,9 @@ jobs:
     ['ubuntu', 'x64', 'x86_64', '*musllinux*', False],
     ['ubuntu', 'x64', 'aarch64', '*manylinux*', False],
     ['ubuntu', 'x64', 'aarch64', '*musllinux*', False],
-    ['windows', 'x64', 'x86_64', '*', True],
+    ['windows', 'x64', 'amd64', '*', True],
     ['windows', 'x86', 'x86', '*', False],
     ['macos', 'x64', 'x86_64', '*', True],
-    ['macos', 'x64', 'arm64', '*', True],
 ] %}
 {% if include_cover or ('nocov' in env and not prefix.startswith('pypy')) %}
 {% set wheel_suffix = 'nocov' in env and wheel_arch.strip('*') %}
