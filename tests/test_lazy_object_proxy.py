@@ -1708,7 +1708,7 @@ def test_set_wrapped_regular(lop):
     assert obj + 1 == 2
 
 
-@pytest.fixture(params=["pickle", "cPickle"])
+@pytest.fixture(params=["pickle", ])
 def pickler(request):
     return pytest.importorskip(request.param)
 
