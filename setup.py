@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import print_function
 
 import io
 import os
@@ -34,6 +32,7 @@ else:
 
 class OptionalBuildExt(build_ext):
     """Allow the building of C extensions to fail."""
+
     def run(self):
         try:
             super().run()
@@ -43,12 +42,14 @@ class OptionalBuildExt(build_ext):
 
     def _unavailable(self, e):
         print('*' * 80)
-        print('''WARNING:
+        print(
+            '''WARNING:
 
     An optional code optimization (C extension) could not be compiled.
 
     Optimizations for this package will not be available!
-        ''')
+        '''
+        )
 
         print('CAUSE:')
         print('')
@@ -56,18 +57,16 @@ class OptionalBuildExt(build_ext):
         print('*' * 80)
 
 
-def read(*names, **kwargs):
-    with io.open(
-        join(dirname(__file__), *names),
-        encoding=kwargs.get('encoding', 'utf8')
-    ) as fh:
-        return fh.read()
-
-
 class BinaryDistribution(Distribution):
     """Distribution which almost always forces a binary package with platform name"""
+
     def has_ext_modules(self):
         return super().has_ext_modules() or not os.environ.get('SETUPPY_ALLOW_PURE')
+
+
+def read(*names, **kwargs):
+    with io.open(join(dirname(__file__), *names), encoding=kwargs.get('encoding', 'utf8')) as fh:
+        return fh.read()
 
 
 setup(
@@ -79,9 +78,9 @@ setup(
     },
     license='BSD-2-Clause',
     description='A fast and thorough lazy object proxy.',
-    long_description='%s\n%s' % (
+    long_description='{}\n{}'.format(
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
-        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
+        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst')),
     ),
     author='Ionel Cristian Mărieș',
     author_email='contact@ionelmc.ro',
@@ -100,8 +99,8 @@ setup(
         'Operating System :: POSIX',
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -122,7 +121,7 @@ setup(
     keywords=[
         # eg: 'keyword1', 'keyword2', 'keyword3',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     install_requires=[
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
     ],
@@ -131,14 +130,19 @@ setup(
         #   'rst': ['docutils>=0.11'],
         #   ':python_version=="2.6"': ['argparse'],
     },
+    setup_requires=[
+        'setuptools_scm>=3.3.1',
+    ],
     cmdclass={'build_ext': OptionalBuildExt},
-    ext_modules=[] if hasattr(sys, 'pypy_version_info') else [
+    ext_modules=[]
+    if hasattr(sys, 'pypy_version_info')
+    else [
         Extension(
             splitext(relpath(path, 'src').replace(os.sep, '.'))[0],
             sources=[path],
             extra_compile_args=CFLAGS.split(),
             extra_link_args=LFLAGS.split(),
-            include_dirs=[dirname(path)]
+            include_dirs=[dirname(path)],
         )
         for root, _, _ in os.walk('src')
         for path in glob(join(root, '*.c'))

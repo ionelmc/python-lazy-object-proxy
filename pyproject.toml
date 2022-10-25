@@ -4,3 +4,8 @@ requires = [
     "wheel",
     "setuptools_scm>=3.3.1",
 ]
+
+[tool.black]
+line-length = 140
+target-version = ['py37']
+skip-string-normalization = true

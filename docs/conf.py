@@ -19,11 +19,12 @@ extensions = [
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'lazy-object-proxy'
-year = '2014-2021'
+year = '2014-2022'
 author = 'Ionel Cristian Mărieș'
 copyright = '{0}, {1}'.format(year, author)
 try:
     from pkg_resources import get_distribution
+
     version = release = get_distribution('lazy_object_proxy').version
 except Exception:
     traceback.print_exc()
@@ -35,10 +36,10 @@ extlinks = {
     'issue': ('https://github.com/ionelmc/python-lazy-object-proxy/issues/%s', '#'),
     'pr': ('https://github.com/ionelmc/python-lazy-object-proxy/pull/%s', 'PR #'),
 }
-html_theme = "sphinx_py3doc_enhanced_theme"
+html_theme = 'sphinx_py3doc_enhanced_theme'
 html_theme_path = [sphinx_py3doc_enhanced_theme.get_html_theme_path()]
 html_theme_options = {
-    'githuburl': 'https://github.com/ionelmc/python-lazy-object-proxy/'
+    'githuburl': 'https://github.com/ionelmc/python-lazy-object-proxy/',
 }
 
 html_use_smartypants = True
