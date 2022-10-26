@@ -2,9 +2,15 @@
 Changelog
 =========
 
-1.7.1 (2021-12-15)
+1.8.0 (2022-10-26)
 ------------------
 
+* Cleaned up use of cPickle. Contributed by Sandro Tosi in `#62 <https://github.com/ionelmc/python-lazy-object-proxy/pull/62>`_.
+* Added Python 3.11 wheels.
+* Dropped support for Python 3.6.
+
+1.7.1 (2021-12-15)
+------------------
 
 * Removed most of the Python 2 support code and fixed ``python_requires`` to require at least Python 3.6.
 

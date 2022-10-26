@@ -8,3 +8,4 @@ Authors
 * Erik M. Bray - http://iguananaut.net
 * Ran Benita - https://github.com/bluetech
 * "hugovk" - https://github.com/hugovk
+* Sandro Tosi - https://github.com/sandrotosi
