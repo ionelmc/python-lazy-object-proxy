@@ -1,7 +1,5 @@
 import operator
 
-from .compat import PY2
-from .compat import PY3
 from .compat import string_types
 from .compat import with_metaclass
 from .utils import await_
@@ -89,9 +87,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __annotations__ = property(make_proxy_method(operator.attrgetter('__anotations__')))
     __dir__ = make_proxy_method(dir)
     __str__ = make_proxy_method(str)
-
-    if PY3:
-        __bytes__ = make_proxy_method(bytes)
+    __bytes__ = make_proxy_method(bytes)
 
     def __repr__(self, __getattr__=object.__getattribute__):
         if '__wrapped__' in self.__dict__:
@@ -113,10 +109,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
                 return fspath()
 
     __reversed__ = make_proxy_method(reversed)
-
-    if PY3:
-        __round__ = make_proxy_method(round)
-
+    __round__ = make_proxy_method(round)
     __lt__ = make_proxy_method(operator.lt)
     __le__ = make_proxy_method(operator.le)
     __eq__ = make_proxy_method(operator.eq)
@@ -148,7 +141,6 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __add__ = make_proxy_method(operator.add)
     __sub__ = make_proxy_method(operator.sub)
     __mul__ = make_proxy_method(operator.mul)
-    __div__ = make_proxy_method(operator.div if PY2 else operator.truediv)
     __truediv__ = make_proxy_method(operator.truediv)
     __floordiv__ = make_proxy_method(operator.floordiv)
     __mod__ = make_proxy_method(operator.mod)
@@ -205,7 +197,6 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __iadd__ = make_proxy_method(operator.iadd)
     __isub__ = make_proxy_method(operator.isub)
     __imul__ = make_proxy_method(operator.imul)
-    __idiv__ = make_proxy_method(operator.idiv if PY2 else operator.itruediv)
     __itruediv__ = make_proxy_method(operator.itruediv)
     __ifloordiv__ = make_proxy_method(operator.ifloordiv)
     __imod__ = make_proxy_method(operator.imod)
@@ -219,12 +210,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __pos__ = make_proxy_method(operator.pos)
     __abs__ = make_proxy_method(operator.abs)
     __invert__ = make_proxy_method(operator.invert)
-
     __int__ = make_proxy_method(int)
-
-    if PY2:
-        __long__ = make_proxy_method(long)  # noqa
-
     __float__ = make_proxy_method(float)
     __oct__ = make_proxy_method(oct)
     __hex__ = make_proxy_method(hex)
@@ -240,11 +226,6 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __getitem__ = make_proxy_method(operator.getitem)
     __setitem__ = make_proxy_method(operator.setitem)
     __delitem__ = make_proxy_method(operator.delitem)
-
-    if PY2:
-        __getslice__ = make_proxy_method(operator.getslice)
-        __setslice__ = make_proxy_method(operator.setslice)
-        __delslice__ = make_proxy_method(operator.delslice)
 
     def __enter__(self):
         return self.__wrapped__.__enter__()

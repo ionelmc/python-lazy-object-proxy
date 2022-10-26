@@ -6,6 +6,7 @@ Changelog
 ------------------
 
 * Cleaned up use of cPickle. Contributed by Sandro Tosi in `#62 <https://github.com/ionelmc/python-lazy-object-proxy/pull/62>`_.
+* Cleaned up more dead Python 2 code.
 * Added Python 3.11 wheels.
 * Dropped support for Python 3.6.
 

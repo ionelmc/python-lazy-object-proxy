@@ -13,9 +13,6 @@ from decimal import Decimal
 from functools import partial
 
 import pytest
-from compat import PY2
-from compat import PY3
-from compat import exec_
 
 PYPY = '__pypy__' in sys.builtin_module_names
 
@@ -32,7 +29,7 @@ def target():
 """
 
 objects = types.ModuleType('objects')
-exec_(OBJECTS_CODE, objects.__dict__, objects.__dict__)
+exec(OBJECTS_CODE, objects.__dict__, objects.__dict__)
 
 
 def test_round(lop):
@@ -72,8 +69,7 @@ def test_set_wrapped(lop):
     assert function2.__wrapped__ is function1
     assert function2.__name__ == function1.__name__
 
-    if PY3:
-        assert function2.__qualname__ == function1.__qualname__
+    assert function2.__qualname__ == function1.__qualname__
 
     function2.__wrapped__ = None
 
@@ -83,8 +79,7 @@ def test_set_wrapped(lop):
     assert function2.__wrapped__ is None
     assert not hasattr(function2, '__name__')
 
-    if PY3:
-        assert not hasattr(function2, '__qualname__')
+    assert not hasattr(function2, '__qualname__')
 
     def function3(*args, **kwargs):
         return args, kwargs
@@ -95,8 +90,7 @@ def test_set_wrapped(lop):
     assert function2.__wrapped__ == function3
     assert function2.__name__ == function3.__name__
 
-    if PY3:
-        assert function2.__qualname__ == function3.__qualname__
+    assert function2.__qualname__ == function3.__qualname__
 
 
 def test_wrapped_attribute(lop):
@@ -884,9 +878,6 @@ def test_int(lop):
 
     assert int(one) == 1
 
-    if not PY3:
-        assert long(one) == 1  # noqa
-
 
 def test_float(lop):
     one = lop.Proxy(lambda: 1)
@@ -1556,17 +1547,15 @@ def test_callable_proxy_is_callable(lop):
 
 
 def test_class_bytes(lop):
-    if PY3:
+    class Class(object):
+        def __bytes__(self):
+            return b'BYTES'
 
-        class Class(object):
-            def __bytes__(self):
-                return b'BYTES'
+    instance = Class()
 
-        instance = Class()
+    proxy = lop.Proxy(lambda: instance)
 
-        proxy = lop.Proxy(lambda: instance)
-
-        assert bytes(instance) == bytes(proxy)
+    assert bytes(instance) == bytes(proxy)
 
 
 def test_str_format(lop):
@@ -1606,14 +1595,7 @@ def test_fractions_round(lop):
 
 
 def test_readonly(lop):
-    class Foo(object):
-        if PY2:
-
-            @property
-            def __qualname__(self):
-                return 'object'
-
-    proxy = lop.Proxy(lambda: Foo() if PY2 else object)
+    proxy = lop.Proxy(lambda: object)
     assert proxy.__qualname__ == 'object'
 
 

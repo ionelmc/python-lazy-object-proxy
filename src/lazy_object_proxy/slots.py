@@ -1,7 +1,5 @@
 import operator
 
-from .compat import PY2
-from .compat import PY3
 from .compat import string_types
 from .compat import with_metaclass
 from .utils import await_
@@ -144,10 +142,8 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __str__(self):
         return str(self.__wrapped__)
 
-    if PY3:
-
-        def __bytes__(self):
-            return bytes(self.__wrapped__)
+    def __bytes__(self):
+        return bytes(self.__wrapped__)
 
     def __repr__(self, __getattr__=object.__getattribute__):
         try:
@@ -173,10 +169,8 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __reversed__(self):
         return reversed(self.__wrapped__)
 
-    if PY3:
-
-        def __round__(self):
-            return round(self.__wrapped__)
+    def __round__(self):
+        return round(self.__wrapped__)
 
     def __lt__(self, other):
         return self.__wrapped__ < other
@@ -231,9 +225,6 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __mul__(self, other):
         return self.__wrapped__ * other
-
-    def __div__(self, other):
-        return operator.div(self.__wrapped__, other)
 
     def __truediv__(self, other):
         return operator.truediv(self.__wrapped__, other)
@@ -373,11 +364,6 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __int__(self):
         return int(self.__wrapped__)
-
-    if PY2:
-
-        def __long__(self):
-            return long(self.__wrapped__)  # noqa
 
     def __float__(self):
         return float(self.__wrapped__)
