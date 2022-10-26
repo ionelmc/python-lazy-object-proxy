@@ -7,8 +7,8 @@ default_context:
     c_extension_module: '-'
     c_extension_optional: 'yes'
     c_extension_support: 'yes'
-    c_extension_test_pypi: 'yes'
-    c_extension_test_pypi_username: ionel
+    c_extension_test_pypi: 'no'
+    c_extension_test_pypi_username: '-'
     codacy: 'no'
     codacy_projectid: 862e7946eabb4112be6503a667381b71
     codeclimate: 'no'
