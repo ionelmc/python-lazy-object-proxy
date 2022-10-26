@@ -94,8 +94,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
             return True
 
     @property
-    def __wrapped__(self, __getattr__=object.__getattribute__, __setattr__=object.__setattr__,
-                    __delattr__=object.__delattr__):
+    def __wrapped__(self, __getattr__=object.__getattribute__, __setattr__=object.__setattr__, __delattr__=object.__delattr__):
         try:
             return __getattr__(self, '__target__')
         except AttributeError:
@@ -146,6 +145,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return str(self.__wrapped__)
 
     if PY3:
+
         def __bytes__(self):
             return bytes(self.__wrapped__)
 
@@ -153,15 +153,10 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         try:
             target = __getattr__(self, '__target__')
         except AttributeError:
-            return '<{} at 0x{:x} with factory {!r}>'.format(
-                type(self).__name__, id(self),
-                self.__factory__
-            )
+            return '<{} at 0x{:x} with factory {!r}>'.format(type(self).__name__, id(self), self.__factory__)
         else:
             return '<{} at 0x{:x} wrapping {!r} at 0x{:x} with factory {!r}>'.format(
-                type(self).__name__, id(self),
-                target, id(target),
-                self.__factory__
+                type(self).__name__, id(self), target, id(target), self.__factory__
             )
 
     def __fspath__(self):
@@ -179,6 +174,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return reversed(self.__wrapped__)
 
     if PY3:
+
         def __round__(self):
             return round(self.__wrapped__)
 
@@ -379,6 +375,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return int(self.__wrapped__)
 
     if PY2:
+
         def __long__(self):
             return long(self.__wrapped__)  # noqa
 

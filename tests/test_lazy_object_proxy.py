@@ -964,9 +964,9 @@ def test_pow(lop):
     two = lop.Proxy(lambda: 2)
     three = lop.Proxy(lambda: 3)
 
-    assert three ** two == pow(3, 2)
-    assert 3 ** two == pow(3, 2)
-    assert three ** 2 == pow(3, 2)
+    assert three**two == pow(3, 2)
+    assert 3**two == pow(3, 2)
+    assert three**2 == pow(3, 2)
 
     assert pow(three, two) == pow(3, 2)
     assert pow(3, two) == pow(3, 2)
@@ -1135,13 +1135,13 @@ def test_ipow(lop):
     two = lop.Proxy(lambda: 2)
 
     value **= 2
-    assert value == 10 ** 2
+    assert value == 10**2
 
     if lop.kind != 'simple':
         assert type(value) == lop.Proxy
 
     value **= two
-    assert value == 10 ** 2 ** 2
+    assert value == 10**2**2
 
     if lop.kind != 'simple':
         assert type(value) == lop.Proxy
@@ -1512,8 +1512,7 @@ def test_override_getattr(lop):
     assert 'attribute' in accessed
 
 
-skipcallable = pytest.mark.xfail(
-    reason="Don't know how to make this work. This tests the existence of the __call__ method.")
+skipcallable = pytest.mark.xfail(reason="Don't know how to make this work. This tests the existence of the __call__ method.")
 
 
 @skipcallable
@@ -1558,6 +1557,7 @@ def test_callable_proxy_is_callable(lop):
 
 def test_class_bytes(lop):
     if PY3:
+
         class Class(object):
             def __bytes__(self):
                 return b'BYTES'
@@ -1608,6 +1608,7 @@ def test_fractions_round(lop):
 def test_readonly(lop):
     class Foo(object):
         if PY2:
+
             @property
             def __qualname__(self):
                 return 'object'
@@ -1708,21 +1709,16 @@ def test_set_wrapped_regular(lop):
     assert obj + 1 == 2
 
 
-@pytest.fixture(params=["pickle", ])
+@pytest.fixture(
+    params=[
+        "pickle",
+    ]
+)
 def pickler(request):
     return pytest.importorskip(request.param)
 
 
-@pytest.mark.parametrize("obj", [
-    1,
-    1.2,
-    "a",
-    ["b", "c"],
-    {"d": "e"},
-    date(2015, 5, 1),
-    datetime(2015, 5, 1),
-    Decimal("1.2")
-])
+@pytest.mark.parametrize("obj", [1, 1.2, "a", ["b", "c"], {"d": "e"}, date(2015, 5, 1), datetime(2015, 5, 1), Decimal("1.2")])
 @pytest.mark.parametrize("level", range(pickle.HIGHEST_PROTOCOL + 1))
 def test_pickling(lop, obj, pickler, level):
     proxy = lop.Proxy(lambda: obj)
@@ -1743,8 +1739,7 @@ def test_pickling_exception(lop, pickler, level):
     pytest.raises(BadStuff, pickler.dumps, proxy, protocol=level)
 
 
-@pytest.mark.skipif(platform.python_implementation() != 'CPython',
-                    reason="Interpreter doesn't have reference counting")
+@pytest.mark.skipif(platform.python_implementation() != 'CPython', reason="Interpreter doesn't have reference counting")
 def test_garbage_collection(lop):
     leaky = lambda: "foobar"  # noqa
     proxy = lop.Proxy(leaky)
@@ -1757,8 +1752,7 @@ def test_garbage_collection(lop):
     assert ref() is None
 
 
-@pytest.mark.skipif(platform.python_implementation() != 'CPython',
-                    reason="Interpreter doesn't have reference counting")
+@pytest.mark.skipif(platform.python_implementation() != 'CPython', reason="Interpreter doesn't have reference counting")
 def test_garbage_collection_count(lop):
     obj = object()
     count = sys.getrefcount(obj)
@@ -1778,13 +1772,14 @@ def test_perf(benchmark, name, lop_loader):
 empty = object()
 
 
-@pytest.fixture(scope="module", params=["SimpleProxy", "LocalsSimpleProxy", "CachedPropertyProxy",
-                                        "LocalsCachedPropertyProxy"])
+@pytest.fixture(scope="module", params=["SimpleProxy", "LocalsSimpleProxy", "CachedPropertyProxy", "LocalsCachedPropertyProxy"])
 def prototype(request):
     from lazy_object_proxy.simple import cached_property
+
     name = request.param
 
     if name == "SimpleProxy":
+
         class SimpleProxy(object):
             def __init__(self, factory):
                 self.factory = factory
@@ -1797,6 +1792,7 @@ def prototype(request):
 
         return SimpleProxy
     elif name == "CachedPropertyProxy":
+
         class CachedPropertyProxy(object):
             def __init__(self, factory):
                 self.factory = factory
@@ -1810,6 +1806,7 @@ def prototype(request):
 
         return CachedPropertyProxy
     elif name == "LocalsSimpleProxy":
+
         class LocalsSimpleProxy(object):
             def __init__(self, factory):
                 self.factory = factory
@@ -1822,6 +1819,7 @@ def prototype(request):
 
         return LocalsSimpleProxy
     elif name == "LocalsCachedPropertyProxy":
+
         class LocalsCachedPropertyProxy(object):
             def __init__(self, factory):
                 self.factory = factory

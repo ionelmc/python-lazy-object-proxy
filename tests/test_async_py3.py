@@ -69,7 +69,8 @@ async def proxy(ob):  # workaround
 
 
 def test_gen_1(lop):
-    def gen(): yield
+    def gen():
+        yield
 
     assert not hasattr(gen, '__await__')
 
@@ -88,7 +89,8 @@ def test_func_1(lop):
 
     assert run_async__await__(foo()) == ([], 10)
 
-    def bar(): pass
+    def bar():
+        pass
 
     assert not bool(bar.__code__.co_flags & inspect.CO_COROUTINE)
 
@@ -223,7 +225,7 @@ def test_func_10(lop):
         nonlocal N
         try:
             a = yield
-            yield (a ** 2)
+            yield (a**2)
         except ZeroDivisionError:
             N += 100
             raise
@@ -252,7 +254,8 @@ def test_func_10(lop):
 
 
 def test_func_11(lop):
-    async def func(): pass
+    async def func():
+        pass
 
     coro = lop.Proxy(func)
     # Test that PyCoro_Type and _PyCoroWrapper_Type types were properly
@@ -531,7 +534,7 @@ def test_await_5(lop):
             return
 
     async def foo():
-        return (await lop.Proxy(Awaitable))
+        return await lop.Proxy(Awaitable)
 
     with pytest.raises(TypeError, match="__await__.*returned non-iterator of type"):
         run_async(lop.Proxy(foo))
@@ -543,7 +546,7 @@ def test_await_6(lop):
             return iter([52])
 
     async def foo():
-        return (await lop.Proxy(Awaitable))
+        return await lop.Proxy(Awaitable)
 
     assert run_async(lop.Proxy(foo)) == ([52], None)
 
@@ -555,7 +558,7 @@ def test_await_7(lop):
             return 100
 
     async def foo():
-        return (await lop.Proxy(Awaitable))
+        return await lop.Proxy(Awaitable)
 
     assert run_async(lop.Proxy(foo)) == ([42], 100)
 
@@ -584,8 +587,13 @@ def test_await_9(lop):
         class DB:
             b = wrap
 
-        return (await lop.Proxy(bar) + await lop.Proxy(wrap)() + await lop.Proxy(lambda: db['b']()()()) +
-                await lop.Proxy(bar) * 1000 + await DB.b()())
+        return (
+            await lop.Proxy(bar)
+            + await lop.Proxy(wrap)()
+            + await lop.Proxy(lambda: db['b']()()())
+            + await lop.Proxy(bar) * 1000
+            + await DB.b()()
+        )
 
     async def foo2():
         return -await lop.Proxy(bar)
@@ -731,13 +739,11 @@ def test_with_1(lop):
             self.name = name
 
         async def __aenter__(self):
-            await AsyncYieldFrom(['enter-1-' + self.name,
-                                  'enter-2-' + self.name])
+            await AsyncYieldFrom(['enter-1-' + self.name, 'enter-2-' + self.name])
             return self
 
         async def __aexit__(self, *args):
-            await AsyncYieldFrom(['exit-1-' + self.name,
-                                  'exit-2-' + self.name])
+            await AsyncYieldFrom(['exit-1-' + self.name, 'exit-2-' + self.name])
 
             if self.name == 'B':
                 return True
@@ -750,9 +756,17 @@ def test_with_1(lop):
     f = lop.Proxy(foo)
     result, _ = run_async(f)
 
-    assert result == ['enter-1-A', 'enter-2-A', 'enter-1-B', 'enter-2-B',
-                      ('managers', 'A', 'B'),
-                      'exit-1-B', 'exit-2-B', 'exit-1-A', 'exit-2-A']
+    assert result == [
+        'enter-1-A',
+        'enter-2-A',
+        'enter-1-B',
+        'enter-2-B',
+        ('managers', 'A', 'B'),
+        'exit-1-B',
+        'exit-2-B',
+        'exit-1-A',
+        'exit-2-A',
+    ]
 
     async def foo():
         async with lop.Proxy(lambda: Manager("A")) as a, lop.Proxy(lambda: Manager("C")) as c:
@@ -843,8 +857,7 @@ def test_with_6(lop):
         async with lop.Proxy(CM):
             pass
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aenter__ "
-                                        "that does not implement __await__: int"):
+    with pytest.raises(TypeError, match="'async with' received an object from __aenter__ " "that does not implement __await__: int"):
         # it's important that __aexit__ wasn't called
         run_async(lop.Proxy(foo))
 
@@ -866,8 +879,7 @@ def test_with_7(lop):
     try:
         run_async(lop.Proxy(foo))
     except TypeError as exc:
-        assert re.search("'async with' received an object from __aexit__ " \
-                         "that does not implement __await__: int", exc.args[0])
+        assert re.search("'async with' received an object from __aexit__ " "that does not implement __await__: int", exc.args[0])
         assert exc.__context__ is not None
         assert isinstance(exc.__context__, ZeroDivisionError)
     else:
@@ -891,8 +903,7 @@ def test_with_8(lop):
         async with lop.Proxy(CM):
             CNT += 1
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ "
-                                        "that does not implement __await__: int"):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " "that does not implement __await__: int"):
         run_async(lop.Proxy(foo))
     assert CNT == 1
 
@@ -904,8 +915,7 @@ def test_with_8(lop):
                 CNT += 1
                 break
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ "
-                                        "that does not implement __await__: int"):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " "that does not implement __await__: int"):
         run_async(lop.Proxy(foo))
     assert CNT == 2
 
@@ -917,8 +927,7 @@ def test_with_8(lop):
                 CNT += 1
                 continue
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ "
-                                        "that does not implement __await__: int"):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " "that does not implement __await__: int"):
         run_async(lop.Proxy(foo))
     assert CNT == 3
 
@@ -929,8 +938,7 @@ def test_with_8(lop):
             CNT += 1
             return
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ "
-                                        "that does not implement __await__: int"):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " "that does not implement __await__: int"):
         run_async(lop.Proxy(foo))
     assert CNT == 4
 
@@ -977,8 +985,7 @@ def test_with_10(lop):
     except ZeroDivisionError as exc:
         assert exc.__context__ is not None
         assert isinstance(exc.__context__, ZeroDivisionError)
-        assert isinstance(exc.__context__.__context__,
-                          RuntimeError)
+        assert isinstance(exc.__context__.__context__, RuntimeError)
     else:
         pytest.fail('exception from __aexit__ did not propagate')
 
@@ -1116,8 +1123,7 @@ def test_for_1(lop):
     # Make sure that __aiter__ was called only once
     assert aiter_calls == 3
     assert yielded == [i * 100 for i in range(1, 11)]
-    assert buffer == [i for i in range(1, 21)] + \
-           ['what?', 'end']
+    assert buffer == [i for i in range(1, 21)] + ['what?', 'end']
 
 
 @pypyxfail
@@ -1415,37 +1421,28 @@ def test_comp_2(lop):
         return i
 
     async def run_list():
-        return [s for c in [lop.Proxy(lambda: f('')), lop.Proxy(lambda: f('abc')), lop.Proxy(lambda: f('')),
-                            lop.Proxy(lambda: f(['de', 'fg']))]
-                for s in await c]
+        return [
+            s
+            for c in [lop.Proxy(lambda: f('')), lop.Proxy(lambda: f('abc')), lop.Proxy(lambda: f('')), lop.Proxy(lambda: f(['de', 'fg']))]
+            for s in await c
+        ]
 
-    assert run_async(lop.Proxy(run_list)) == \
-           ([], ['a', 'b', 'c', 'de', 'fg'])
+    assert run_async(lop.Proxy(run_list)) == ([], ['a', 'b', 'c', 'de', 'fg'])
 
     async def run_set():
         return {
-            d for c in [
-                lop.Proxy(lambda: f([
-                    lop.Proxy(lambda: f([10, 30])),
-                    lop.Proxy(lambda: f([20]))]))
-            ]
+            d
+            for c in [lop.Proxy(lambda: f([lop.Proxy(lambda: f([10, 30])), lop.Proxy(lambda: f([20]))]))]
             for s in await c
-            for d in await s}
+            for d in await s
+        }
 
-    assert run_async(lop.Proxy(run_set)) == \
-           ([], {10, 20, 30})
+    assert run_async(lop.Proxy(run_set)) == ([], {10, 20, 30})
 
     async def run_set2():
-        return {
-            await s
-            for c in [lop.Proxy(lambda: f([
-                lop.Proxy(lambda: f(10)),
-                lop.Proxy(lambda: f(20))
-            ]))]
-            for s in await c}
+        return {await s for c in [lop.Proxy(lambda: f([lop.Proxy(lambda: f(10)), lop.Proxy(lambda: f(20))]))] for s in await c}
 
-    assert run_async(lop.Proxy(run_set2)) == \
-           ([], {10, 20})
+    assert run_async(lop.Proxy(run_set2)) == ([], {10, 20})
 
 
 def test_comp_3(lop):
@@ -1456,27 +1453,23 @@ def test_comp_3(lop):
     async def run_list():
         return [i + 1 async for i in f([10, 20])]
 
-    assert run_async(run_list()) == \
-           ([], [11, 21])
+    assert run_async(run_list()) == ([], [11, 21])
 
     async def run_set():
         return {i + 1 async for i in f([10, 20])}
 
-    assert run_async(run_set()) == \
-           ([], {11, 21})
+    assert run_async(run_set()) == ([], {11, 21})
 
     async def run_dict():
         return {i + 1: i + 2 async for i in f([10, 20])}
 
-    assert run_async(run_dict()) == \
-           ([], {11: 12, 21: 22})
+    assert run_async(run_dict()) == ([], {11: 12, 21: 22})
 
     async def run_gen():
         gen = (i + 1 async for i in f([10, 20]))
         return [g + 100 async for g in gen]
 
-    assert run_async(run_gen()) == \
-           ([], [111, 121])
+    assert run_async(run_gen()) == ([], [111, 121])
 
 
 def test_comp_4(lop):
@@ -1487,27 +1480,23 @@ def test_comp_4(lop):
     async def run_list():
         return [i + 1 async for i in f([10, 20]) if i > 10]
 
-    assert run_async(run_list()) == \
-           ([], [21])
+    assert run_async(run_list()) == ([], [21])
 
     async def run_set():
         return {i + 1 async for i in f([10, 20]) if i > 10}
 
-    assert run_async(run_set()) == \
-           ([], {21})
+    assert run_async(run_set()) == ([], {21})
 
     async def run_dict():
         return {i + 1: i + 2 async for i in f([10, 20]) if i > 10}
 
-    assert run_async(run_dict()) == \
-           ([], {21: 22})
+    assert run_async(run_dict()) == ([], {21: 22})
 
     async def run_gen():
         gen = (i + 1 async for i in f([10, 20]) if i > 10)
         return [g + 100 async for g in gen]
 
-    assert run_async(run_gen()) == \
-           ([], [121])
+    assert run_async(run_gen()) == ([], [121])
 
 
 def test_comp_4_2(lop):
@@ -1518,27 +1507,23 @@ def test_comp_4_2(lop):
     async def run_list():
         return [i + 10 async for i in f(range(5)) if 0 < i < 4]
 
-    assert run_async(run_list()) == \
-           ([], [11, 12, 13])
+    assert run_async(run_list()) == ([], [11, 12, 13])
 
     async def run_set():
         return {i + 10 async for i in f(range(5)) if 0 < i < 4}
 
-    assert run_async(run_set()) == \
-           ([], {11, 12, 13})
+    assert run_async(run_set()) == ([], {11, 12, 13})
 
     async def run_dict():
         return {i + 10: i + 100 async for i in f(range(5)) if 0 < i < 4}
 
-    assert run_async(run_dict()) == \
-           ([], {11: 101, 12: 102, 13: 103})
+    assert run_async(run_dict()) == ([], {11: 101, 12: 102, 13: 103})
 
     async def run_gen():
         gen = (i + 10 async for i in f(range(5)) if 0 < i < 4)
         return [g + 100 async for g in gen]
 
-    assert run_async(run_gen()) == \
-           ([], [111, 112, 113])
+    assert run_async(run_gen()) == ([], [111, 112, 113])
 
 
 def test_comp_5(lop):
@@ -1547,11 +1532,9 @@ def test_comp_5(lop):
             yield i
 
     async def run_list():
-        return [i + 1 for pair in ([10, 20], [30, 40]) if pair[0] > 10
-                async for i in f(pair) if i > 30]
+        return [i + 1 for pair in ([10, 20], [30, 40]) if pair[0] > 10 async for i in f(pair) if i > 30]
 
-    assert run_async(run_list()) == \
-           ([], [41])
+    assert run_async(run_list()) == ([], [41])
 
 
 def test_comp_6(lop):
@@ -1560,11 +1543,9 @@ def test_comp_6(lop):
             yield i
 
     async def run_list():
-        return [i + 1 async for seq in f([(10, 20), (30,)])
-                for i in seq]
+        return [i + 1 async for seq in f([(10, 20), (30,)]) for i in seq]
 
-    assert run_async(run_list()) == \
-           ([], [11, 21, 31])
+    assert run_async(run_list()) == ([], [11, 21, 31])
 
 
 def test_comp_7(lop):
@@ -1584,8 +1565,7 @@ def test_comp_8(lop):
     async def f():
         return [i for i in [1, 2, 3]]
 
-    assert run_async(f()) == \
-           ([], [1, 2, 3])
+    assert run_async(f()) == ([], [1, 2, 3])
 
 
 def test_comp_9(lop):
@@ -1597,8 +1577,7 @@ def test_comp_9(lop):
         l = [i async for i in gen()]
         return [i for i in l]
 
-    assert run_async(f()) == \
-           ([], [1, 2])
+    assert run_async(f()) == ([], [1, 2])
 
 
 def test_comp_10(lop):
@@ -1606,8 +1585,7 @@ def test_comp_10(lop):
         xx = {i for i in [1, 2, 3]}
         return {x: x for x in xx}
 
-    assert run_async(f()) == \
-           ([], {1: 1, 2: 2, 3: 3})
+    assert run_async(f()) == ([], {1: 1, 2: 2, 3: 3})
 
 
 def test_copy(lop):
