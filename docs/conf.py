@@ -28,7 +28,7 @@ try:
     version = release = get_distribution('lazy_object_proxy').version
 except Exception:
     traceback.print_exc()
-    version = release = '1.8.0'
+    version = release = '1.9.0'
 
 pygments_style = 'trac'
 templates_path = ['.']
