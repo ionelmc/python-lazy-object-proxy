@@ -2,6 +2,16 @@
 Changelog
 =========
 
+1.9.0 (2023-01-04)
+------------------
+
+* Added support for matrix multiplication operator (``@``).
+* Should have all the wheels now (including the manylinux ones).
+* Bumped minimum version requirements for setuptools and setuptools-scm.
+* Switched the default pure python fallback implementation to the "simple" one (when you ``from lazy_object_proxy import Proxy``
+  and the C extension is not available).
+  Previously the "slots" implementation was used but as it turns out it is slower on Python 3.
+
 1.8.0 (2022-10-26)
 ------------------
 
