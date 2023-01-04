@@ -11,7 +11,7 @@ try:
     from .cext import Proxy
     from .cext import identity
 except ImportError:
-    from .slots import Proxy
+    from .simple import Proxy
 else:
     copyreg.constructor(identity)
 
