@@ -248,6 +248,16 @@ static PyObject *Proxy_multiply(PyObject *o1, PyObject *o2)
 
 /* ------------------------------------------------------------------------- */
 
+static PyObject *Proxy_matrix_multiply(PyObject *o1, PyObject *o2)
+{
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o2);
+
+    return PyNumber_MatrixMultiply(o1, o2);
+}
+
+/* ------------------------------------------------------------------------- */
+
 static PyObject *Proxy_remainder(PyObject *o1, PyObject *o2)
 {
     Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(o1);
@@ -445,6 +455,28 @@ static PyObject *Proxy_inplace_multiply(
     Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
 
     object = PyNumber_InPlaceMultiply(self->wrapped, other);
+
+    if (!object)
+        return NULL;
+
+    Py_DECREF(self->wrapped);
+    self->wrapped = object;
+
+    Py_INCREF(self);
+    return (PyObject *)self;
+}
+
+/* ------------------------------------------------------------------------- */
+
+static PyObject *Proxy_inplace_matrix_multiply(
+        ProxyObject *self, PyObject *other)
+{
+    PyObject *object = NULL;
+
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    Proxy__WRAPPED_REPLACE_OR_RETURN_NULL(other);
+
+    object = PyNumber_InPlaceMatrixMultiply(self->wrapped, other);
 
     if (!object)
         return NULL;
@@ -1239,6 +1271,8 @@ static PyNumberMethods Proxy_as_number = {
     (binaryfunc)Proxy_inplace_floor_divide, /*nb_inplace_floor_divide*/
     (binaryfunc)Proxy_inplace_true_divide,  /*nb_inplace_true_divide*/
     (unaryfunc)Proxy_index,                 /*nb_index*/
+    (binaryfunc)Proxy_matrix_multiply,      /*nb_matrix_multiply*/
+    (binaryfunc)Proxy_inplace_matrix_multiply,      /*nb_inplace_matrix_multiply*/
 };
 
 static PySequenceMethods Proxy_as_sequence = {

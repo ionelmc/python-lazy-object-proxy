@@ -912,6 +912,26 @@ def test_mul(lop):
     assert two * 3 == 2 * 3
 
 
+def test_matmul(lop):
+    import numpy
+
+    one = numpy.array((1, 2, 3))
+    two = numpy.array((2, 3, 4))
+    assert one @ two == 20
+
+    one = lop.Proxy(lambda: numpy.array((1, 2, 3)))
+    two = lop.Proxy(lambda: numpy.array((2, 3, 4)))
+    assert one @ two == 20
+
+    one = lop.Proxy(lambda: numpy.array((1, 2, 3)))
+    two = numpy.array((2, 3, 4))
+    assert one @ two == 20
+
+    one = numpy.array((1, 2, 3))
+    two = lop.Proxy(lambda: numpy.array((2, 3, 4)))
+    assert one @ two == 20
+
+
 def test_div(lop):
     # On Python 2 this will pick up div and on Python
     # 3 it will pick up truediv.
@@ -1062,6 +1082,27 @@ def test_imul(lop):
 
     value *= two
     assert value == 8
+
+    if lop.kind != 'simple':
+        assert type(value) == lop.Proxy
+
+
+def test_imatmul(lop):
+    class InplaceMatmul:
+        value = None
+
+        def __imatmul__(self, other):
+            self.value = other
+            return self
+
+    value = InplaceMatmul()
+    assert value.value is None
+    value @= 123
+    assert value.value == 123
+
+    value = lop.Proxy(InplaceMatmul)
+    value @= 234
+    assert value.value == 234
 
     if lop.kind != 'simple':
         assert type(value) == lop.Proxy

@@ -141,6 +141,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __add__ = make_proxy_method(operator.add)
     __sub__ = make_proxy_method(operator.sub)
     __mul__ = make_proxy_method(operator.mul)
+    __matmul__ = make_proxy_method(operator.matmul)
     __truediv__ = make_proxy_method(operator.truediv)
     __floordiv__ = make_proxy_method(operator.floordiv)
     __mod__ = make_proxy_method(operator.mod)
@@ -160,6 +161,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __rmul__(self, other):
         return other * self.__wrapped__
+
+    def __rmatmul__(self, other):
+        return other @ self.__wrapped__
 
     def __rdiv__(self, other):
         return operator.div(other, self.__wrapped__)
@@ -197,6 +201,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     __iadd__ = make_proxy_method(operator.iadd)
     __isub__ = make_proxy_method(operator.isub)
     __imul__ = make_proxy_method(operator.imul)
+    __imatmul__ = make_proxy_method(operator.imatmul)
     __itruediv__ = make_proxy_method(operator.itruediv)
     __ifloordiv__ = make_proxy_method(operator.ifloordiv)
     __imod__ = make_proxy_method(operator.imod)

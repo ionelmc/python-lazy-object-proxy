@@ -226,6 +226,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __mul__(self, other):
         return self.__wrapped__ * other
 
+    def __matmul__(self, other):
+        return self.__wrapped__ @ other
+
     def __truediv__(self, other):
         return operator.truediv(self.__wrapped__, other)
 
@@ -264,6 +267,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __rmul__(self, other):
         return other * self.__wrapped__
+
+    def __rmatmul__(self, other):
+        return other @ self.__wrapped__
 
     def __rdiv__(self, other):
         return operator.div(other, self.__wrapped__)
@@ -310,8 +316,8 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         self.__wrapped__ *= other
         return self
 
-    def __idiv__(self, other):
-        self.__wrapped__ = operator.idiv(self.__wrapped__, other)
+    def __imatmul__(self, other):
+        self.__wrapped__ @= other
         return self
 
     def __itruediv__(self, other):
