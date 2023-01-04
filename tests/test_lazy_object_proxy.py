@@ -913,23 +913,35 @@ def test_mul(lop):
 
 
 def test_matmul(lop):
-    import numpy
+    class MatmulClass:
+        def __init__(self, value):
+            self.value = value
 
-    one = numpy.array((1, 2, 3))
-    two = numpy.array((2, 3, 4))
-    assert one @ two == 20
+        def __matmul__(self, other):
+            return self.value * other.value
 
-    one = lop.Proxy(lambda: numpy.array((1, 2, 3)))
-    two = lop.Proxy(lambda: numpy.array((2, 3, 4)))
-    assert one @ two == 20
+        def __rmatmul__(self, other):
+            return other + self.value
 
-    one = lop.Proxy(lambda: numpy.array((1, 2, 3)))
-    two = numpy.array((2, 3, 4))
-    assert one @ two == 20
+    one = MatmulClass(123)
+    two = MatmulClass(234)
+    assert one @ two == 28782
 
-    one = numpy.array((1, 2, 3))
-    two = lop.Proxy(lambda: numpy.array((2, 3, 4)))
-    assert one @ two == 20
+    one = lop.Proxy(lambda: MatmulClass(123))
+    two = lop.Proxy(lambda: MatmulClass(234))
+    assert one @ two == 28782
+
+    one = lop.Proxy(lambda: MatmulClass(123))
+    two = MatmulClass(234)
+    assert one @ two == 28782
+
+    one = 123
+    two = lop.Proxy(lambda: MatmulClass(234))
+    assert one @ two == 357
+
+    one = lop.Proxy(lambda: 123)
+    two = lop.Proxy(lambda: MatmulClass(234))
+    assert one @ two == 357
 
 
 def test_div(lop):
