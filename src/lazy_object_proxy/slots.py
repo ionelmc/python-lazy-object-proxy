@@ -98,8 +98,8 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         except AttributeError:
             try:
                 factory = __getattr__(self, '__factory__')
-            except AttributeError:
-                raise ValueError("Proxy hasn't been initiated: __factory__ is missing.")
+            except AttributeError as exc:
+                raise ValueError("Proxy hasn't been initiated: __factory__ is missing.") from exc
             target = factory()
             __setattr__(self, '__target__', target)
             return target

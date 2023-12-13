@@ -771,7 +771,7 @@ def test_iteration(lop):
 
     wrapper = lop.Proxy(lambda: items)
 
-    result = [x for x in wrapper]
+    result = [x for x in wrapper]  # noqa: C416
 
     assert result == items
 
@@ -816,13 +816,11 @@ def test_mapping_key(lop):
 
     function2 = lop.Proxy(lambda: function1)
 
-    table = dict()
-    table[function1] = True
+    table = {function1: True}
 
     assert table.get(function2)
 
-    table = dict()
-    table[function2] = True
+    table = {function2: True}
 
     assert table.get(function1)
 
@@ -1458,12 +1456,12 @@ def test_repr_doesnt_consume(lop):
 def test_derived_new(lop):
     class DerivedObjectProxy(lop.Proxy):
         def __new__(cls, wrapped):
-            instance = super(DerivedObjectProxy, cls).__new__(cls)
+            instance = super().__new__(cls)
             instance.__init__(wrapped)
             return instance
 
         def __init__(self, wrapped):
-            super(DerivedObjectProxy, self).__init__(wrapped)
+            super().__init__(wrapped)
 
     def function():
         return 123
@@ -1540,9 +1538,9 @@ def test_override_getattr(lop):
         def __getattr__(self, name):
             accessed.append(name)
             try:
-                __getattr__ = super(DerivedObjectProxy, self).__getattr__
+                __getattr__ = super().__getattr__
             except AttributeError as e:
-                raise RuntimeError(str(e))
+                raise RuntimeError(str(e)) from e
             return __getattr__(name)
 
     function.attribute = 1
@@ -1884,7 +1882,7 @@ def test_subclassing_with_local_attr(lop):
         name = None
 
         def __init__(self, func, **lazy_attr):
-            super(LazyProxy, self).__init__(func)
+            super().__init__(func)
             for attr, val in lazy_attr.items():
                 setattr(self, attr, val)
 
@@ -1904,7 +1902,7 @@ def test_subclassing_dynamic_with_local_attr(lop):
 
     class LazyProxy(lop.Proxy):
         def __init__(self, func, **lazy_attr):
-            super(LazyProxy, self).__init__(func)
+            super().__init__(func)
             for attr, val in lazy_attr.items():
                 object.__setattr__(self, attr, val)
 
@@ -1915,20 +1913,20 @@ def test_subclassing_dynamic_with_local_attr(lop):
 
 class FSPathMock:
     def __fspath__(self):
-        return '/tmp'
+        return '/foobar'
 
 
 @pytest.mark.skipif(not hasattr(os, 'fspath'), reason='No os.fspath support.')
 def test_fspath(lop):
-    assert os.fspath(lop.Proxy(lambda: '/tmp')) == '/tmp'
-    assert os.fspath(lop.Proxy(FSPathMock)) == '/tmp'
+    assert os.fspath(lop.Proxy(lambda: '/foobar')) == '/foobar'
+    assert os.fspath(lop.Proxy(FSPathMock)) == '/foobar'
     with pytest.raises(TypeError) as excinfo:
         os.fspath(lop.Proxy(lambda: None))
     assert '__fspath__() to return str or bytes, not NoneType' in excinfo.value.args[0]
 
 
 def test_fspath_method(lop):
-    assert lop.Proxy(FSPathMock).__fspath__() == '/tmp'
+    assert lop.Proxy(FSPathMock).__fspath__() == '/foobar'
 
 
 def test_resolved_new(lop):

@@ -30,7 +30,7 @@ def lop_loader():
             else:
                 raise RuntimeError('Unsupported param: %r.' % name)
 
-            Proxy
+            Proxy  # noqa: B018
 
         return FakeModule
 
@@ -63,7 +63,7 @@ def lop_subclass(request, lop_implementation):
         return lop_implementation
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture
 def lop(request, lop_subclass):
     if request.node.get_closest_marker('xfail_subclass'):
         request.applymarker(

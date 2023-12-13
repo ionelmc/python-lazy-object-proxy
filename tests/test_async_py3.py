@@ -249,7 +249,7 @@ def test_func_10(lop):
     aw = coro.__await__()
     next(aw)
     with pytest.raises(ZeroDivisionError):
-        aw.throw(ZeroDivisionError, None, None)
+        aw.throw(ZeroDivisionError)
     assert N == 102
 
 

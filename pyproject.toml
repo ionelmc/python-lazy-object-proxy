@@ -1,8 +1,11 @@
 [build-system]
 requires = [
-    "setuptools>=30.3.0",
-    "setuptools_scm>=3.3.1",
+    "setuptools>=64",
+    "setuptools_scm>=8",
 ]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
 
 [tool.ruff.per-file-ignores]
 "ci/*" = ["S"]
@@ -14,6 +17,11 @@ ignore = [
     "S101", # flake8-bandit assert
     "S308", # flake8-bandit suspicious-mark-safe-usage
     "E501", # pycodestyle line-too-long
+    "DTZ001",
+    "PT011",
+    "PT012",
+    "B004",
+    "S102",
 ]
 line-length = 140
 select = [
