@@ -49,7 +49,7 @@ def identity(obj):
     return obj
 
 
-class cached_property(object):
+class cached_property:
     def __init__(self, func):
         self.func = func
 

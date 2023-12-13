@@ -14,7 +14,7 @@ def make_proxy_method(code):
     return proxy_wrapper
 
 
-class _ProxyMethods(object):
+class _ProxyMethods:
     # We use properties to override the values of __module__ and
     # __doc__. If we add these in ObjectProxy, the derived class
     # __dict__ will still be setup to have string variants of these
@@ -95,7 +95,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
                 type(self).__name__, id(self), self.__wrapped__, id(self.__wrapped__), self.__factory__
             )
         else:
-            return '<{} at 0x{:x} with factory {!r}>'.format(type(self).__name__, id(self), self.__factory__)
+            return f'<{type(self).__name__} at 0x{id(self):x} with factory {self.__factory__!r}>'
 
     def __fspath__(self):
         wrapped = self.__wrapped__

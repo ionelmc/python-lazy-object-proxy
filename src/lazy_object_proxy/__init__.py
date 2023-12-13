@@ -20,4 +20,4 @@ try:
 except ImportError:
     __version__ = '1.9.0'
 
-__all__ = ("Proxy",)
+__all__ = ('Proxy',)

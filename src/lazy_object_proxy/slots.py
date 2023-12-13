@@ -6,7 +6,7 @@ from .utils import await_
 from .utils import identity
 
 
-class _ProxyMethods(object):
+class _ProxyMethods:
     # We use properties to override the values of __module__ and
     # __doc__. If we add these in ObjectProxy, the derived class
     # __dict__ will still be setup to have string variants of these
@@ -124,8 +124,8 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __class__(self):
         return self.__wrapped__.__class__
 
-    @__class__.setter  # noqa: F811
-    def __class__(self, value):  # noqa: F811
+    @__class__.setter
+    def __class__(self, value):
         self.__wrapped__.__class__ = value
 
     @property
@@ -149,11 +149,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         try:
             target = __getattr__(self, '__target__')
         except AttributeError:
-            return '<{} at 0x{:x} with factory {!r}>'.format(type(self).__name__, id(self), self.__factory__)
+            return f'<{type(self).__name__} at 0x{id(self):x} with factory {self.__factory__!r}>'
         else:
-            return '<{} at 0x{:x} wrapping {!r} at 0x{:x} with factory {!r}>'.format(
-                type(self).__name__, id(self), target, id(target), self.__factory__
-            )
+            return f'<{type(self).__name__} at 0x{id(self):x} wrapping {target!r} at 0x{id(target):x} with factory {self.__factory__!r}>'
 
     def __fspath__(self):
         wrapped = self.__wrapped__
