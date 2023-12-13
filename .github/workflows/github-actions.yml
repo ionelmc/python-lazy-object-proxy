@@ -10,100 +10,21 @@ jobs:
       matrix:
         include:
           - name: 'check'
-            python: '3.9'
-            toxpython: 'python3.9'
+            python: '3.11'
+            toxpython: 'python3.11'
             tox_env: 'check'
             os: 'ubuntu-latest'
           - name: 'docs'
-            python: '3.9'
-            toxpython: 'python3.9'
+            python: '3.11'
+            toxpython: 'python3.11'
             tox_env: 'docs'
             os: 'ubuntu-latest'
-          - name: 'py37-cover (ubuntu/x86_64)'
-            python: '3.7'
-            toxpython: 'python3.7'
-            python_arch: 'x64'
-            tox_env: 'py37-cover,codecov'
-            cibw_arch: 'x86_64'
-            cibw_build: false
-            os: 'ubuntu-latest'
-          - name: 'py37-cover (windows/AMD64)'
-            python: '3.7'
-            toxpython: 'python3.7'
-            python_arch: 'x64'
-            tox_env: 'py37-cover,codecov'
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'py37-cover (macos/x86_64)'
-            python: '3.7'
-            toxpython: 'python3.7'
-            python_arch: 'x64'
-            tox_env: 'py37-cover,codecov'
-            cibw_arch: 'x86_64'
-            cibw_build: false
-            os: 'macos-latest'
-          - name: 'py37-nocov (ubuntu/x86_64/manylinux)'
-            python: '3.7'
-            toxpython: 'python3.7'
-            python_arch: 'x64'
-            tox_env: 'py37-nocov'
-            cibw_arch: 'x86_64'
-            cibw_build: 'cp37-*manylinux*'
-            os: 'ubuntu-latest'
-          - name: 'py37-nocov (ubuntu/x86_64/musllinux)'
-            python: '3.7'
-            toxpython: 'python3.7'
-            python_arch: 'x64'
-            tox_env: 'py37-nocov'
-            cibw_arch: 'x86_64'
-            cibw_build: 'cp37-*musllinux*'
-            os: 'ubuntu-latest'
-          - name: 'py37-nocov (ubuntu/aarch64/manylinux)'
-            python: '3.7'
-            toxpython: 'python3.7'
-            python_arch: 'x64'
-            tox_env: 'py37-nocov'
-            cibw_arch: 'aarch64'
-            cibw_build: 'cp37-*manylinux*'
-            os: 'ubuntu-latest'
-          - name: 'py37-nocov (ubuntu/aarch64/musllinux)'
-            python: '3.7'
-            toxpython: 'python3.7'
-            python_arch: 'x64'
-            tox_env: 'py37-nocov'
-            cibw_arch: 'aarch64'
-            cibw_build: 'cp37-*musllinux*'
-            os: 'ubuntu-latest'
-          - name: 'py37-nocov (windows/AMD64)'
-            python: '3.7'
-            toxpython: 'python3.7'
-            python_arch: 'x64'
-            tox_env: 'py37-nocov'
-            cibw_arch: 'AMD64'
-            cibw_build: 'cp37-*'
-            os: 'windows-latest'
-          - name: 'py37-nocov (windows/x86)'
-            python: '3.7'
-            toxpython: 'python3.7'
-            python_arch: 'x86'
-            tox_env: 'py37-nocov'
-            cibw_arch: 'x86'
-            cibw_build: 'cp37-*'
-            os: 'windows-latest'
-          - name: 'py37-nocov (macos/x86_64)'
-            python: '3.7'
-            toxpython: 'python3.7'
-            python_arch: 'x64'
-            tox_env: 'py37-nocov'
-            cibw_arch: 'x86_64'
-            cibw_build: 'cp37-*'
-            os: 'macos-latest'
           - name: 'py38-cover (ubuntu/x86_64)'
             python: '3.8'
             toxpython: 'python3.8'
             python_arch: 'x64'
-            tox_env: 'py38-cover,codecov'
+            tox_env: 'py38-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
@@ -111,7 +32,8 @@ jobs:
             python: '3.8'
             toxpython: 'python3.8'
             python_arch: 'x64'
-            tox_env: 'py38-cover,codecov'
+            tox_env: 'py38-cover'
+            cover: true
             cibw_arch: 'AMD64'
             cibw_build: false
             os: 'windows-latest'
@@ -119,7 +41,8 @@ jobs:
             python: '3.8'
             toxpython: 'python3.8'
             python_arch: 'x64'
-            tox_env: 'py38-cover,codecov'
+            tox_env: 'py38-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'macos-latest'
@@ -183,7 +106,8 @@ jobs:
             python: '3.9'
             toxpython: 'python3.9'
             python_arch: 'x64'
-            tox_env: 'py39-cover,codecov'
+            tox_env: 'py39-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
@@ -191,7 +115,8 @@ jobs:
             python: '3.9'
             toxpython: 'python3.9'
             python_arch: 'x64'
-            tox_env: 'py39-cover,codecov'
+            tox_env: 'py39-cover'
+            cover: true
             cibw_arch: 'AMD64'
             cibw_build: false
             os: 'windows-latest'
@@ -199,7 +124,8 @@ jobs:
             python: '3.9'
             toxpython: 'python3.9'
             python_arch: 'x64'
-            tox_env: 'py39-cover,codecov'
+            tox_env: 'py39-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'macos-latest'
@@ -263,7 +189,8 @@ jobs:
             python: '3.10'
             toxpython: 'python3.10'
             python_arch: 'x64'
-            tox_env: 'py310-cover,codecov'
+            tox_env: 'py310-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
@@ -271,7 +198,8 @@ jobs:
             python: '3.10'
             toxpython: 'python3.10'
             python_arch: 'x64'
-            tox_env: 'py310-cover,codecov'
+            tox_env: 'py310-cover'
+            cover: true
             cibw_arch: 'AMD64'
             cibw_build: false
             os: 'windows-latest'
@@ -279,7 +207,8 @@ jobs:
             python: '3.10'
             toxpython: 'python3.10'
             python_arch: 'x64'
-            tox_env: 'py310-cover,codecov'
+            tox_env: 'py310-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'macos-latest'
@@ -343,7 +272,8 @@ jobs:
             python: '3.11'
             toxpython: 'python3.11'
             python_arch: 'x64'
-            tox_env: 'py311-cover,codecov'
+            tox_env: 'py311-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
@@ -351,7 +281,8 @@ jobs:
             python: '3.11'
             toxpython: 'python3.11'
             python_arch: 'x64'
-            tox_env: 'py311-cover,codecov'
+            tox_env: 'py311-cover'
+            cover: true
             cibw_arch: 'AMD64'
             cibw_build: false
             os: 'windows-latest'
@@ -359,7 +290,8 @@ jobs:
             python: '3.11'
             toxpython: 'python3.11'
             python_arch: 'x64'
-            tox_env: 'py311-cover,codecov'
+            tox_env: 'py311-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'macos-latest'
@@ -419,59 +351,95 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: 'cp311-*'
             os: 'macos-latest'
-          - name: 'pypy37-cover (ubuntu/x86_64)'
-            python: 'pypy-3.7'
-            toxpython: 'pypy3.7'
+          - name: 'py312-cover (ubuntu/x86_64)'
+            python: '3.12'
+            toxpython: 'python3.12'
             python_arch: 'x64'
-            tox_env: 'pypy37-cover,codecov'
+            tox_env: 'py312-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'pypy37-cover (windows/AMD64)'
-            python: 'pypy-3.7'
-            toxpython: 'pypy3.7'
+          - name: 'py312-cover (windows/AMD64)'
+            python: '3.12'
+            toxpython: 'python3.12'
             python_arch: 'x64'
-            tox_env: 'pypy37-cover,codecov'
+            tox_env: 'py312-cover'
+            cover: true
             cibw_arch: 'AMD64'
             cibw_build: false
             os: 'windows-latest'
-          - name: 'pypy37-cover (macos/x86_64)'
-            python: 'pypy-3.7'
-            toxpython: 'pypy3.7'
+          - name: 'py312-cover (macos/x86_64)'
+            python: '3.12'
+            toxpython: 'python3.12'
             python_arch: 'x64'
-            tox_env: 'pypy37-cover,codecov'
+            tox_env: 'py312-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'macos-latest'
-          - name: 'pypy37-nocov (ubuntu/x86_64/manylinux)'
-            python: 'pypy-3.7'
-            toxpython: 'pypy3.7'
+          - name: 'py312-nocov (ubuntu/x86_64/manylinux)'
+            python: '3.12'
+            toxpython: 'python3.12'
             python_arch: 'x64'
-            tox_env: 'pypy37-nocov'
+            tox_env: 'py312-nocov'
             cibw_arch: 'x86_64'
-            cibw_build: false
+            cibw_build: 'cp312-*manylinux*'
             os: 'ubuntu-latest'
-          - name: 'pypy37-nocov (windows/AMD64)'
-            python: 'pypy-3.7'
-            toxpython: 'pypy3.7'
+          - name: 'py312-nocov (ubuntu/x86_64/musllinux)'
+            python: '3.12'
+            toxpython: 'python3.12'
             python_arch: 'x64'
-            tox_env: 'pypy37-nocov'
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'pypy37-nocov (macos/x86_64)'
-            python: 'pypy-3.7'
-            toxpython: 'pypy3.7'
-            python_arch: 'x64'
-            tox_env: 'pypy37-nocov'
+            tox_env: 'py312-nocov'
             cibw_arch: 'x86_64'
-            cibw_build: false
+            cibw_build: 'cp312-*musllinux*'
+            os: 'ubuntu-latest'
+          - name: 'py312-nocov (ubuntu/aarch64/manylinux)'
+            python: '3.12'
+            toxpython: 'python3.12'
+            python_arch: 'x64'
+            tox_env: 'py312-nocov'
+            cibw_arch: 'aarch64'
+            cibw_build: 'cp312-*manylinux*'
+            os: 'ubuntu-latest'
+          - name: 'py312-nocov (ubuntu/aarch64/musllinux)'
+            python: '3.12'
+            toxpython: 'python3.12'
+            python_arch: 'x64'
+            tox_env: 'py312-nocov'
+            cibw_arch: 'aarch64'
+            cibw_build: 'cp312-*musllinux*'
+            os: 'ubuntu-latest'
+          - name: 'py312-nocov (windows/AMD64)'
+            python: '3.12'
+            toxpython: 'python3.12'
+            python_arch: 'x64'
+            tox_env: 'py312-nocov'
+            cibw_arch: 'AMD64'
+            cibw_build: 'cp312-*'
+            os: 'windows-latest'
+          - name: 'py312-nocov (windows/x86)'
+            python: '3.12'
+            toxpython: 'python3.12'
+            python_arch: 'x86'
+            tox_env: 'py312-nocov'
+            cibw_arch: 'x86'
+            cibw_build: 'cp312-*'
+            os: 'windows-latest'
+          - name: 'py312-nocov (macos/x86_64)'
+            python: '3.12'
+            toxpython: 'python3.12'
+            python_arch: 'x64'
+            tox_env: 'py312-nocov'
+            cibw_arch: 'x86_64'
+            cibw_build: 'cp312-*'
             os: 'macos-latest'
           - name: 'pypy38-cover (ubuntu/x86_64)'
             python: 'pypy-3.8'
             toxpython: 'pypy3.8'
             python_arch: 'x64'
-            tox_env: 'pypy38-cover,codecov'
+            tox_env: 'pypy38-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
@@ -479,7 +447,8 @@ jobs:
             python: 'pypy-3.8'
             toxpython: 'pypy3.8'
             python_arch: 'x64'
-            tox_env: 'pypy38-cover,codecov'
+            tox_env: 'pypy38-cover'
+            cover: true
             cibw_arch: 'AMD64'
             cibw_build: false
             os: 'windows-latest'
@@ -487,7 +456,8 @@ jobs:
             python: 'pypy-3.8'
             toxpython: 'pypy3.8'
             python_arch: 'x64'
-            tox_env: 'pypy38-cover,codecov'
+            tox_env: 'pypy38-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'macos-latest'
@@ -519,7 +489,8 @@ jobs:
             python: 'pypy-3.9'
             toxpython: 'pypy3.9'
             python_arch: 'x64'
-            tox_env: 'pypy39-cover,codecov'
+            tox_env: 'pypy39-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
@@ -527,7 +498,8 @@ jobs:
             python: 'pypy-3.9'
             toxpython: 'pypy3.9'
             python_arch: 'x64'
-            tox_env: 'pypy39-cover,codecov'
+            tox_env: 'pypy39-cover'
+            cover: true
             cibw_arch: 'AMD64'
             cibw_build: false
             os: 'windows-latest'
@@ -535,7 +507,8 @@ jobs:
             python: 'pypy-3.9'
             toxpython: 'pypy3.9'
             python_arch: 'x64'
-            tox_env: 'pypy39-cover,codecov'
+            tox_env: 'pypy39-cover'
+            cover: true
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'macos-latest'
@@ -563,15 +536,66 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'macos-latest'
+          - name: 'pypy310-cover (ubuntu/x86_64)'
+            python: 'pypy-3.10'
+            toxpython: 'pypy3.10'
+            python_arch: 'x64'
+            tox_env: 'pypy310-cover'
+            cover: true
+            cibw_arch: 'x86_64'
+            cibw_build: false
+            os: 'ubuntu-latest'
+          - name: 'pypy310-cover (windows/AMD64)'
+            python: 'pypy-3.10'
+            toxpython: 'pypy3.10'
+            python_arch: 'x64'
+            tox_env: 'pypy310-cover'
+            cover: true
+            cibw_arch: 'AMD64'
+            cibw_build: false
+            os: 'windows-latest'
+          - name: 'pypy310-cover (macos/x86_64)'
+            python: 'pypy-3.10'
+            toxpython: 'pypy3.10'
+            python_arch: 'x64'
+            tox_env: 'pypy310-cover'
+            cover: true
+            cibw_arch: 'x86_64'
+            cibw_build: false
+            os: 'macos-latest'
+          - name: 'pypy310-nocov (ubuntu/x86_64/manylinux)'
+            python: 'pypy-3.10'
+            toxpython: 'pypy3.10'
+            python_arch: 'x64'
+            tox_env: 'pypy310-nocov'
+            cibw_arch: 'x86_64'
+            cibw_build: false
+            os: 'ubuntu-latest'
+          - name: 'pypy310-nocov (windows/AMD64)'
+            python: 'pypy-3.10'
+            toxpython: 'pypy3.10'
+            python_arch: 'x64'
+            tox_env: 'pypy310-nocov'
+            cibw_arch: 'AMD64'
+            cibw_build: false
+            os: 'windows-latest'
+          - name: 'pypy310-nocov (macos/x86_64)'
+            python: 'pypy-3.10'
+            toxpython: 'pypy3.10'
+            python_arch: 'x64'
+            tox_env: 'pypy310-nocov'
+            cibw_arch: 'x86_64'
+            cibw_build: false
+            os: 'macos-latest'
     steps:
-    - uses: docker/setup-qemu-action@v2
+    - uses: docker/setup-qemu-action@v3
       if: matrix.cibw_arch == 'aarch64'
       with:
         platforms: arm64
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.python_arch }}
@@ -611,6 +635,17 @@ jobs:
         !matrix.cibw_build
       run: >
         tox -e ${{ matrix.tox_env }} -v
+    - uses: coverallsapp/github-action@v2
+      if: matrix.cover
+      continue-on-error: true
+      with:
+        parallel: true
+        flag-name: ${{ matrix.tox_env }}
+    - uses: codecov/codecov-action@v3
+      if: matrix.cover
+      with:
+        verbose: true
+        flags: ${{ matrix.tox_env }}
     - name: check wheel
       if: matrix.cibw_build
       run: twine check wheelhouse/*.whl
@@ -619,3 +654,11 @@ jobs:
       if: matrix.cibw_build
       with:
         path: wheelhouse/*.whl
+  finish:
+    needs: test
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: coverallsapp/github-action@v2
+      with:
+        parallel-finished: true
