@@ -2,6 +2,7 @@
 import os
 import platform
 import re
+import sys
 from pathlib import Path
 
 from setuptools import Extension
@@ -28,6 +29,8 @@ class OptionalBuildExt(build_ext):
 
     def run(self):
         try:
+            if '__pypy__' in sys.builtin_module_names:
+                raise Exception('C extensions are broken on PyPy!')
             if os.environ.get('SETUPPY_FORCE_PURE'):
                 raise Exception('C extensions disabled (SETUPPY_FORCE_PURE)!')
             super().run()
