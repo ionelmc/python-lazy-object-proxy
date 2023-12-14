@@ -985,19 +985,28 @@ def test_pow(lop):
 
     assert three**two == pow(3, 2)
     assert 3**two == pow(3, 2)
+    assert pow(3, two) == pow(3, 2)
     assert three**2 == pow(3, 2)
 
     assert pow(three, two) == pow(3, 2)
     assert pow(3, two) == pow(3, 2)
     assert pow(three, 2) == pow(3, 2)
-
-    # Only PyPy implements __rpow__ for ternary pow().
-
-    if PYPY:
-        assert pow(three, two, 2) == pow(3, 2, 2)
-        assert pow(3, two, 2) == pow(3, 2, 2)
-
     assert pow(three, 2, 2) == pow(3, 2, 2)
+
+
+@pytest.mark.xfail
+def test_pow_ternary(lop):
+    two = lop.Proxy(lambda: 2)
+    three = lop.Proxy(lambda: 3)
+
+    assert pow(three, two, 2) == pow(3, 2, 2)
+
+
+@pytest.mark.xfail
+def test_rpow_ternary(lop):
+    two = lop.Proxy(lambda: 2)
+
+    assert pow(3, two, 2) == pow(3, 2, 2)
 
 
 def test_lshift(lop):
