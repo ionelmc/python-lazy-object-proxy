@@ -21,6 +21,14 @@ else:
     CFLAGS = ''
     LFLAGS = ''
 
+allow_extensions = True
+if '__pypy__' in sys.builtin_module_names:
+    print('NOTICE: C extensions disabled on PyPy (would be broken)!')
+    allow_extensions = False
+if os.environ.get('SETUPPY_FORCE_PURE'):
+    print('NOTICE: C extensions disabled (SETUPPY_FORCE_PURE)!')
+    allow_extensions = False
+
 
 class OptionalBuildExt(build_ext):
     """
@@ -29,10 +37,6 @@ class OptionalBuildExt(build_ext):
 
     def run(self):
         try:
-            if '__pypy__' in sys.builtin_module_names:
-                raise Exception('C extensions are broken on PyPy!')
-            if os.environ.get('SETUPPY_FORCE_PURE'):
-                raise Exception('C extensions disabled (SETUPPY_FORCE_PURE)!')
             super().run()
         except Exception as e:
             self._unavailable(e)
@@ -144,6 +148,8 @@ setup(
             include_dirs=[str(path.parent)],
         )
         for path in Path('src').glob('**/*.c')
-    ],
+    ]
+    if allow_extensions
+    else [],
     distclass=BinaryDistribution,
 )
