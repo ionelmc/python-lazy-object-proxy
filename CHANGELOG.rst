@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.10.0 (2023-12-15)
+-------------------
+
+* Added Python 3.12 wheels.
+* Dropped support for Python 3.7.
+* Applied some reformatting and lint fixes using ruff to the codebase (mostly more Python 2 leftover cleanups).
+
 1.9.0 (2023-01-04)
 ------------------
 
