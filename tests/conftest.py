@@ -1,3 +1,4 @@
+import os
 import sys
 
 import pytest
@@ -19,7 +20,7 @@ def lop_loader():
                 try:
                     from lazy_object_proxy.cext import Proxy
                 except ImportError:
-                    if PYPY:
+                    if PYPY or os.environ.get('SETUPPY_FORCE_PURE'):
                         pytest.skip(reason='C Extension not available.')
                     else:
                         raise
