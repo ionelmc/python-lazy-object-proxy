@@ -1062,13 +1062,13 @@ def test_iadd(lop):
     assert value == 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value += one
     assert value == 3
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_isub(lop):
@@ -1078,13 +1078,13 @@ def test_isub(lop):
     value -= 1
     assert value == 0
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value -= one
     assert value == -1
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_imul(lop):
@@ -1095,13 +1095,13 @@ def test_imul(lop):
     assert value == 4
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value *= two
     assert value == 8
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_imatmul(lop):
@@ -1122,7 +1122,7 @@ def test_imatmul(lop):
     assert value.value == 234
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_idiv(lop):
@@ -1136,13 +1136,13 @@ def test_idiv(lop):
     assert value == 2 / 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value /= two
     assert value == 2 / 2 / 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_ifloordiv(lop):
@@ -1153,13 +1153,13 @@ def test_ifloordiv(lop):
     assert value == 2 // 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value //= two
     assert value == 2 // 2 // 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_imod(lop):
@@ -1170,13 +1170,13 @@ def test_imod(lop):
     assert value == 10 % 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value %= two
     assert value == 10 % 2 % 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_ipow(lop):
@@ -1187,13 +1187,13 @@ def test_ipow(lop):
     assert value == 10**2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value **= two
     assert value == 10**2**2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_ilshift(lop):
@@ -1204,13 +1204,13 @@ def test_ilshift(lop):
     assert value == 256 << 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value <<= two
     assert value == 256 << 2 << 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_irshift(lop):
@@ -1221,13 +1221,13 @@ def test_irshift(lop):
     assert value == 2 >> 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value >>= two
     assert value == 2 >> 2 >> 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_iand(lop):
@@ -1238,13 +1238,13 @@ def test_iand(lop):
     assert value == 1 & 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value &= two
     assert value == 1 & 2 & 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_ixor(lop):
@@ -1255,13 +1255,13 @@ def test_ixor(lop):
     assert value == 1 ^ 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value ^= two
     assert value == 1 ^ 2 ^ 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_ior(lop):
@@ -1272,13 +1272,13 @@ def test_ior(lop):
     assert value == 1 | 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
     value |= two
     assert value == 1 | 2 | 2
 
     if lop.kind != 'simple':
-        assert type(value) == lop.Proxy
+        assert type(value) is lop.Proxy
 
 
 def test_neg(lop):
@@ -1781,7 +1781,7 @@ def test_pickling_exception(lop, pickler, level):
 
 @pytest.mark.skipif(platform.python_implementation() != 'CPython', reason="Interpreter doesn't have reference counting")
 def test_garbage_collection(lop):
-    leaky = lambda: "foobar"  # noqa
+    leaky = lambda: 'foobar'  # noqa
     proxy = lop.Proxy(leaky)
     leaky.leak = proxy
     ref = weakref.ref(leaky)

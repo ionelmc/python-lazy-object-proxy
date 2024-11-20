@@ -99,7 +99,7 @@ def test_func_2(lop):
     async def foo():
         raise StopIteration
 
-    with pytest.raises(RuntimeError, match="coroutine raised StopIteration"):
+    with pytest.raises(RuntimeError, match='coroutine raised StopIteration'):
         run_async(lop.Proxy(foo))
 
 
@@ -275,7 +275,7 @@ def test_func_12(lop):
         await foo
 
     me = lop.Proxy(g)
-    with pytest.raises(ValueError, match="coroutine already executing"):
+    with pytest.raises(ValueError, match='coroutine already executing'):
         me.send(None)
 
 
@@ -303,7 +303,7 @@ def test_func_14(lop):
 
     c = lop.Proxy(coro)
     c.send(None)
-    with pytest.raises(RuntimeError, match="coroutine ignored GeneratorExit"):
+    with pytest.raises(RuntimeError, match='coroutine ignored GeneratorExit'):
         c.close()
 
 
@@ -498,7 +498,7 @@ def test_await_1(lop):
     async def foo():
         await 1
 
-    with pytest.raises(TypeError, match="object int can.t.*await"):
+    with pytest.raises(TypeError, match='object int can.t.*await'):
         run_async(lop.Proxy(foo))
 
 
@@ -506,7 +506,7 @@ def test_await_2(lop):
     async def foo():
         await []
 
-    with pytest.raises(TypeError, match="object list can.t.*await"):
+    with pytest.raises(TypeError, match='object list can.t.*await'):
         run_async(lop.Proxy(foo))
 
 
@@ -536,7 +536,7 @@ def test_await_5(lop):
     async def foo():
         return await lop.Proxy(Awaitable)
 
-    with pytest.raises(TypeError, match="__await__.*returned non-iterator of type"):
+    with pytest.raises(TypeError, match='__await__.*returned non-iterator of type'):
         run_async(lop.Proxy(foo))
 
 
@@ -644,7 +644,7 @@ def test_await_12(lop):
     async def foo():
         return await lop.Proxy(Awaitable)
 
-    with pytest.raises(TypeError, match=r"__await__\(\) returned a coroutine"):
+    with pytest.raises(TypeError, match=r'__await__\(\) returned a coroutine'):
         run_async(lop.Proxy(foo))
 
     c.close()
@@ -658,7 +658,7 @@ def test_await_13(lop):
     async def foo():
         return await lop.Proxy(Awaitable)
 
-    with pytest.raises(TypeError, match="__await__.*returned non-iterator of type"):
+    with pytest.raises(TypeError, match='__await__.*returned non-iterator of type'):
         run_async(lop.Proxy(foo))
 
 
@@ -713,7 +713,7 @@ def test_await_15(lop):
     coro = lop.Proxy(coroutine)
     coro.send(None)
 
-    with pytest.raises(RuntimeError, match="coroutine is being awaited already"):
+    with pytest.raises(RuntimeError, match='coroutine is being awaited already'):
         waiter(coro).send(None)
 
 
@@ -749,7 +749,7 @@ def test_with_1(lop):
                 return True
 
     async def foo():
-        async with lop.Proxy(lambda: Manager("A")) as a, lop.Proxy(lambda: Manager("B")) as b:
+        async with lop.Proxy(lambda: Manager('A')) as a, lop.Proxy(lambda: Manager('B')) as b:
             await lop.Proxy(lambda: AsyncYieldFrom([('managers', a.name, b.name)]))
             1 / 0
 
@@ -769,7 +769,7 @@ def test_with_1(lop):
     ]
 
     async def foo():
-        async with lop.Proxy(lambda: Manager("A")) as a, lop.Proxy(lambda: Manager("C")) as c:
+        async with lop.Proxy(lambda: Manager('A')) as a, lop.Proxy(lambda: Manager('C')) as c:
             await lop.Proxy(lambda: AsyncYieldFrom([('managers', a.name, c.name)]))
             1 / 0
 
@@ -857,7 +857,7 @@ def test_with_6(lop):
         async with lop.Proxy(CM):
             pass
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aenter__ " "that does not implement __await__: int"):
+    with pytest.raises(TypeError, match="'async with' received an object from __aenter__ " 'that does not implement __await__: int'):
         # it's important that __aexit__ wasn't called
         run_async(lop.Proxy(foo))
 
@@ -879,7 +879,7 @@ def test_with_7(lop):
     try:
         run_async(lop.Proxy(foo))
     except TypeError as exc:
-        assert re.search("'async with' received an object from __aexit__ " "that does not implement __await__: int", exc.args[0])
+        assert re.search("'async with' received an object from __aexit__ " 'that does not implement __await__: int', exc.args[0])
         assert exc.__context__ is not None
         assert isinstance(exc.__context__, ZeroDivisionError)
     else:
@@ -903,7 +903,7 @@ def test_with_8(lop):
         async with lop.Proxy(CM):
             CNT += 1
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " "that does not implement __await__: int"):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " 'that does not implement __await__: int'):
         run_async(lop.Proxy(foo))
     assert CNT == 1
 
@@ -915,7 +915,7 @@ def test_with_8(lop):
                 CNT += 1
                 break
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " "that does not implement __await__: int"):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " 'that does not implement __await__: int'):
         run_async(lop.Proxy(foo))
     assert CNT == 2
 
@@ -927,7 +927,7 @@ def test_with_8(lop):
                 CNT += 1
                 continue
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " "that does not implement __await__: int"):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " 'that does not implement __await__: int'):
         run_async(lop.Proxy(foo))
     assert CNT == 3
 
@@ -938,7 +938,7 @@ def test_with_8(lop):
             CNT += 1
             return
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " "that does not implement __await__: int"):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " 'that does not implement __await__: int'):
         run_async(lop.Proxy(foo))
     assert CNT == 4
 
@@ -1224,7 +1224,7 @@ def test_for_6(lop):
         I += 1000
 
     with warnings.catch_warnings():
-        warnings.simplefilter("error")
+        warnings.simplefilter('error')
         # Test that __aiter__ that returns an asynchronous iterator
         # directly does not throw any warnings.
         run_async(main())
@@ -1309,7 +1309,7 @@ def test_for_8(lop):
 
     with pytest.raises(ZeroDivisionError):
         with warnings.catch_warnings():
-            warnings.simplefilter("error")
+            warnings.simplefilter('error')
             # Test that if __aiter__ raises an exception it propagates
             # without any kind of warning.
             run_async(lop.Proxy(foo))
@@ -1622,7 +1622,7 @@ def test_pickle(lop):
         aw.close()
 
 
-@pytest.mark.skipif("sys.version_info[1] < 8")
+@pytest.mark.skipif('sys.version_info[1] < 8')
 def test_for_assign_raising_stop_async_iteration(lop):
     class BadTarget:
         def __setitem__(self, key, value):
@@ -1662,7 +1662,7 @@ def test_for_assign_raising_stop_async_iteration(lop):
     assert run_async(run_gen()) == ([], 'end')
 
 
-@pytest.mark.skipif("sys.version_info[1] < 8")
+@pytest.mark.skipif('sys.version_info[1] < 8')
 def test_for_assign_raising_stop_async_iteration_2(lop):
     class BadIterable:
         def __iter__(self):

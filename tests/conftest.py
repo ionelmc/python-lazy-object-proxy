@@ -28,7 +28,7 @@ def lop_loader():
             elif name == 'django':
                 Proxy = pytest.importorskip('django.utils.functional').SimpleLazyObject
             else:
-                raise RuntimeError('Unsupported param: %r.' % name)
+                raise RuntimeError(f'Unsupported param: {name!r}.')
 
             Proxy  # noqa: B018
 
@@ -68,7 +68,7 @@ def lop(request, lop_subclass):
     if request.node.get_closest_marker('xfail_subclass'):
         request.applymarker(
             pytest.mark.xfail(
-                reason="This test can't work because subclassing disables certain " "features like __doc__ and __module__ proxying."
+                reason="This test can't work because subclassing disables certain features like __doc__ and __module__ proxying."
             )
         )
     if request.node.get_closest_marker('xfail_simple'):
