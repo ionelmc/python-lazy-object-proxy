@@ -22,6 +22,7 @@ jobs:
 {% for env in tox_environments %}
 {% set prefix = env.split('-')[0] -%}
 {% set nogil = 'ft' in env %}
+{% if not nogil %}
 {% if prefix.startswith('pypy') %}
 {% set python %}pypy-{{ prefix[4] }}.{{ prefix[5:] }}{% endset %}
 {% set cpython %}pp{{ prefix[4:5] }}{% endset %}
@@ -60,6 +61,7 @@ jobs:
             os: '{{ os }}-latest'
 {% endif %}
 {% endfor %}
+{% endif %}
 {% endfor %}
     steps:
     - uses: docker/setup-qemu-action@v3
