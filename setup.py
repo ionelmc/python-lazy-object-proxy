@@ -105,7 +105,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
@@ -126,14 +125,14 @@ setup(
     keywords=[
         # eg: "keyword1", "keyword2", "keyword3",
     ],
-    python_requires='>=3.8',
+    python_requires='>=3.9',
     install_requires=[
         # eg: "aspectlib==1.1.1", "six>=1.7",
     ],
     extras_require={
         # eg:
         #   "rst": ["docutils>=0.11"],
-        #   ":python_version=="2.6"": ["argparse"],
+        #   ":python_version=='3.8'": ["backports.zoneinfo"],
     },
     setup_requires=[
         'setuptools_scm>=3.3.1',

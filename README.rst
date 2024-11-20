@@ -10,13 +10,11 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |github-actions|
-        | |coveralls| |codecov|
+      - |github-actions| |coveralls| |codecov|
     * - package
-      - | |version| |wheel| |supported-versions| |supported-implementations|
-        | |commits-since|
+      - |version| |wheel| |supported-versions| |supported-implementations| |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/python-lazy-object-proxy/badge/?style=flat
-    :target: https://python-lazy-object-proxy.readthedocs.io/
+    :target: https://readthedocs.org/projects/python-lazy-object-proxy/
     :alt: Documentation Status
 
 .. |github-actions| image:: https://github.com/ionelmc/python-lazy-object-proxy/actions/workflows/github-actions.yml/badge.svg
@@ -91,10 +89,17 @@ Installation
 
     pip install lazy-object-proxy
 
+You can also install the in-development version with::
+
+    pip install https://github.com/ionelmc/python-lazy-object-proxy/archive/master.zip
+
+
 Documentation
 =============
 
+
 https://python-lazy-object-proxy.readthedocs.io/
+
 
 Development
 ===========

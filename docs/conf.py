@@ -1,7 +1,3 @@
-import traceback
-
-import sphinx_py3doc_enhanced_theme
-
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
@@ -16,7 +12,7 @@ extensions = [
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'lazy-object-proxy'
-year = '2014-2023'
+year = '2014-2024'
 author = 'Ionel Cristian Mărieș'
 copyright = f'{year}, {author}'
 try:
@@ -24,17 +20,19 @@ try:
 
     version = release = get_distribution('lazy_object_proxy').version
 except Exception:
+    import traceback
+
     traceback.print_exc()
     version = release = '1.10.0'
 
 pygments_style = 'trac'
 templates_path = ['.']
 extlinks = {
-    'issue': ('https://github.com/ionelmc/python-lazy-object-proxy/issues/%s', '#'),
-    'pr': ('https://github.com/ionelmc/python-lazy-object-proxy/pull/%s', 'PR #'),
+    'issue': ('https://github.com/ionelmc/python-lazy-object-proxy/issues/%s', '#%s'),
+    'pr': ('https://github.com/ionelmc/python-lazy-object-proxy/pull/%s', 'PR #%s'),
 }
-html_theme = 'sphinx_py3doc_enhanced_theme'
-html_theme_path = [sphinx_py3doc_enhanced_theme.get_html_theme_path()]
+
+html_theme = 'furo'
 html_theme_options = {
     'githuburl': 'https://github.com/ionelmc/python-lazy-object-proxy/',
 }
@@ -42,9 +40,6 @@ html_theme_options = {
 html_use_smartypants = True
 html_last_updated_fmt = '%b %d, %Y'
 html_split_index = False
-html_sidebars = {
-    '**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html'],
-}
 html_short_title = f'{project}-{version}'
 
 napoleon_use_ivar = True
