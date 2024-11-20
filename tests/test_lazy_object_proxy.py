@@ -35,6 +35,11 @@ def test_round(lop):
     assert round(proxy) == 1
 
 
+def test_round_ndigits(lop):
+    proxy = lop.Proxy(lambda: 1.49494)
+    assert round(proxy, 3) == 1.495
+
+
 def test_attributes(lop):
     def function1(*args, **kwargs):
         return args, kwargs

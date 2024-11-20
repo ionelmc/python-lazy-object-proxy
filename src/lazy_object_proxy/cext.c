@@ -839,24 +839,28 @@ static PyObject *Proxy_reduce(
 
 /* ------------------------------------------------------------------------- */
 
-static PyObject *Proxy_round(
-        ProxyObject *self, PyObject *args)
+static PyObject *Proxy_round(ProxyObject *self, PyObject *args, PyObject *kwds)
 {
     PyObject *module = NULL;
-    PyObject *dict = NULL;
     PyObject *round = NULL;
+    PyObject *ndigits = NULL;
 
     PyObject *result = NULL;
 
+    char *const kwlist[] = { "ndigits", NULL };
+
     Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O:ObjectProxy", kwlist, &ndigits)) {
+        return NULL;
+    }
 
     module = PyImport_ImportModule("builtins");
 
     if (!module)
         return NULL;
 
-    dict = PyModule_GetDict(module);
-    round = PyDict_GetItemString(dict, "round");
+    round = PyObject_GetAttrString(module, "round");
 
     if (!round) {
         Py_DECREF(module);
@@ -866,7 +870,7 @@ static PyObject *Proxy_round(
     Py_INCREF(round);
     Py_DECREF(module);
 
-    result = PyObject_CallFunctionObjArgs(round, self->wrapped, NULL);
+    result = PyObject_CallFunctionObjArgs(round, self->wrapped, ndigits, NULL);
 
     Py_DECREF(round);
 
@@ -1324,7 +1328,7 @@ static PyMethodDef Proxy_methods[] = {
     { "__reduce__",    (PyCFunction)Proxy_reduce,   METH_NOARGS, 0 },
     { "__reduce_ex__", (PyCFunction)Proxy_reduce,   METH_O, 0 },
     { "__fspath__",    (PyCFunction)Proxy_fspath,   METH_NOARGS, 0 },
-    { "__round__",     (PyCFunction)Proxy_round,    METH_NOARGS, 0 },
+    { "__round__",     (PyCFunction)Proxy_round,    METH_VARARGS | METH_KEYWORDS, 0 },
     { "__aenter__",    (PyCFunction)Proxy_aenter,   METH_NOARGS, 0 },
     { "__aexit__",     (PyCFunction)Proxy_aexit,    METH_VARARGS | METH_KEYWORDS, 0 },
     { "__format__",    (PyCFunction)Proxy_format,   METH_VARARGS, 0 },

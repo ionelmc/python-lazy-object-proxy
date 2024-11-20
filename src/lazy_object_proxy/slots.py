@@ -167,8 +167,8 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __reversed__(self):
         return reversed(self.__wrapped__)
 
-    def __round__(self):
-        return round(self.__wrapped__)
+    def __round__(self, ndigits=None):
+        return round(self.__wrapped__, ndigits)
 
     def __lt__(self, other):
         return self.__wrapped__ < other
