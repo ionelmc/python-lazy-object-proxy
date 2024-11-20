@@ -1182,6 +1182,22 @@ static PyObject *Proxy_aexit(
 
 /* ------------------------------------------------------------------------- */
 
+static PyObject *Proxy_format(
+        ProxyObject *self, PyObject *args, PyObject *kwds)
+{
+    PyObject *format_spec = NULL;
+
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+
+    if (!PyArg_ParseTuple(args, "|O:format", &format_spec))
+        return NULL;
+
+    return PyObject_Format(self->wrapped, format_spec);
+
+}
+
+/* ------------------------------------------------------------------------- */
+
 static PyObject *Proxy_await(ProxyObject *self)
 {
     Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
@@ -1311,6 +1327,7 @@ static PyMethodDef Proxy_methods[] = {
     { "__round__",     (PyCFunction)Proxy_round,    METH_NOARGS, 0 },
     { "__aenter__",    (PyCFunction)Proxy_aenter,   METH_NOARGS, 0 },
     { "__aexit__",     (PyCFunction)Proxy_aexit,    METH_VARARGS | METH_KEYWORDS, 0 },
+    { "__format__",    (PyCFunction)Proxy_format,   METH_VARARGS, 0 },
     { NULL, NULL },
 };
 

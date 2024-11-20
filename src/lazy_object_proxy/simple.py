@@ -91,9 +91,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __repr__(self, __getattr__=object.__getattribute__):
         if '__wrapped__' in self.__dict__:
-            return '<{} at 0x{:x} wrapping {!r} at 0x{:x} with factory {!r}>'.format(
-                type(self).__name__, id(self), self.__wrapped__, id(self.__wrapped__), self.__factory__
-            )
+            return f'<{type(self).__name__} at 0x{id(self):x} wrapping {self.__wrapped__!r} at 0x{id(self.__wrapped__):x} with factory {self.__factory__!r}>'
         else:
             return f'<{type(self).__name__} at 0x{id(self):x} with factory {self.__factory__!r}>'
 
@@ -248,6 +246,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     def __reduce_ex__(self, protocol):
         return identity, (self.__wrapped__,)
+
+    def __format__(self, format_spec):
+        return self.__wrapped__.__format__(format_spec)
 
     if await_:
         from .utils import __aenter__

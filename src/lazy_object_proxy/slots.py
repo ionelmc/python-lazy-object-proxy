@@ -429,6 +429,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __reduce_ex__(self, protocol):
         return identity, (self.__wrapped__,)
 
+    def __format__(self, format_spec):
+        return self.__wrapped__.__format__(format_spec)
+
     if await_:
         from .utils import __aenter__
         from .utils import __aexit__

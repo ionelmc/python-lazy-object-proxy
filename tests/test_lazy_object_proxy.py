@@ -1955,3 +1955,12 @@ def test_resolved_str(lop):
     assert obj.__resolved__ is False
     str(obj)
     assert obj.__resolved__ is True
+
+
+def test_format(lop):
+    class WithFormat:
+        def __format__(self, format_spec):
+            return f'spec({format_spec!r})'
+
+    obj = lop.Proxy(WithFormat)
+    assert f'{obj:stuff}' == "spec('stuff')"
