@@ -440,6 +440,11 @@ jobs:
         pip --version
         tox --version
         pip list --format=freeze
+    - name: install dependencies (gdb)
+      if: >
+        !matrix.cibw_build && matrix.os == 'ubuntu'
+      run: >
+        sudo apt-get install gdb
     - name: cibw build and test
       if: matrix.cibw_build
       run: cibuildwheel
