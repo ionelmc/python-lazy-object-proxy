@@ -151,5 +151,5 @@ setup(
     ]
     if allow_extensions
     else [],
-    distclass=BinaryDistribution,
+    distclass=BinaryDistribution if allow_extensions else None,
 )
