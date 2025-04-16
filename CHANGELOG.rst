@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.11.0 (2025-04-16)
+-------------------
+
+* Added Python 3.13 wheels.
+* Added support for ``__format__``.
+* Dropped support for Python 3.8.
+
 1.10.0 (2023-12-15)
 -------------------
 
