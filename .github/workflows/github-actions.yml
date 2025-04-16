@@ -734,8 +734,11 @@ jobs:
         verbose: true
         flags: ${{ matrix.tox_env }}
     - name: check wheel
-      if: matrix.cibw_build
-      run: twine check wheelhouse/*.whl
+      if: >
+        !matrix.cibw_ft && matrix.cibw_build
+      run:
+        python -mpip install --progress-bar=off twine
+        twine check wheelhouse/*.whl
     - name: upload wheel
       uses: actions/upload-artifact@v4
       if: matrix.cibw_build
