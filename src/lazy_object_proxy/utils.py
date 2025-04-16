@@ -16,8 +16,7 @@ def await_(obj):
     obj_type = type(obj)
     if (
         obj_type is CoroutineType
-        or obj_type is GeneratorType
-        and bool(obj.gi_code.co_flags & CO_ITERABLE_COROUTINE)
+        or (obj_type is GeneratorType and bool(obj.gi_code.co_flags & CO_ITERABLE_COROUTINE))
         or isinstance(obj, Awaitable)
     ):
         return do_await(obj).__await__()

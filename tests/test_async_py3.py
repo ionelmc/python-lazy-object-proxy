@@ -857,7 +857,7 @@ def test_with_6(lop):
         async with lop.Proxy(CM):
             pass
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aenter__ " 'that does not implement __await__: int'):
+    with pytest.raises(TypeError, match="'async with' received an object from __aenter__ that does not implement __await__: int"):
         # it's important that __aexit__ wasn't called
         run_async(lop.Proxy(foo))
 
@@ -879,7 +879,7 @@ def test_with_7(lop):
     try:
         run_async(lop.Proxy(foo))
     except TypeError as exc:
-        assert re.search("'async with' received an object from __aexit__ " 'that does not implement __await__: int', exc.args[0])
+        assert re.search("'async with' received an object from __aexit__ that does not implement __await__: int", exc.args[0])
         assert exc.__context__ is not None
         assert isinstance(exc.__context__, ZeroDivisionError)
     else:
@@ -903,7 +903,7 @@ def test_with_8(lop):
         async with lop.Proxy(CM):
             CNT += 1
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " 'that does not implement __await__: int'):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ that does not implement __await__: int"):
         run_async(lop.Proxy(foo))
     assert CNT == 1
 
@@ -915,7 +915,7 @@ def test_with_8(lop):
                 CNT += 1
                 break
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " 'that does not implement __await__: int'):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ that does not implement __await__: int"):
         run_async(lop.Proxy(foo))
     assert CNT == 2
 
@@ -927,7 +927,7 @@ def test_with_8(lop):
                 CNT += 1
                 continue
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " 'that does not implement __await__: int'):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ that does not implement __await__: int"):
         run_async(lop.Proxy(foo))
     assert CNT == 3
 
@@ -938,7 +938,7 @@ def test_with_8(lop):
             CNT += 1
             return
 
-    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ " 'that does not implement __await__: int'):
+    with pytest.raises(TypeError, match="'async with' received an object from __aexit__ that does not implement __await__: int"):
         run_async(lop.Proxy(foo))
     assert CNT == 4
 

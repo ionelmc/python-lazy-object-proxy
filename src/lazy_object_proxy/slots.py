@@ -77,7 +77,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
       * calls ``__factory__``, saves result to ``__target__`` and returns said result.
     """
 
-    __slots__ = '__target__', '__factory__'
+    __slots__ = '__factory__', '__target__'
 
     def __init__(self, factory):
         object.__setattr__(self, '__factory__', factory)
