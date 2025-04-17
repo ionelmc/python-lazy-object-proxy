@@ -1,4 +1,5 @@
 import operator
+import sys
 
 from .compat import string_types
 from .compat import with_metaclass
@@ -258,3 +259,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         from .utils import __await__
 
         __aiter__, __anext__, __await__, __aenter__, __aexit__  # noqa
+
+    if sys.hexversion >= 0x03070000:
+        def __mro_entries__(self, _):
+            return (self.__wrapped__,)
