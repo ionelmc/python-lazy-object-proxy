@@ -22,8 +22,8 @@ else:
     LFLAGS = ''
 
 allow_extensions = True
-if '__pypy__' in sys.builtin_module_names:
-    print('NOTICE: C extensions disabled on PyPy (would be broken)!')
+if sys.implementation.name in ('pypy', 'graalpy'):
+    print('NOTICE: C extensions disabled on PyPy/GraalPy (would be broken)!')
     allow_extensions = False
 if os.environ.get('SETUPPY_FORCE_PURE'):
     print('NOTICE: C extensions disabled (SETUPPY_FORCE_PURE)!')
