@@ -14,6 +14,8 @@ import pytest
 
 PYPY = '__pypy__' in sys.builtin_module_names
 
+graalpyxfail = pytest.mark.xfail('sys.implementation.name == "graalpy"')
+
 OBJECTS_CODE = """
 class TargetBaseClass(object):
     "documentation"
@@ -223,6 +225,7 @@ def test_function_doc_string(lop):
     assert wrapper.__doc__ == target.__doc__
 
 
+@graalpyxfail
 def test_class_of_class(lop):
     # Test preservation of class __class__ attribute.
 
@@ -271,6 +274,7 @@ def test_class_of_instance(lop):
     assert isinstance(wrapper, objects.TargetBaseClass)
 
 
+@graalpyxfail
 def test_class_of_function(lop):
     # Test preservation of function __class__ attribute.
 
