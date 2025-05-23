@@ -673,6 +673,24 @@ jobs:
             cibw_arch: 'arm64'
             cibw_build: false
             os: 'macos-latest'
+          - name: 'graalpy242-nocov (ubuntu/x86_64/manylinux)'
+            artifact: 'graalpy242-ubuntu-x86_64-manylinux'
+            python: 'graalpy-24.2'
+            toxpython: 'graalpy'
+            python_arch: 'x64'
+            tox_env: 'graalpy-nocov'
+            cibw_arch: 'x86_64'
+            cibw_build: false
+            os: 'ubuntu-latest'
+          - name: 'graalpy242-nocov (macos/arm64)'
+            artifact: 'graalpy242-macos-arm64'
+            python: 'graalpy-24.2'
+            toxpython: 'graalpy'
+            python_arch: 'arm64'
+            tox_env: 'graalpy-nocov'
+            cibw_arch: 'arm64'
+            cibw_build: false
+            os: 'macos-latest'
     steps:
     - uses: docker/setup-qemu-action@v3
       if: matrix.cibw_arch == 'aarch64'

@@ -13,6 +13,7 @@ import pytest
 from lazy_object_proxy.utils import await_
 
 pypyxfail = pytest.mark.xfail('hasattr(sys, "pypy_version_info")')
+graalpyxfail = pytest.mark.xfail('sys.implementation.name == "graalpy"')
 
 
 class AsyncYieldFrom:
@@ -75,6 +76,7 @@ def test_gen_1(lop):
     assert not hasattr(gen, '__await__')
 
 
+@graalpyxfail
 def test_func_1(lop):
     async def foo():
         return 10
@@ -95,6 +97,7 @@ def test_func_1(lop):
     assert not bool(bar.__code__.co_flags & inspect.CO_COROUTINE)
 
 
+@graalpyxfail
 def test_func_2(lop):
     async def foo():
         raise StopIteration
@@ -269,6 +272,7 @@ def test_func_11(lop):
     coro.close()
 
 
+@graalpyxfail
 def test_func_12(lop):
     async def g():
         i = me.send(None)
@@ -279,6 +283,7 @@ def test_func_12(lop):
         me.send(None)
 
 
+@graalpyxfail
 def test_func_13(lop):
     async def g():
         pass
@@ -290,6 +295,7 @@ def test_func_13(lop):
     coro.close()
 
 
+@graalpyxfail
 def test_func_14(lop):
     @types.coroutine
     def gen():
@@ -777,6 +783,7 @@ def test_with_1(lop):
         run_async(lop.Proxy(foo))
 
 
+@graalpyxfail
 def test_with_2(lop):
     class CM:
         def __aenter__(self):
@@ -845,6 +852,7 @@ def test_with_5(lop):
 
 
 @pypyxfail
+@graalpyxfail
 def test_with_6(lop):
     class CM:
         def __aenter__(self):
@@ -863,6 +871,7 @@ def test_with_6(lop):
 
 
 @pypyxfail
+@graalpyxfail
 def test_with_7(lop):
     class CM:
         async def __aenter__(self):
@@ -887,6 +896,7 @@ def test_with_7(lop):
 
 
 @pypyxfail
+@graalpyxfail
 def test_with_8(lop):
     CNT = 0
 
@@ -990,6 +1000,7 @@ def test_with_10(lop):
         pytest.fail('exception from __aexit__ did not propagate')
 
 
+@graalpyxfail
 def test_with_11(lop):
     CNT = 0
 
@@ -1032,6 +1043,7 @@ def test_with_12(lop):
     run_async(lop.Proxy(foo))
 
 
+@graalpyxfail
 def test_with_13(lop):
     CNT = 0
 
