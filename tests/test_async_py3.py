@@ -1733,6 +1733,8 @@ def test_asyncio_1(lop):
         pass
     finally:
         loop.close()
-        asyncio.set_event_loop_policy(None)
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', DeprecationWarning)
+            asyncio.set_event_loop_policy(None)
 
     assert buffer == [1, 2, 'MyException']
