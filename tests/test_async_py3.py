@@ -504,7 +504,7 @@ def test_await_1(lop):
     async def foo():
         await 1
 
-    with pytest.raises(TypeError, match='object int can.t.*await'):
+    with pytest.raises(TypeError, match='int.*can.t.*await'):
         run_async(lop.Proxy(foo))
 
 
@@ -512,7 +512,7 @@ def test_await_2(lop):
     async def foo():
         await []
 
-    with pytest.raises(TypeError, match='object list can.t.*await'):
+    with pytest.raises(TypeError, match='list.*can.t.*await'):
         run_async(lop.Proxy(foo))
 
 
