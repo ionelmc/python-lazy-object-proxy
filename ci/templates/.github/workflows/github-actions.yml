@@ -37,8 +37,8 @@ jobs:
     ['ubuntu', 'x64', 'x86_64', '*musllinux*', False],
     ['ubuntu', 'x64', 'aarch64', '*manylinux*', False],
     ['ubuntu', 'x64', 'aarch64', '*musllinux*', False],
-    ['windows', 'x64', 'AMD64', '*', True],
-    ['macos', 'arm64', 'arm64', '*', True],
+    ['windows', 'x64', 'AMD64', '*', False],
+    ['macos', 'arm64', 'arm64', '*', False],
 ] %}
 {% if include_cover or ('nocov' in env and not prefix.startswith(('graalpy', 'pypy'))) %}
 {% set wheel_suffix = 'nocov' in env and wheel_arch.strip('*') %}

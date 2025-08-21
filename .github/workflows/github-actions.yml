@@ -26,24 +26,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'py39-cover (windows/AMD64)'
-            artifact: 'py39-windows-AMD64'
-            python: '3.9'
-            python_arch: 'x64'
-            tox_env: 'py39-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'py39-cover (macos/arm64)'
-            artifact: 'py39-macos-arm64'
-            python: '3.9'
-            python_arch: 'arm64'
-            tox_env: 'py39-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'py39-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'py39-ubuntu-x86_64-manylinux'
             python: '3.9'
@@ -107,24 +89,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'py310-cover (windows/AMD64)'
-            artifact: 'py310-windows-AMD64'
-            python: '3.10'
-            python_arch: 'x64'
-            tox_env: 'py310-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'py310-cover (macos/arm64)'
-            artifact: 'py310-macos-arm64'
-            python: '3.10'
-            python_arch: 'arm64'
-            tox_env: 'py310-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'py310-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'py310-ubuntu-x86_64-manylinux'
             python: '3.10'
@@ -188,24 +152,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'py311-cover (windows/AMD64)'
-            artifact: 'py311-windows-AMD64'
-            python: '3.11'
-            python_arch: 'x64'
-            tox_env: 'py311-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'py311-cover (macos/arm64)'
-            artifact: 'py311-macos-arm64'
-            python: '3.11'
-            python_arch: 'arm64'
-            tox_env: 'py311-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'py311-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'py311-ubuntu-x86_64-manylinux'
             python: '3.11'
@@ -269,24 +215,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'py312-cover (windows/AMD64)'
-            artifact: 'py312-windows-AMD64'
-            python: '3.12'
-            python_arch: 'x64'
-            tox_env: 'py312-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'py312-cover (macos/arm64)'
-            artifact: 'py312-macos-arm64'
-            python: '3.12'
-            python_arch: 'arm64'
-            tox_env: 'py312-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'py312-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'py312-ubuntu-x86_64-manylinux'
             python: '3.12'
@@ -350,24 +278,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'py313-cover (windows/AMD64)'
-            artifact: 'py313-windows-AMD64'
-            python: '3.13'
-            python_arch: 'x64'
-            tox_env: 'py313-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'py313-cover (macos/arm64)'
-            artifact: 'py313-macos-arm64'
-            python: '3.13'
-            python_arch: 'arm64'
-            tox_env: 'py313-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'py313-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'py313-ubuntu-x86_64-manylinux'
             python: '3.13'
@@ -431,24 +341,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'py313t-cover (windows/AMD64)'
-            artifact: 'py313t-windows-AMD64'
-            python: '3.13'
-            python_arch: 'x64-freethreaded'
-            tox_env: 'py313t-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'py313t-cover (macos/arm64)'
-            artifact: 'py313t-macos-arm64'
-            python: '3.13'
-            python_arch: 'arm64-freethreaded'
-            tox_env: 'py313t-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'py313t-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'py313t-ubuntu-x86_64-manylinux'
             python: '3.13'
@@ -512,24 +404,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'py314-cover (windows/AMD64)'
-            artifact: 'py314-windows-AMD64'
-            python: '3.14.0-rc.2'
-            python_arch: 'x64'
-            tox_env: 'py314-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'py314-cover (macos/arm64)'
-            artifact: 'py314-macos-arm64'
-            python: '3.14.0-rc.2'
-            python_arch: 'arm64'
-            tox_env: 'py314-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'py314-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'py314-ubuntu-x86_64-manylinux'
             python: '3.14.0-rc.2'
@@ -593,24 +467,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'py314t-cover (windows/AMD64)'
-            artifact: 'py314t-windows-AMD64'
-            python: '3.14.0-rc.2'
-            python_arch: 'x64-freethreaded'
-            tox_env: 'py314t-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'py314t-cover (macos/arm64)'
-            artifact: 'py314t-macos-arm64'
-            python: '3.14.0-rc.2'
-            python_arch: 'arm64-freethreaded'
-            tox_env: 'py314t-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'py314t-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'py314t-ubuntu-x86_64-manylinux'
             python: '3.14.0-rc.2'
@@ -674,24 +530,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'pypy39-cover (windows/AMD64)'
-            artifact: 'pypy39-windows-AMD64'
-            python: 'pypy-3.9'
-            python_arch: 'x64'
-            tox_env: 'pypy39-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'pypy39-cover (macos/arm64)'
-            artifact: 'pypy39-macos-arm64'
-            python: 'pypy-3.9'
-            python_arch: 'arm64'
-            tox_env: 'pypy39-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'pypy39-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'pypy39-ubuntu-x86_64-manylinux'
             python: 'pypy-3.9'
@@ -700,22 +538,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'pypy39-nocov (windows/AMD64)'
-            artifact: 'pypy39-windows-AMD64'
-            python: 'pypy-3.9'
-            python_arch: 'x64'
-            tox_env: 'pypy39-nocov'
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'pypy39-nocov (macos/arm64)'
-            artifact: 'pypy39-macos-arm64'
-            python: 'pypy-3.9'
-            python_arch: 'arm64'
-            tox_env: 'pypy39-nocov'
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'pypy310-cover (ubuntu/x86_64)'
             artifact: 'pypy310-ubuntu-x86_64'
             python: 'pypy-3.10'
@@ -725,24 +547,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'pypy310-cover (windows/AMD64)'
-            artifact: 'pypy310-windows-AMD64'
-            python: 'pypy-3.10'
-            python_arch: 'x64'
-            tox_env: 'pypy310-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'pypy310-cover (macos/arm64)'
-            artifact: 'pypy310-macos-arm64'
-            python: 'pypy-3.10'
-            python_arch: 'arm64'
-            tox_env: 'pypy310-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'pypy310-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'pypy310-ubuntu-x86_64-manylinux'
             python: 'pypy-3.10'
@@ -751,22 +555,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'pypy310-nocov (windows/AMD64)'
-            artifact: 'pypy310-windows-AMD64'
-            python: 'pypy-3.10'
-            python_arch: 'x64'
-            tox_env: 'pypy310-nocov'
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'pypy310-nocov (macos/arm64)'
-            artifact: 'pypy310-macos-arm64'
-            python: 'pypy-3.10'
-            python_arch: 'arm64'
-            tox_env: 'pypy310-nocov'
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'pypy311-cover (ubuntu/x86_64)'
             artifact: 'pypy311-ubuntu-x86_64'
             python: 'pypy-3.11'
@@ -776,24 +564,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'pypy311-cover (windows/AMD64)'
-            artifact: 'pypy311-windows-AMD64'
-            python: 'pypy-3.11'
-            python_arch: 'x64'
-            tox_env: 'pypy311-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'pypy311-cover (macos/arm64)'
-            artifact: 'pypy311-macos-arm64'
-            python: 'pypy-3.11'
-            python_arch: 'arm64'
-            tox_env: 'pypy311-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'pypy311-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'pypy311-ubuntu-x86_64-manylinux'
             python: 'pypy-3.11'
@@ -802,22 +572,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'pypy311-nocov (windows/AMD64)'
-            artifact: 'pypy311-windows-AMD64'
-            python: 'pypy-3.11'
-            python_arch: 'x64'
-            tox_env: 'pypy311-nocov'
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'pypy311-nocov (macos/arm64)'
-            artifact: 'pypy311-macos-arm64'
-            python: 'pypy-3.11'
-            python_arch: 'arm64'
-            tox_env: 'pypy311-nocov'
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'graalpy-cover (ubuntu/x86_64)'
             artifact: 'graalpy-ubuntu-x86_64'
             python: 'graalpy-24.2'
@@ -827,24 +581,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'graalpy-cover (windows/AMD64)'
-            artifact: 'graalpy-windows-AMD64'
-            python: 'graalpy-24.2'
-            python_arch: 'x64'
-            tox_env: 'graalpy-cover'
-            cover: true
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'graalpy-cover (macos/arm64)'
-            artifact: 'graalpy-macos-arm64'
-            python: 'graalpy-24.2'
-            python_arch: 'arm64'
-            tox_env: 'graalpy-cover'
-            cover: true
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
           - name: 'graalpy-nocov (ubuntu/x86_64/manylinux)'
             artifact: 'graalpy-ubuntu-x86_64-manylinux'
             python: 'graalpy-24.2'
@@ -853,22 +589,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'graalpy-nocov (windows/AMD64)'
-            artifact: 'graalpy-windows-AMD64'
-            python: 'graalpy-24.2'
-            python_arch: 'x64'
-            tox_env: 'graalpy-nocov'
-            cibw_arch: 'AMD64'
-            cibw_build: false
-            os: 'windows-latest'
-          - name: 'graalpy-nocov (macos/arm64)'
-            artifact: 'graalpy-macos-arm64'
-            python: 'graalpy-24.2'
-            python_arch: 'arm64'
-            tox_env: 'graalpy-nocov'
-            cibw_arch: 'arm64'
-            cibw_build: false
-            os: 'macos-latest'
     steps:
     - uses: docker/setup-qemu-action@v3
       if: matrix.cibw_arch == 'aarch64'
