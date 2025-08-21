@@ -23,7 +23,7 @@ jobs:
 {% if prefix.startswith('pypy') %}
 {% set python %}pypy-{{ prefix[4] }}.{{ prefix[5:] }}{% endset %}
 {% set cpython %}pp{{ prefix[4:5] }}{% endset %}
-{% elif prefix.startswith('pygraal') %}
+{% elif prefix.startswith('graalpy') %}
 {% set python %}graalpy-24.2{% endset %}
 {% elif prefix.startswith('py314') %}
 {% set python %}3.14.0-rc.2{% endset %}
@@ -40,7 +40,7 @@ jobs:
     ['windows', 'x64', 'AMD64', '*', True],
     ['macos', 'arm64', 'arm64', '*', True],
 ] %}
-{% if include_cover or ('nocov' in env and not prefix.startswith(('pygraal', 'pypy'))) %}
+{% if include_cover or ('nocov' in env and not prefix.startswith(('graalpy', 'pypy'))) %}
 {% set wheel_suffix = 'nocov' in env and wheel_arch.strip('*') %}
 {% set name_suffix = '/' + wheel_suffix if wheel_suffix else '' %}
           - name: '{{ env }} ({{ os }}/{{ cibw_arch }}{{ name_suffix }})'
@@ -52,7 +52,7 @@ jobs:
             cover: true
 {% endif %}
             cibw_arch: '{{ cibw_arch }}'
-{% if 'nocov' in env and not prefix.startswith(('pygraal', 'pypy')) %}
+{% if 'nocov' in env and not prefix.startswith(('graalpy', 'pypy')) %}
             cibw_build: '{{ cpython }}-{{ wheel_arch }}'
             cibw_ft: '{% if freethreaded %}true{% else %}false{% endif %}'
 {% else %}
