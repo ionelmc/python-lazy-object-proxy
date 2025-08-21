@@ -1,11 +1,65 @@
 [build-system]
 requires = [
-    "setuptools>=64",
+    "setuptools>=69",
     "setuptools_scm>=8",
 ]
 build-backend = "setuptools.build_meta"
 
+[project]
+dynamic = [
+    "readme",
+    "version",
+]
+name = "lazy-object-proxy"
+license = "BSD-2-Clause"
+license-files = ["LICENSE"]
+description = "A fast and thorough lazy object proxy."
+authors = [
+    { name = "Ionel Cristian Mărieș", email = "contact@ionelmc.ro" },
+]
+classifiers = [
+    # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: Unix",
+    "Operating System :: POSIX",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    # uncomment if you test on these interpreters:
+    # "Programming Language :: Python :: Implementation :: IronPython",
+    # "Programming Language :: Python :: Implementation :: Jython",
+    # "Programming Language :: Python :: Implementation :: Stackless",
+    "Topic :: Utilities",
+]
+keywords = [
+    # eg: "keyword1", "keyword2", "keyword3",
+]
+requires-python = ">=3.9"
+dependencies = [
+]
+
+[project.optional-dependencies]
+# rst = ["docutils>=0.11"]
+
+[project.urls]
+"Sources" = "https://github.com/ionelmc/python-lazy-object-proxy"
+"Documentation" = "https://python-lazy-object-proxy.readthedocs.io/"
+"Changelog" = "https://python-lazy-object-proxy.readthedocs.io/en/latest/changelog.html"
+"Issue Tracker" = "https://github.com/ionelmc/python-lazy-object-proxy/issues"
+
 [tool.setuptools_scm]
+local_scheme = "dirty-tag"
+write_to = "src/lazy_object_proxy/_version.py"
+fallback_version = "1.11.0"
 
 [tool.ruff]
 extend-exclude = ["static", "ci/templates"]
@@ -18,35 +72,36 @@ target-version = "py39"
 
 [tool.ruff.lint]
 ignore = [
-    "RUF001", # ruff-specific rules ambiguous-unicode-character-string
-    "S101", # flake8-bandit assert
-    "S308", # flake8-bandit suspicious-mark-safe-usage
-    "E501", # pycodestyle line-too-long
+    "RUF001",  # ruff-specific rules ambiguous-unicode-character-string
+    "S101",    # flake8-bandit assert
+    "S308",    # flake8-bandit suspicious-mark-safe-usage
+    "E501",    # pycodestyle line-too-long
     "DTZ001",
     "PT011",
     "PT012",
     "B004",
     "S102",
+    "PLC0415",
 ]
 select = [
-    "B", # flake8-bugbear
-    "C4", # flake8-comprehensions
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
     "DTZ", # flake8-datetimez
-    "E", # pycodestyle errors
+    "E",   # pycodestyle errors
     "EXE", # flake8-executable
-    "F", # pyflakes
-    "I", # isort
+    "F",   # pyflakes
+    "I",   # isort
     "INT", # flake8-gettext
     "PIE", # flake8-pie
     "PLC", # pylint convention
     "PLE", # pylint errors
-    "PT", # flake8-pytest-style
+    "PT",  # flake8-pytest-style
     "PTH", # flake8-use-pathlib
     "RSE", # flake8-raise
     "RUF", # ruff-specific rules
-    "S", # flake8-bandit
-    "UP", # pyupgrade
-    "W", # pycodestyle warnings
+    "S",   # flake8-bandit
+    "UP",  # pyupgrade
+    "W",   # pycodestyle warnings
 ]
 
 [tool.ruff.lint.flake8-pytest-style]

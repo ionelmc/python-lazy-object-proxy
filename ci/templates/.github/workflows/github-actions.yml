@@ -10,26 +10,24 @@ jobs:
       matrix:
         include:
           - name: 'check'
-            python: '3.11'
-            toxpython: 'python3.11'
+            python: '3.13'
             tox_env: 'check'
             os: 'ubuntu-latest'
           - name: 'docs'
-            python: '3.11'
-            toxpython: 'python3.11'
+            python: '3.13'
             tox_env: 'docs'
             os: 'ubuntu-latest'
 {% for env in tox_environments %}
 {% set prefix = env.split('-')[0] -%}
-{% set nogil = 'ft' in env %}
+{% set freethreaded = prefix.endswith('t') %}
 {% if prefix.startswith('pypy') %}
 {% set python %}pypy-{{ prefix[4] }}.{{ prefix[5:] }}{% endset %}
 {% set cpython %}pp{{ prefix[4:5] }}{% endset %}
-{% set toxpython %}pypy{{ prefix[4] }}.{{ prefix[5:] }}{{ 't' if nogil else '' }}{% endset %}
+{% elif prefix.startswith('pygraal') %}
+{% set python %}graalpy-24.2{% endset %}
 {% else %}
-{% set python %}{{ prefix[2] }}.{{ prefix[3:] }}{% endset %}
+{% set python %}{{ prefix[2] }}.{{ prefix[3:].rstrip('t') }}{% endset %}
 {% set cpython %}cp{{ prefix[2:] }}{% endset %}
-{% set toxpython %}python{{ prefix[2] }}.{{ prefix[3:] }}{{ 't' if nogil else '' }}{% endset %}
 {% endif %}
 {% for os, python_arch, cibw_arch, wheel_arch, include_cover in [
     ['ubuntu', 'x64', 'x86_64', '*manylinux*', True],
@@ -39,22 +37,21 @@ jobs:
     ['windows', 'x64', 'AMD64', '*', True],
     ['macos', 'arm64', 'arm64', '*', True],
 ] %}
-{% if include_cover or ('nocov' in env and not prefix.startswith('pypy')) %}
+{% if include_cover or ('nocov' in env and not prefix.startswith(('pygraal', 'pypy'))) %}
 {% set wheel_suffix = 'nocov' in env and wheel_arch.strip('*') %}
 {% set name_suffix = '/' + wheel_suffix if wheel_suffix else '' %}
           - name: '{{ env }} ({{ os }}/{{ cibw_arch }}{{ name_suffix }})'
             artifact: '{{ env.rsplit('-', 1)[0] }}-{{ os }}-{{ cibw_arch }}{{ name_suffix.replace('/', '-') }}'
             python: '{{ python }}'
-            toxpython: '{{ toxpython }}'
-            python_arch: '{{ python_arch }}{% if nogil %}-freethreaded{% endif %}'
+            python_arch: '{{ python_arch }}{% if freethreaded %}-freethreaded{% endif %}'
             tox_env: '{{ env }}'
 {% if 'cover' in env %}
             cover: true
 {% endif %}
             cibw_arch: '{{ cibw_arch }}'
-{% if 'nocov' in env and not prefix.startswith('pypy') %}
-            cibw_build: '{{ cpython }}{% if nogil %}t{% endif %}-{{ wheel_arch }}'
-            cibw_ft: '{% if nogil %}true{% else %}false{% endif %}'
+{% if 'nocov' in env and not prefix.startswith(('pygraal', 'pypy')) %}
+            cibw_build: '{{ cpython }}-{{ wheel_arch }}'
+            cibw_ft: '{% if freethreaded %}true{% else %}false{% endif %}'
 {% else %}
             cibw_build: false
 {% endif %}
@@ -90,27 +87,26 @@ jobs:
       if: matrix.cibw_build
       run: cibuildwheel
       env:
-        TOXPYTHON: '{{ '${{ matrix.toxpython }}' }}'
         CIBW_ARCHS: '{{ '${{ matrix.cibw_arch }}' }}'
         CIBW_BUILD: '{{ '${{ matrix.cibw_build }}' }}'
         CIBW_FREE_THREADED_SUPPORT: '{{ '${{ matrix.cibw_ft }}' }}'
+        CIBW_CONTAINER_ENGINE: "docker; create_args: --cap-add=SYS_PTRACE"
+        CIBW_ENABLE: cpython-freethreading
         CIBW_BUILD_VERBOSITY: '3'
         CIBW_TEST_REQUIRES: >
           tox
           tox-direct
         CIBW_TEST_COMMAND: >
           cd {project} &&
-          tox --skip-pkg-install --direct-yolo -e {{ '${{ matrix.tox_env }}' }} -v
+          tox --skip-pkg-install --direct-yolo -e {{ '${{ matrix.tox_env }}' }} -vv
         CIBW_TEST_COMMAND_WINDOWS: >
           cd /d {project} &&
-          tox --skip-pkg-install --direct-yolo -e {{ '${{ matrix.tox_env }}' }} -v
+          tox --skip-pkg-install --direct-yolo -e {{ '${{ matrix.tox_env }}' }} -vv
     - name: regular build and test
-      env:
-        TOXPYTHON: '{{ '${{ matrix.toxpython }}' }}'
       if: >
         !matrix.cibw_build
       run: >
-        tox -e {{ '${{ matrix.tox_env }}' }} -v
+        tox -e {{ '${{ matrix.tox_env }}' }} -vv
     - uses: coverallsapp/github-action@v2
       if: matrix.cover
       continue-on-error: true
@@ -125,7 +121,7 @@ jobs:
     - name: check wheel
       if: >
         !matrix.cibw_ft && matrix.cibw_build
-      run:
+      run: |
         python -mpip install --progress-bar=off twine
         twine check wheelhouse/*.whl
     - name: upload wheel
@@ -141,11 +137,11 @@ jobs:
     steps:
     - uses: actions/upload-artifact/merge@v4
       with:
-        name: wheels
+        name: all-wheels
     - uses: coverallsapp/github-action@v2
       with:
         parallel-finished: true
     - uses: codecov/codecov-action@v5
       with:
         CODECOV_TOKEN: {% raw %}${{ secrets.CODECOV_TOKEN }}{% endraw %}
-
+{{ '' }}

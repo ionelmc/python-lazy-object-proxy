@@ -44,4 +44,4 @@ default_context:
     version_manager: bump2version
     website: https://blog.ionelmc.ro
     year_from: '2014'
-    year_to: '2024'
+    year_to: '2025'
