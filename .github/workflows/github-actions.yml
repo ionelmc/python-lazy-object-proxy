@@ -672,4 +672,5 @@ jobs:
         parallel-finished: true
     - uses: codecov/codecov-action@v5
       with:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        verbose: true
+        token: ${{ secrets.CODECOV_TOKEN }}
