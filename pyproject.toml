@@ -56,6 +56,9 @@ dependencies = [
 "Changelog" = "https://python-lazy-object-proxy.readthedocs.io/en/latest/changelog.html"
 "Issue Tracker" = "https://github.com/ionelmc/python-lazy-object-proxy/issues"
 
+[tool.setuptools.dynamic]
+readme = { file = ["README.rst"] }
+
 [tool.setuptools_scm]
 local_scheme = "dirty-tag"
 write_to = "src/lazy_object_proxy/_version.py"
