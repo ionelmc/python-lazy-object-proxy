@@ -2,6 +2,19 @@
 Changelog
 =========
 
+1.12.0 (2025-08-22)
+-------------------
+
+* Fixed testing issues when C extensions are not desired.
+  Contributed by Michał Górny in `#79 <https://github.com/ionelmc/python-lazy-object-proxy/pull/79>`_.
+* Added support for GraalPy.
+  Contributed by Michael Šimáček in `#87 <https://github.com/ionelmc/python-lazy-object-proxy/pull/87>`_.
+* Fixed testing issues on Python 3.14.
+  Contributed by Michał Górny in `#88 <https://github.com/ionelmc/python-lazy-object-proxy/pull/88>`_.
+* Modernized packaging to have metadata in ``pyproject.toml``.
+* Added Python 3.14 wheels.
+
+
 1.11.0 (2025-04-16)
 -------------------
 
