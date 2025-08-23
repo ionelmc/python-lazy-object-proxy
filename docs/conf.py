@@ -18,7 +18,7 @@ copyright = f'{year}, {author}'
 try:
     from importlib import metadata
 
-    version = release = metadata.version('hunter')
+    version = release = metadata.version('lazy-object-proxy')
 except Exception:
     import traceback
 
