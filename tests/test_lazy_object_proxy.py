@@ -1810,14 +1810,6 @@ def test_garbage_collection_count(lop):
     assert count == sys.getrefcount(obj)
 
 
-@pytest.mark.parametrize('name', ['slots', 'cext', 'simple', 'django', 'objproxies'])
-def test_perf(benchmark, name, lop_loader):
-    implementation = lop_loader(name)
-    obj = 'foobar'
-    proxied = implementation.Proxy(lambda: obj)
-    assert benchmark(partial(str, proxied)) == obj
-
-
 empty = object()
 
 

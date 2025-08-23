@@ -5,6 +5,16 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[dependency-groups]
+test = [
+    "pytest",
+]
+benchmark = [
+    "pytest-benchmark",
+    "Django",
+    "objproxies==0.9.4",
+]
+
 [project]
 dynamic = [
     "readme",
