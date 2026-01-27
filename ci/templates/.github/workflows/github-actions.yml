@@ -25,9 +25,6 @@ jobs:
 {% set cpython %}pp{{ prefix[4:5] }}{% endset %}
 {% elif prefix.startswith('graalpy') %}
 {% set python %}graalpy-24.2{% endset %}
-{% elif prefix.startswith('py314') %}
-{% set python %}3.14.0-rc.2{% endset %}
-{% set cpython %}cp314{% endset %}
 {% else %}
 {% set python %}{{ prefix[2] }}.{{ prefix[3:].rstrip('t') }}{% endset %}
 {% set cpython %}cp{{ prefix[2:] }}{% endset %}
