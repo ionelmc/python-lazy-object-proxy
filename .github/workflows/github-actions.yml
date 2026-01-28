@@ -746,6 +746,7 @@ jobs:
       with:
         fetch-depth: 0
     - uses: actions/setup-python@v5
+      if: matrix.cibw_build
       with:
         # for cibuildwheel 3.x
         python-version: 3.11
@@ -779,6 +780,8 @@ jobs:
           cd /d {project} &&
           tox --installpkg {wheel} -e ${{ matrix.tox_env }} -vv
     - uses: actions/setup-python@v5
+      if: >
+        !matrix.cibw_build
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.python_arch }}
