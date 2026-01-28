@@ -75,7 +75,8 @@ jobs:
         fetch-depth: 0
     - uses: actions/setup-python@v5
       with:
-        python-version: {{ '${{ matrix.python }}' }}
+        # for cibuildwheel 3.x
+        python-version: 3.11
         architecture: {{ '${{ matrix.python_arch }}' }}
     - name: install dependencies
       run: |
@@ -106,6 +107,10 @@ jobs:
         CIBW_TEST_COMMAND_WINDOWS: >
           cd /d {project} &&
           tox --installpkg {wheel} -e {{ '${{ matrix.tox_env }}' }} -vv
+    - uses: actions/setup-python@v5
+      with:
+        python-version: {{ '${{ matrix.python }}' }}
+        architecture: {{ '${{ matrix.python_arch }}' }}
     - name: regular build and test
       if: >
         !matrix.cibw_build
