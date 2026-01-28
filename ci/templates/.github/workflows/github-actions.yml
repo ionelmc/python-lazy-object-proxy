@@ -118,7 +118,7 @@ jobs:
       if: >
         !matrix.cibw_build
       run: |
-        python -mpip install --progress-bar=off cibuildwheel==3.3.1 -r ci/requirements.txt
+        python -mpip install --progress-bar=off cibuildwheel -r ci/requirements.txt
         virtualenv --version
         pip --version
         tox --version
