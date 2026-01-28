@@ -34,6 +34,8 @@ jobs:
     ['ubuntu', 'x64', 'x86_64', '*musllinux*', False],
     ['ubuntu', 'x64', 'aarch64', '*manylinux*', False],
     ['ubuntu', 'x64', 'aarch64', '*musllinux*', False],
+    ['ubuntu', 'x64', 'riscv64', '*manylinux*', False],
+    ['ubuntu', 'x64', 'riscv64', '*musllinux*', False],
     ['windows', 'x64', 'AMD64', '*', False],
     ['macos', 'arm64', 'arm64', '*', False],
 ] %}
@@ -64,6 +66,10 @@ jobs:
       if: matrix.cibw_arch == 'aarch64'
       with:
         platforms: arm64
+    - uses: docker/setup-qemu-action@v3
+      if: matrix.cibw_arch == 'riscv64'
+      with:
+        platforms: riscv64
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
@@ -73,7 +79,7 @@ jobs:
         architecture: {{ '${{ matrix.python_arch }}' }}
     - name: install dependencies
       run: |
-        python -mpip install --progress-bar=off cibuildwheel -r ci/requirements.txt
+        python -mpip install --progress-bar=off cibuildwheel==3.3.1 -r ci/requirements.txt
         virtualenv --version
         pip --version
         tox --version
