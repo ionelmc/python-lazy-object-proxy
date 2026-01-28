@@ -751,6 +751,7 @@ jobs:
         # for cibuildwheel 3.x
         python-version: 3.11
     - name: install dependencies
+      if: matrix.cibw_build
       run: |
         python -mpip install --progress-bar=off cibuildwheel==3.3.1 -r ci/requirements.txt
         virtualenv --version
@@ -785,6 +786,15 @@ jobs:
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.python_arch }}
+    - name: install dependencies
+      if: >
+        !matrix.cibw_build
+      run: |
+        python -mpip install --progress-bar=off cibuildwheel==3.3.1 -r ci/requirements.txt
+        virtualenv --version
+        pip --version
+        tox --version
+        pip list --format=freeze
     - name: regular build and test
       if: >
         !matrix.cibw_build
