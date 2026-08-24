@@ -29,17 +29,21 @@ jobs:
 {% set python %}{{ prefix[2] }}.{{ prefix[3:].rstrip('t') }}{% endset %}
 {% set cpython %}cp{{ prefix[2:] }}{% endset %}
 {% endif %}
-{% for os, python_arch, cibw_arch, wheel_arch, include_cover in [
-    ['ubuntu', 'x64', 'x86_64', '*manylinux*', True],
-    ['ubuntu', 'x64', 'x86_64', '*musllinux*', False],
-    ['ubuntu', 'x64', 'aarch64', '*manylinux*', False],
-    ['ubuntu', 'x64', 'aarch64', '*musllinux*', False],
-    ['ubuntu', 'x64', 'riscv64', '*manylinux*', False],
-    ['ubuntu', 'x64', 'riscv64', '*musllinux*', False],
-    ['windows', 'x64', 'AMD64', '*', False],
-    ['macos', 'arm64', 'arm64', '*', False],
+{% for runner, python_arch, cibw_arch, wheel_arch, include_cover in [
+    ['ubuntu-latest', 'x64', 'x86_64', '*manylinux*', True],
+    ['ubuntu-latest', 'x64', 'x86_64', '*musllinux*', False],
+    ['ubuntu-latest', 'x64', 'aarch64', '*manylinux*', False],
+    ['ubuntu-latest', 'x64', 'aarch64', '*musllinux*', False],
+    ['ubuntu-latest', 'x64', 'riscv64', '*manylinux*', False],
+    ['ubuntu-latest', 'x64', 'riscv64', '*musllinux*', False],
+    ['windows-latest', 'x64', 'AMD64', '*', False],
+    ['windows-11-arm', 'arm64', 'ARM64', '*', False],
+    ['macos-latest', 'arm64', 'arm64', '*', False],
 ] %}
-{% if include_cover or ('nocov' in env and not prefix.startswith(('graalpy', 'pypy'))) %}
+{% set os = runner.split('-')[0] %}
+{# there is no win_arm64 CPython before 3.11 #}
+{% set prefix_supported = runner != 'windows-11-arm' or prefix not in ('py39', 'py310') %}
+{% if prefix_supported and (include_cover or ('nocov' in env and not prefix.startswith(('graalpy', 'pypy')))) %}
 {% set wheel_suffix = 'nocov' in env and wheel_arch.strip('*') %}
 {% set name_suffix = '/' + wheel_suffix if wheel_suffix else '' %}
           - name: '{{ env }} ({{ os }}/{{ cibw_arch }}{{ name_suffix }})'
@@ -57,7 +61,7 @@ jobs:
 {% else %}
             cibw_build: false
 {% endif %}
-            os: '{{ os }}-latest'
+            os: '{{ runner }}'
 {% endif %}
 {% endfor %}
 {% endfor %}
