@@ -251,6 +251,15 @@ jobs:
             cibw_build: 'cp311-*'
             cibw_ft: 'false'
             os: 'windows-latest'
+          - name: 'py311-nocov (windows/ARM64)'
+            artifact: 'py311-windows-ARM64'
+            python: '3.11'
+            python_arch: 'arm64'
+            tox_env: 'py311-nocov'
+            cibw_arch: 'ARM64'
+            cibw_build: 'cp311-*'
+            cibw_ft: 'false'
+            os: 'windows-11-arm'
           - name: 'py311-nocov (macos/arm64)'
             artifact: 'py311-macos-arm64'
             python: '3.11'
@@ -332,6 +341,15 @@ jobs:
             cibw_build: 'cp312-*'
             cibw_ft: 'false'
             os: 'windows-latest'
+          - name: 'py312-nocov (windows/ARM64)'
+            artifact: 'py312-windows-ARM64'
+            python: '3.12'
+            python_arch: 'arm64'
+            tox_env: 'py312-nocov'
+            cibw_arch: 'ARM64'
+            cibw_build: 'cp312-*'
+            cibw_ft: 'false'
+            os: 'windows-11-arm'
           - name: 'py312-nocov (macos/arm64)'
             artifact: 'py312-macos-arm64'
             python: '3.12'
@@ -413,6 +431,15 @@ jobs:
             cibw_build: 'cp313-*'
             cibw_ft: 'false'
             os: 'windows-latest'
+          - name: 'py313-nocov (windows/ARM64)'
+            artifact: 'py313-windows-ARM64'
+            python: '3.13'
+            python_arch: 'arm64'
+            tox_env: 'py313-nocov'
+            cibw_arch: 'ARM64'
+            cibw_build: 'cp313-*'
+            cibw_ft: 'false'
+            os: 'windows-11-arm'
           - name: 'py313-nocov (macos/arm64)'
             artifact: 'py313-macos-arm64'
             python: '3.13'
@@ -494,6 +521,15 @@ jobs:
             cibw_build: 'cp313t-*'
             cibw_ft: 'true'
             os: 'windows-latest'
+          - name: 'py313t-nocov (windows/ARM64)'
+            artifact: 'py313t-windows-ARM64'
+            python: '3.13'
+            python_arch: 'arm64-freethreaded'
+            tox_env: 'py313t-nocov'
+            cibw_arch: 'ARM64'
+            cibw_build: 'cp313t-*'
+            cibw_ft: 'true'
+            os: 'windows-11-arm'
           - name: 'py313t-nocov (macos/arm64)'
             artifact: 'py313t-macos-arm64'
             python: '3.13'
@@ -575,6 +611,15 @@ jobs:
             cibw_build: 'cp314-*'
             cibw_ft: 'false'
             os: 'windows-latest'
+          - name: 'py314-nocov (windows/ARM64)'
+            artifact: 'py314-windows-ARM64'
+            python: '3.14'
+            python_arch: 'arm64'
+            tox_env: 'py314-nocov'
+            cibw_arch: 'ARM64'
+            cibw_build: 'cp314-*'
+            cibw_ft: 'false'
+            os: 'windows-11-arm'
           - name: 'py314-nocov (macos/arm64)'
             artifact: 'py314-macos-arm64'
             python: '3.14'
@@ -656,6 +701,15 @@ jobs:
             cibw_build: 'cp314t-*'
             cibw_ft: 'true'
             os: 'windows-latest'
+          - name: 'py314t-nocov (windows/ARM64)'
+            artifact: 'py314t-windows-ARM64'
+            python: '3.14'
+            python_arch: 'arm64-freethreaded'
+            tox_env: 'py314t-nocov'
+            cibw_arch: 'ARM64'
+            cibw_build: 'cp314t-*'
+            cibw_ft: 'true'
+            os: 'windows-11-arm'
           - name: 'py314t-nocov (macos/arm64)'
             artifact: 'py314t-macos-arm64'
             python: '3.14'
@@ -716,23 +770,6 @@ jobs:
             cibw_arch: 'x86_64'
             cibw_build: false
             os: 'ubuntu-latest'
-          - name: 'graalpy-cover (ubuntu/x86_64)'
-            artifact: 'graalpy-ubuntu-x86_64'
-            python: 'graalpy-24.2'
-            python_arch: 'x64'
-            tox_env: 'graalpy-cover'
-            cover: true
-            cibw_arch: 'x86_64'
-            cibw_build: false
-            os: 'ubuntu-latest'
-          - name: 'graalpy-nocov (ubuntu/x86_64/manylinux)'
-            artifact: 'graalpy-ubuntu-x86_64-manylinux'
-            python: 'graalpy-24.2'
-            python_arch: 'x64'
-            tox_env: 'graalpy-nocov'
-            cibw_arch: 'x86_64'
-            cibw_build: false
-            os: 'ubuntu-latest'
     steps:
     - uses: docker/setup-qemu-action@v3
       if: matrix.cibw_arch == 'aarch64'
@@ -742,10 +779,10 @@ jobs:
       if: matrix.cibw_arch == 'riscv64'
       with:
         platforms: riscv64
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v6
       if: matrix.cibw_build
       with:
         # for cibuildwheel 3.x
@@ -800,17 +837,6 @@ jobs:
         !matrix.cibw_build
       run: >
         tox -e ${{ matrix.tox_env }} -vv
-    - uses: coverallsapp/github-action@v2
-      if: matrix.cover
-      continue-on-error: true
-      with:
-        parallel: true
-        flag-name: ${{ matrix.tox_env }}
-    - uses: codecov/codecov-action@v5
-      if: matrix.cover
-      with:
-        verbose: true
-        flags: ${{ matrix.tox_env }}
     - name: check wheel
       if: >
         !matrix.cibw_ft && matrix.cibw_build
