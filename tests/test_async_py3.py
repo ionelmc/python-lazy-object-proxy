@@ -542,7 +542,11 @@ def test_await_5(lop):
     async def foo():
         return await lop.Proxy(Awaitable)
 
-    with pytest.raises(TypeError, match='__await__.*returned non-iterator of type'):
+    msg = '__await__.*returned non-iterator of type'
+    if sys.version_info[:2] >= (3, 15):
+        msg = r'__await__\(\) must return an iterator, not NoneType'
+
+    with pytest.raises(TypeError, match=msg):
         run_async(lop.Proxy(foo))
 
 
@@ -650,7 +654,11 @@ def test_await_12(lop):
     async def foo():
         return await lop.Proxy(Awaitable)
 
-    with pytest.raises(TypeError, match=r'__await__\(\) returned a coroutine'):
+    msg = r'__await__\(\) returned a coroutine'
+    if sys.version_info[:2] >= (3, 15):
+        msg = r'__await__\(\) must return an iterator, not coroutine'
+
+    with pytest.raises(TypeError, match=msg):
         run_async(lop.Proxy(foo))
 
     c.close()
@@ -664,7 +672,11 @@ def test_await_13(lop):
     async def foo():
         return await lop.Proxy(Awaitable)
 
-    with pytest.raises(TypeError, match='__await__.*returned non-iterator of type'):
+    msg = '__await__.*returned non-iterator of type'
+    if sys.version_info[:2] >= (3, 15):
+        msg = r'__await__\(\) must return an iterator, not.*Awaitable'
+
+    with pytest.raises(TypeError, match=msg):
         run_async(lop.Proxy(foo))
 
 
