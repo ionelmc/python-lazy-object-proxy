@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+* Document explicit proxy evaluation and identity checks with ``None``.
+
 1.12.0 (2025-08-22)
 -------------------
 
