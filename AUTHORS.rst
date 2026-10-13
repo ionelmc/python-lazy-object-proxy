@@ -11,3 +11,4 @@ Authors
 * Sandro Tosi - https://github.com/sandrotosi
 * Michael Šimáček - https://github.com/msimacek
 * Michał Górny https://github.com/mgorny
+* ac1982 - https://github.com/ac1982
