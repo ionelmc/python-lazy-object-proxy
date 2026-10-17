@@ -98,6 +98,7 @@ jobs:
         python -mpip install --progress-bar=off -r ci/requirements.txt
     - name: list dependencies
       run: |
+        python -VV
         virtualenv --version
         pip --version
         tox --version
