@@ -82,19 +82,26 @@ jobs:
       with:
         # for cibuildwheel 3.x
         python-version: 3.11
-    - name: install dependencies
+    - name: install dependencies (cibw)
       if: matrix.cibw_build
       run: |
         python -mpip install --progress-bar=off cibuildwheel -r ci/requirements.txt
-        virtualenv --version
-        pip --version
-        tox --version
-        pip list --format=freeze
     - name: install dependencies (gdb)
       if: >
         !matrix.cibw_build && matrix.os == 'ubuntu'
       run: >
         sudo apt-get install gdb
+    - name: install dependencies (regular)
+      if: >
+        !matrix.cibw_build
+      run: |
+        python -mpip install --progress-bar=off -r ci/requirements.txt
+    - name: list dependencies
+      run: |
+        virtualenv --version
+        pip --version
+        tox --version
+        pip list --format=freeze
     - name: cibw build and test
       if: matrix.cibw_build
       run: cibuildwheel
@@ -117,15 +124,6 @@ jobs:
       with:
         python-version: {{ '${{ matrix.python }}' }}
         architecture: {{ '${{ matrix.python_arch }}' }}
-    - name: install dependencies
-      if: >
-        !matrix.cibw_build
-      run: |
-        python -mpip install --progress-bar=off cibuildwheel -r ci/requirements.txt
-        virtualenv --version
-        pip --version
-        tox --version
-        pip list --format=freeze
     - name: regular build and test
       if: >
         !matrix.cibw_build

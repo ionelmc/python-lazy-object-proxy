@@ -467,96 +467,6 @@ jobs:
             cibw_build: 'cp315-*'
             cibw_ft: 'false'
             os: 'macos-latest'
-          - name: 'py313t-cover (ubuntu/x86_64)'
-            artifact: 'py313t-ubuntu-x86_64'
-            python: '3.13t'
-            python_arch: 'x64'
-            tox_env: 'py313t-cover'
-            cover: true
-            cibw_arch: 'x86_64'
-            cibw_build: false
-            os: 'ubuntu-latest'
-          - name: 'py313t-nocov (ubuntu/x86_64/manylinux)'
-            artifact: 'py313t-ubuntu-x86_64-manylinux'
-            python: '3.13t'
-            python_arch: 'x64'
-            tox_env: 'py313t-nocov'
-            cibw_arch: 'x86_64'
-            cibw_build: 'cp313t-*manylinux*'
-            cibw_ft: 'true'
-            os: 'ubuntu-latest'
-          - name: 'py313t-nocov (ubuntu/x86_64/musllinux)'
-            artifact: 'py313t-ubuntu-x86_64-musllinux'
-            python: '3.13t'
-            python_arch: 'x64'
-            tox_env: 'py313t-nocov'
-            cibw_arch: 'x86_64'
-            cibw_build: 'cp313t-*musllinux*'
-            cibw_ft: 'true'
-            os: 'ubuntu-latest'
-          - name: 'py313t-nocov (ubuntu/aarch64/manylinux)'
-            artifact: 'py313t-ubuntu-aarch64-manylinux'
-            python: '3.13t'
-            python_arch: 'x64'
-            tox_env: 'py313t-nocov'
-            cibw_arch: 'aarch64'
-            cibw_build: 'cp313t-*manylinux*'
-            cibw_ft: 'true'
-            os: 'ubuntu-latest'
-          - name: 'py313t-nocov (ubuntu/aarch64/musllinux)'
-            artifact: 'py313t-ubuntu-aarch64-musllinux'
-            python: '3.13t'
-            python_arch: 'x64'
-            tox_env: 'py313t-nocov'
-            cibw_arch: 'aarch64'
-            cibw_build: 'cp313t-*musllinux*'
-            cibw_ft: 'true'
-            os: 'ubuntu-latest'
-          - name: 'py313t-nocov (ubuntu/riscv64/manylinux)'
-            artifact: 'py313t-ubuntu-riscv64-manylinux'
-            python: '3.13t'
-            python_arch: 'x64'
-            tox_env: 'py313t-nocov'
-            cibw_arch: 'riscv64'
-            cibw_build: 'cp313t-*manylinux*'
-            cibw_ft: 'true'
-            os: 'ubuntu-latest'
-          - name: 'py313t-nocov (ubuntu/riscv64/musllinux)'
-            artifact: 'py313t-ubuntu-riscv64-musllinux'
-            python: '3.13t'
-            python_arch: 'x64'
-            tox_env: 'py313t-nocov'
-            cibw_arch: 'riscv64'
-            cibw_build: 'cp313t-*musllinux*'
-            cibw_ft: 'true'
-            os: 'ubuntu-latest'
-          - name: 'py313t-nocov (windows/AMD64)'
-            artifact: 'py313t-windows-AMD64'
-            python: '3.13t'
-            python_arch: 'x64'
-            tox_env: 'py313t-nocov'
-            cibw_arch: 'AMD64'
-            cibw_build: 'cp313t-*'
-            cibw_ft: 'true'
-            os: 'windows-latest'
-          - name: 'py313t-nocov (windows/ARM64)'
-            artifact: 'py313t-windows-ARM64'
-            python: '3.13t'
-            python_arch: 'arm64'
-            tox_env: 'py313t-nocov'
-            cibw_arch: 'ARM64'
-            cibw_build: 'cp313t-*'
-            cibw_ft: 'true'
-            os: 'windows-11-arm'
-          - name: 'py313t-nocov (macos/arm64)'
-            artifact: 'py313t-macos-arm64'
-            python: '3.13t'
-            python_arch: 'arm64'
-            tox_env: 'py313t-nocov'
-            cibw_arch: 'arm64'
-            cibw_build: 'cp313t-*'
-            cibw_ft: 'true'
-            os: 'macos-latest'
           - name: 'py314t-cover (ubuntu/x86_64)'
             artifact: 'py314t-ubuntu-x86_64'
             python: '3.14t'
@@ -788,19 +698,26 @@ jobs:
       with:
         # for cibuildwheel 3.x
         python-version: 3.11
-    - name: install dependencies
+    - name: install dependencies (cibw)
       if: matrix.cibw_build
       run: |
         python -mpip install --progress-bar=off cibuildwheel -r ci/requirements.txt
-        virtualenv --version
-        pip --version
-        tox --version
-        pip list --format=freeze
     - name: install dependencies (gdb)
       if: >
         !matrix.cibw_build && matrix.os == 'ubuntu'
       run: >
         sudo apt-get install gdb
+    - name: install dependencies (regular)
+      if: >
+        !matrix.cibw_build
+      run: |
+        python -mpip install --progress-bar=off -r ci/requirements.txt
+    - name: list dependencies
+      run: |
+        virtualenv --version
+        pip --version
+        tox --version
+        pip list --format=freeze
     - name: cibw build and test
       if: matrix.cibw_build
       run: cibuildwheel
@@ -823,15 +740,6 @@ jobs:
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.python_arch }}
-    - name: install dependencies
-      if: >
-        !matrix.cibw_build
-      run: |
-        python -mpip install --progress-bar=off cibuildwheel -r ci/requirements.txt
-        virtualenv --version
-        pip --version
-        tox --version
-        pip list --format=freeze
     - name: regular build and test
       if: >
         !matrix.cibw_build
