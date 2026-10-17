@@ -40,7 +40,7 @@ identity(PyObject *self, PyObject *value)
 
 /* ------------------------------------------------------------------------- */
 
-PyDoc_STRVAR(identity_doc, "Indentity function: returns the single argument.");
+PyDoc_STRVAR(identity_doc, "Identity function: returns the single argument.");
 
 static struct PyMethodDef module_functions[] = {
     {"identity", identity, METH_O, identity_doc},

@@ -85,7 +85,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     __name__ = property(make_proxy_method(operator.attrgetter('__name__')))
     __class__ = property(make_proxy_method(operator.attrgetter('__class__')))
-    __annotations__ = property(make_proxy_method(operator.attrgetter('__anotations__')))
+    __annotations__ = property(make_proxy_method(operator.attrgetter('__annotations__')))
     __dir__ = make_proxy_method(dir)
     __str__ = make_proxy_method(str)
     __bytes__ = make_proxy_method(bytes)

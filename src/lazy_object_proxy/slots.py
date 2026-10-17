@@ -130,7 +130,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
 
     @property
     def __annotations__(self):
-        return self.__wrapped__.__anotations__
+        return self.__wrapped__.__annotations__
 
     @__annotations__.setter
     def __annotations__(self, value):
