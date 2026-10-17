@@ -74,10 +74,10 @@ jobs:
       if: matrix.cibw_arch == 'riscv64'
       with:
         platforms: riscv64
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
-    - uses: actions/setup-python@v6
+    - uses: actions/setup-python@v7
       if: matrix.cibw_build
       with:
         # for cibuildwheel 3.x
@@ -85,7 +85,7 @@ jobs:
     - name: install dependencies
       if: matrix.cibw_build
       run: |
-        python -mpip install --progress-bar=off cibuildwheel==3.3.1 -r ci/requirements.txt
+        python -mpip install --progress-bar=off cibuildwheel -r ci/requirements.txt
         virtualenv --version
         pip --version
         tox --version
@@ -112,7 +112,7 @@ jobs:
         CIBW_TEST_COMMAND_WINDOWS: >
           cd /d {project} &&
           tox --installpkg {wheel} -e {{ '${{ matrix.tox_env }}' }} -vv
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v7
       if: >
         !matrix.cibw_build
       with:
@@ -150,7 +150,7 @@ jobs:
       with:
         flag-name: {{ '${{ matrix.name }}' }}
         parallel: true
-    - uses: codecov/codecov-action@v5
+    - uses: codecov/codecov-action@v7
       if: matrix.cover
       with:
         flags: {{ '${{ matrix.name }}' }}

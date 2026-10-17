@@ -12,7 +12,7 @@ extensions = [
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'lazy-object-proxy'
-year = '2014-2025'
+year = '2014-2026'
 author = 'Ionel Cristian Mărieș'
 copyright = f'{year}, {author}'
 try:
