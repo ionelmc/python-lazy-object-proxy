@@ -12,3 +12,5 @@ Authors
 * Michael Šimáček - https://github.com/msimacek
 * Michał Górny https://github.com/mgorny
 * ac1982 - https://github.com/ac1982
+* Steve Kowalik - https://github.com/s-t-e-v-e-n-k
+* Nikhil Dabas - https://github.com/ndabas

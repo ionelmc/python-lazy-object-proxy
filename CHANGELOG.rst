@@ -2,10 +2,21 @@
 Changelog
 =========
 
-Unreleased
-----------
+
+1.13.0 (2026-10-17)
+-------------------
 
 * Document explicit proxy evaluation and identity checks with ``None``.
+  Contributed by ac1982 in `#99 <https://github.com/ionelmc/python-lazy-object-proxy/pull/99>`_.
+* Fixed some broken tests on Python 3.15.
+  Contributed by Steve Kowalik in `#97 <https://github.com/ionelmc/python-lazy-object-proxy/pull/97>`_.
+* Added configuration for Windows ARM64 wheels.
+  Contributed by Nikhil Dabas in `#96 <https://github.com/ionelmc/python-lazy-object-proxy/pull/96>`_.
+* Added Python 3.15 wheels.
+* Dropped support for EOL Python 3.10 and 3.9.
+* Dropped wheel building for Python 3.13 free-threading (experimental and unsupported by cibuildwheel anymore;
+  `details <https://github.com/pypa/cibuildwheel/issues/2683>`_).
+* Fixed typo in ``__annotations__`` (basically it was broken).
 
 1.12.0 (2025-08-22)
 -------------------
