@@ -49,7 +49,7 @@ jobs:
           - name: '{{ env }} ({{ os }}/{{ cibw_arch }}{{ name_suffix }})'
             artifact: '{{ env.rsplit('-', 1)[0] }}-{{ os }}-{{ cibw_arch }}{{ name_suffix.replace('/', '-') }}'
             python: '{{ python }}{% if freethreaded %}t{% endif %}'
-            python_arch: '{{ python_arch }}{% if freethreaded %}-freethreaded{% endif %}'
+            python_arch: '{{ python_arch }}'
             tox_env: '{{ env }}'
 {% if 'cover' in env %}
             cover: true
