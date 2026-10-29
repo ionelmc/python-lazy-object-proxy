@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+* Forward ``next()`` to wrapped iterators in the C and simple Python implementations,
+  matching the slots implementation and preserving generator return values.
+
 
 1.13.0 (2026-10-17)
 -------------------

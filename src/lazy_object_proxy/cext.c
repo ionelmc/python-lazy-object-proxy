@@ -1124,6 +1124,26 @@ static PyObject *Proxy_richcompare(ProxyObject *self,
 
 /* ------------------------------------------------------------------------- */
 
+static PyObject *Proxy_iternext(ProxyObject *self)
+{
+    PyObject *wrapped, *result;
+
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+    wrapped = self->wrapped;
+    if (!PyIter_Check(wrapped)) {
+        PyErr_Format(PyExc_TypeError, "'%.100s' object is not an iterator",
+                     Py_TYPE(wrapped)->tp_name);
+        return NULL;
+    }
+
+    Py_INCREF(wrapped);
+    result = Py_TYPE(wrapped)->tp_iternext(wrapped);
+    Py_DECREF(wrapped);
+    return result;
+}
+
+/* ------------------------------------------------------------------------- */
+
 static PyObject *Proxy_iter(ProxyObject *self)
 {
     Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
@@ -1377,7 +1397,7 @@ PyTypeObject Proxy_Type = {
     (richcmpfunc)Proxy_richcompare, /*tp_richcompare*/
     0,                              /*tp_weaklistoffset*/
     (getiterfunc)Proxy_iter,        /*tp_iter*/
-    0,                              /*tp_iternext*/
+    (iternextfunc)Proxy_iternext,    /*tp_iternext*/
     Proxy_methods,                  /*tp_methods*/
     0,                              /*tp_members*/
     Proxy_getset,                   /*tp_getset*/

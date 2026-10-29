@@ -793,6 +793,40 @@ def test_iter_builtin(lop):
     pytest.raises(TypeError, iter, lop.Proxy(lambda: 1))
 
 
+def test_next_builtin(lop):
+    calls = []
+
+    def factory():
+        calls.append(True)
+        return iter([1, 2])
+
+    wrapper = lop.Proxy(factory)
+    assert calls == []
+    assert next(wrapper) == 1
+    assert next(wrapper) == 2
+    with pytest.raises(StopIteration):
+        next(wrapper)
+    assert next(wrapper, 'finished') == 'finished'
+    assert calls == [True]
+
+
+def test_next_generator_return(lop):
+    def generator():
+        yield 1
+        return 'finished'
+
+    wrapper = lop.Proxy(generator)
+    assert next(wrapper) == 1
+    with pytest.raises(StopIteration) as excinfo:
+        next(wrapper)
+    assert excinfo.value.value == 'finished'
+
+
+def test_next_non_iterator(lop):
+    with pytest.raises(TypeError, match='not an iterator'):
+        next(lop.Proxy(lambda: [1, 2]))
+
+
 def test_context_manager(lop):
     class Class:
         def __enter__(self):

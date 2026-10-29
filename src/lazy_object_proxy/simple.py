@@ -238,6 +238,7 @@ class Proxy(with_metaclass(_ProxyMetaType)):
         return self.__wrapped__.__exit__(*args, **kwargs)
 
     __iter__ = make_proxy_method(iter)
+    __next__ = make_proxy_method(next)
 
     def __call__(self, *args, **kwargs):
         return self.__wrapped__(*args, **kwargs)
