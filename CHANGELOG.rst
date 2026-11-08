@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+* Complete support for inheriting from proxied classes in the C and slots implementations,
+  matching the simple implementation added in #82.
+
 
 1.13.0 (2026-10-17)
 -------------------

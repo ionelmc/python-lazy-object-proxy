@@ -76,3 +76,29 @@ Likewise, ``type(proxy)`` is the proxy's actual type. Use ``type(proxy.__wrapped
 when the concrete type of the result is required; this also evaluates the factory
 if necessary. These identity and exact-type limitations apply even though many
 ordinary operations are forwarded to the wrapped object.
+
+Proxied base classes
+====================
+
+A proxy can be used as a base in a class definition. Defining the subclass
+evaluates the factory and uses its returned class as the actual base:
+
+.. doctest::
+
+    >>> class Base:
+    ...     def method(self):
+    ...         return 'inherited'
+    >>> lazy_base = Proxy(lambda: Base)
+    >>> lazy_base.__resolved__
+    False
+    >>> class Derived(lazy_base):
+    ...     pass
+    >>> Derived.__bases__ == (Base,)
+    True
+    >>> Derived().method()
+    'inherited'
+    >>> lazy_base.__resolved__
+    True
+
+As with other proxy operations, a successful factory result is cached, and
+exceptions from the factory propagate to the caller.

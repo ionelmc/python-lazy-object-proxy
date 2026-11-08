@@ -41,6 +41,74 @@ def test_round_ndigits(lop):
     assert round(proxy, 3) == 1.495
 
 
+def test_class_base(lop):
+    calls = []
+
+    class Base:
+        def method(self):
+            return 'inherited'
+
+    def factory():
+        calls.append('called')
+        return Base
+
+    proxy = lop.Proxy(factory)
+    assert not proxy.__resolved__
+    assert calls == []
+
+    class Derived(proxy):
+        pass
+
+    assert Derived.__bases__ == (Base,)
+    assert Derived.__orig_bases__[0] is proxy
+    assert Derived().method() == 'inherited'
+    assert proxy.__resolved__
+    assert calls == ['called']
+
+    class AnotherDerived(proxy):
+        pass
+
+    assert AnotherDerived.__bases__ == (Base,)
+    assert calls == ['called']
+
+
+def test_class_base_metaclass_and_multiple_inheritance(lop):
+    class Meta(type):
+        pass
+
+    class Base(metaclass=Meta):
+        pass
+
+    class Other:
+        pass
+
+    proxy = lop.Proxy(lambda: Base)
+
+    class Derived(Other, proxy):
+        pass
+
+    assert Derived.__bases__ == (Other, Base)
+    assert type(Derived) is Meta
+    assert Derived.__orig_bases__[0] is Other
+    assert Derived.__orig_bases__[1] is proxy
+
+
+def test_class_base_factory_error(lop):
+    error = RuntimeError('cannot load base class')
+
+    def factory():
+        raise error
+
+    proxy = lop.Proxy(factory)
+    with pytest.raises(RuntimeError) as excinfo:
+
+        class Derived(proxy):
+            pass
+
+    assert excinfo.value is error
+    assert not proxy.__resolved__
+
+
 def test_attributes(lop):
     def function1(*args, **kwargs):
         return args, kwargs
