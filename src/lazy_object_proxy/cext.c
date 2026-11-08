@@ -1318,7 +1318,17 @@ static PyAsyncMethods Proxy_as_async = {
     (unaryfunc)Proxy_anext, /* am_anext */
 };
 
+static PyObject *Proxy_mro_entries(ProxyObject *self, PyObject *bases)
+{
+    Proxy__ENSURE_WRAPPED_OR_RETURN_NULL(self);
+
+    return PyTuple_Pack(1, self->wrapped);
+}
+
+/* ------------------------------------------------------------------------- */
+
 static PyMethodDef Proxy_methods[] = {
+    { "__mro_entries__", (PyCFunction)Proxy_mro_entries, METH_O, 0 },
     { "__dir__",       (PyCFunction)Proxy_dir,      METH_NOARGS, 0 },
     { "__enter__",     (PyCFunction)Proxy_enter,    METH_NOARGS, 0 },
     { "__exit__",      (PyCFunction)Proxy_exit,     METH_VARARGS | METH_KEYWORDS, 0 },

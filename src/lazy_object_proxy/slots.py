@@ -82,6 +82,9 @@ class Proxy(with_metaclass(_ProxyMetaType)):
     def __init__(self, factory):
         object.__setattr__(self, '__factory__', factory)
 
+    def __mro_entries__(self, _):
+        return (self.__wrapped__,)
+
     @property
     def __resolved__(self, __getattr__=object.__getattribute__):
         try:
