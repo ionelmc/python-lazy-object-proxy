@@ -1289,6 +1289,46 @@ def test_ior(lop):
         assert type(value) is lop.Proxy
 
 
+@pytest.mark.parametrize('wrapped_rhs', [False, True])
+def test_ior_reflected_error(lop, wrapped_rhs):
+    class Operand:
+        def __ror__(self, other):
+            raise RuntimeError('in-place or failed')
+
+    calls = []
+
+    def factory():
+        calls.append(None)
+        return {1}
+
+    value = lop.Proxy(factory)
+    original = value.__wrapped__
+    other = Operand()
+    if wrapped_rhs:
+        other = lop.Proxy(lambda: Operand())
+
+    with pytest.raises(RuntimeError, match='in-place or failed'):
+        value |= other
+
+    assert value.__wrapped__ is original
+    assert calls == [None]
+    proxy = value
+    value |= {2}
+    assert value == {1, 2}
+    assert proxy.__wrapped__ is original
+    assert calls == [None]
+
+
+def test_ior_type_error(lop):
+    original = {1}
+    value = lop.Proxy(lambda: original)
+    with pytest.raises(TypeError):
+        value |= object()
+    assert value.__wrapped__ is original
+    value |= {2}
+    assert value == {1, 2}
+
+
 def test_neg(lop):
     value = lop.Proxy(lambda: 1)
 
