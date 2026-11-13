@@ -632,6 +632,9 @@ static PyObject *Proxy_inplace_or(ProxyObject *self,
 
     object = PyNumber_InPlaceOr(self->wrapped, other);
 
+    if (!object)
+        return NULL;
+
     Py_DECREF(self->wrapped);
     self->wrapped = object;
 

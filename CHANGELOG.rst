@@ -3,6 +3,12 @@ Changelog
 =========
 
 
+Unreleased
+----------
+
+* Preserve the wrapped object and propagate errors when an in-place bitwise OR
+  fails in the C extension.
+
 1.13.0 (2026-10-17)
 -------------------
 
